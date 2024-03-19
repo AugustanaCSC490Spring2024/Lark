@@ -33,7 +33,11 @@ class page extends StatelessWidget {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          color: Colors.white, // Background color for the whole page
+          gradient : LinearGradient(
+            colors: [Color(0xffcdffd8), Color(0xff94b9ff), ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         padding: const EdgeInsets.all(20.0),
         child: Column(
