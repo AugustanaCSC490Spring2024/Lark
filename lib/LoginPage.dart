@@ -6,19 +6,41 @@ import 'BottomNavigation.dart';
 
 
 
-
 void main() async {
+
+   WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+
+    // Authenticates if the user is already logged in
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      runApp(user == null ? LogInPage() : NavigationBarApp());
+    });
 }
 
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class LogInPage extends StatelessWidget {
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+      primarySwatch: Colors.blue,
+      ),
+        home: Page(),
+    );
+  }
 }
 
-class _SignInPageState extends State<SignInPage> {
+
+
+class Page extends StatefulWidget {
+  const Page({Key? key}) : super(key: key);
+
+  @override
+  _PageState createState() => _PageState();
+}
+
+class _PageState extends State<Page> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -37,14 +59,7 @@ class _SignInPageState extends State<SignInPage> {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient : LinearGradient(
-            colors: [Color(0xffcdffd8), Color(0xff94b9ff), ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-
-
-          ),
-              // Background color for the whole page
+          color: Colors.white, // Background color for the whole page
         ),
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -80,8 +95,10 @@ class _SignInPageState extends State<SignInPage> {
                 String email = _emailController.text;
                 String password = _passwordController.text;
                 
-           },
-              child: const Text('Sign Up'),
+                // Now you can use 'email' and 'password' for signing up the user
+                signInWithEmailAndPassword(email, password);
+              },
+              child: const Text('Log In'),
             ),
           ],
         ),
@@ -89,9 +106,19 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
+  
 
 
-
-
-
-
+//Signin occurs here
+Future<void> signInWithEmailAndPassword(String email, String password) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    User? user = userCredential.user;
+    // Handle successful sign-in
+  } catch (e) {
+    // Handle sign-in errors
+  }
+}
