@@ -1,29 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:larkcoins/firebase_options.dart';
+import 'BottomNavigation.dart';
 
 
 
-void main(){
 
-  runApp(SignUpPage());
-
+void main() async {
 }
 
-class SignUpPage extends StatelessWidget {
+
+class SignInPage extends StatefulWidget {
+  const SignInPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-      primarySwatch: Colors.blue,
-      ),
-        home: page(),
-    );
-  }
+  _SignInPageState createState() => _SignInPageState();
 }
 
+class _SignInPageState extends State<SignInPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-class page extends StatelessWidget {
-  const page({super.key});
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +59,7 @@ class page extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
@@ -69,6 +67,7 @@ class page extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
+              controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
@@ -76,18 +75,12 @@ class page extends StatelessWidget {
               obscureText: true,
             ),
             const SizedBox(height: 20.0),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                // Implement sign-up logic here
-              },
+                String email = _emailController.text;
+                String password = _passwordController.text;
+                
+           },
               child: const Text('Sign Up'),
             ),
           ],
@@ -96,3 +89,9 @@ class page extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+

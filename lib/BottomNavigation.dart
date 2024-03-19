@@ -7,7 +7,7 @@ import 'HomePage.dart';
 import 'BetsPage.dart';
 import 'WeatherPredictionPage.dart';
 
-void main() => runApp(const NavigationBarApp());
+ void main() => runApp(const NavigationBarApp());
 
 class NavigationBarApp extends StatelessWidget {
   const NavigationBarApp({Key? key}) : super(key: key);
