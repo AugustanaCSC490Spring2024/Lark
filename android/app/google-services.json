@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877343785428",
+    "project_id": "lark-coins",
+    "storage_bucket": "lark-coins.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877343785428:android:221d1341c880b2676a1641",
+        "android_client_info": {
+          "package_name": "com.example.larkcoins"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ22qztxxAuFE2k6GdaVbTzIN5WcJns68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

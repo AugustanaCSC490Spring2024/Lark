@@ -1,29 +1,40 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:larkcoins/firebase_options.dart';
+import 'BottomNavigation.dart';
 
 
 
-void main(){
 
-  runApp(SignUpPage());
+void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
 
-}
+    // Authenticates if the user is already logged in
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      runApp(user == null ? SignInPage() : NavigationBarApp());
+    });
+  }
 
-class SignUpPage extends StatelessWidget {
+
+class SignInPage extends StatefulWidget {
+  const SignInPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-      primarySwatch: Colors.blue,
-      ),
-        home: page(),
-    );
-  }
+  _SignInPageState createState() => _SignInPageState();
 }
 
+class _SignInPageState extends State<SignInPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-class page extends StatelessWidget {
-  const page({super.key});
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +59,7 @@ class page extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
@@ -62,6 +67,7 @@ class page extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
+              controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
@@ -69,17 +75,13 @@ class page extends StatelessWidget {
               obscureText: true,
             ),
             const SizedBox(height: 20.0),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                // Implement sign-up logic here
+                String email = _emailController.text;
+                String password = _passwordController.text;
+                
+                // Now you can use 'email' and 'password' for signing up the user
+                signInWithEmailAndPassword(email,password);
               },
               child: const Text('Sign Up'),
             ),
@@ -89,3 +91,22 @@ class page extends StatelessWidget {
     );
   }
 }
+
+//Signin occurs here
+Future<void> signInWithEmailAndPassword(String email, String password) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    User? user = userCredential.user;
+    // Handle successful sign-in
+  } catch (e) {
+    // Handle sign-in errors
+  }
+}
+
+
+
+
+
