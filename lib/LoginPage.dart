@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,11 @@ void main() async {
     await Firebase.initializeApp();
 
     // Authenticates if the user is already logged in
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      runApp(user == null ? LogInPage() : NavigationBarApp());
-    });
+    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    //   runApp(user == null ? LogInPage() : NavigationBarApp());
+    // });
+
+    runApp(LogInPage());
 }
 
 
@@ -96,7 +99,7 @@ class _PageState extends State<Page> {
                 String password = _passwordController.text;
                 
                 // Now you can use 'email' and 'password' for signing up the user
-                signInWithEmailAndPassword(email, password);
+                signInWithEmailAndPassword(email, password , context);
               },
               child: const Text('Log In'),
             ),
@@ -108,17 +111,42 @@ class _PageState extends State<Page> {
 }
   
 
-
 //Signin occurs here
-Future<void> signInWithEmailAndPassword(String email, String password) async {
+Future<void> signInWithEmailAndPassword(String email, String password , BuildContext context) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
     User? user = userCredential.user;
+    runApp(NavigationBarApp());
+
     // Handle successful sign-in
   } catch (e) {
-    // Handle sign-in errors
-  }
+
+   // Do somethingg
+    showErrorDialog(context,"Wrong credentials.Please try again.");
+
+}
+}
+
+
+void showErrorDialog(BuildContext context, String errorMessage) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
 }
