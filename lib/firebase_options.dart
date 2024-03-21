@@ -17,16 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -49,20 +52,13 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBZ22qztxxAuFE2k6GdaVbTzIN5WcJns68',
-    appId: '1:877343785428:android:221d1341c880b2676a1641',
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBDSh0TJQJDtpRFBihd8GIzFBXkk_u_c0M',
+    appId: '1:877343785428:web:0c1d78126c445e986a1641',
     messagingSenderId: '877343785428',
     projectId: 'lark-coins',
+    authDomain: 'lark-coins.firebaseapp.com',
     storageBucket: 'lark-coins.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDba1EC3C8LdMBgQRIbdpeorM9W1zldO3w',
-    appId: '1:877343785428:ios:1ce1f3bc78755e926a1641',
-    messagingSenderId: '877343785428',
-    projectId: 'lark-coins',
-    storageBucket: 'lark-coins.appspot.com',
-    iosBundleId: 'com.example.larkcoins',
+    measurementId: 'G-ZCY0XBC14W',
   );
 }

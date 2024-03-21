@@ -10,7 +10,11 @@ import 'BottomNavigation.dart';
 void main() async {
 
    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+
+         options: DefaultFirebaseOptions.currentPlatform,
+
+    );
 
     // Authenticates if the user is already logged in
     // FirebaseAuth.instance.authStateChanges().listen((User? user) {
