@@ -1,24 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
 
-
-
-
 void main() async {
+  runApp(MaterialApp(
+    home: SignUpPage(),
+  ));
 }
 
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -37,14 +36,11 @@ class _SignInPageState extends State<SignInPage> {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient : LinearGradient(
-            colors: [Color(0xffcdffd8), Color(0xff94b9ff), ],
+          gradient: LinearGradient(
+            colors: [Color(0xffcdffd8), Color(0xff94b9ff)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-
-
           ),
-              // Background color for the whole page
         ),
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -79,8 +75,8 @@ class _SignInPageState extends State<SignInPage> {
               onPressed: () {
                 String email = _emailController.text;
                 String password = _passwordController.text;
-                
-           },
+                // You can add Firebase authentication logic here
+              },
               child: const Text('Sign Up'),
             ),
           ],
@@ -89,9 +85,3 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
-
-
-
-
-
-
