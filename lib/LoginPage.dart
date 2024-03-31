@@ -4,24 +4,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
-
+import 'sign_up_page.dart';
 
 
 void main() async {
 
-   WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
 
-         options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
 
-    );
+  );
 
-    // Authenticates if the user is already logged in
-    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    //   runApp(user == null ? LogInPage() : NavigationBarApp());
-    // });
+  // Authenticates if the user is already logged in
+  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  //   runApp(user == null ? LogInPage() : NavigationBarApp());
+  // });
 
-    runApp(LogInPage());
+  runApp(LogInPage());
 }
 
 
@@ -31,9 +31,9 @@ class LogInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-      primarySwatch: Colors.blue,
+        primarySwatch: Colors.blue,
       ),
-        home: Page(),
+      home: Page(),
     );
   }
 }
@@ -62,7 +62,7 @@ class _PageState extends State<Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: const Text('Login'),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -105,19 +105,34 @@ class _PageState extends State<Page> {
               onPressed: () {
                 String email = _emailController.text;
                 String password = _passwordController.text;
-                
+
                 // Now you can use 'email' and 'password' for signing up the user
                 signInWithEmailAndPassword(email, password , context);
               },
               child: const Text('Log In'),
             ),
+            GestureDetector(
+              onTap: () {
+                // Add your onPressed logic here
+               runApp(SignUpPageApp());
+              },
+              child: Text(
+                'New to the lark world?',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            )
+
           ],
         ),
       ),
     );
   }
 }
-  
+
 
 //Signin occurs here
 Future<void> signInWithEmailAndPassword(String email, String password , BuildContext context) async {
@@ -132,10 +147,10 @@ Future<void> signInWithEmailAndPassword(String email, String password , BuildCon
     // Handle successful sign-in
   } catch (e) {
 
-   // Do somethingg
+    // Do somethingg
     showErrorDialog(context,"Wrong credentials.Please try again.");
 
-}
+  }
 }
 
 
