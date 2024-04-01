@@ -10,11 +10,8 @@ import 'BottomNavigation.dart';
 void fireBaseSetUp() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure that Flutter bindings have been initialized.
   await Firebase.initializeApp(
-
     options: DefaultFirebaseOptions.currentPlatform,
-
   );
-
 
 }
 

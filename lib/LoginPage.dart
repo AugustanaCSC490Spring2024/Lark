@@ -105,8 +105,6 @@ class _PageState extends State<Page> {
               onPressed: () {
                 String email = _emailController.text;
                 String password = _passwordController.text;
-
-                // Now you can use 'email' and 'password' for signing up the user
                 signInWithEmailAndPassword(email, password , context);
               },
               child: const Text('Log In'),
@@ -125,7 +123,6 @@ class _PageState extends State<Page> {
                 ),
               ),
             )
-
           ],
         ),
       ),
