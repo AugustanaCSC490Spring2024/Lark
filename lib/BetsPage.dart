@@ -6,6 +6,7 @@ import 'package:larkcoins/dbHandler.dart';
 
 import 'Bets.dart';
 
+
 class BetsPage extends StatefulWidget {
   const BetsPage({Key? key}) : super(key: key);
 
@@ -37,6 +38,7 @@ class BetsPageState extends State<BetsPage> {
   void clearBetAmount() {
     _betAmountController.clear();
   }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -229,7 +231,7 @@ class BetsPageState extends State<BetsPage> {
                     onPressed: () {
                      double winnings = calculateWinnings();
                       // Respond to button press
-                      Bets bets = Bets("email", _locationController.text.toString(),_dayController.text.toString(), int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
+                      Bets bets = Bets('username', _locationController.text.toString(),_dayController.text.toString(), int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
                       setBet(bets);
 
                     },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
 
 class AccountPage extends StatelessWidget {
@@ -18,9 +19,10 @@ class AccountPage extends StatelessWidget {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-
+    String wallet = getUserMoney("email").toString();
     Size screenSize = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
@@ -66,7 +68,7 @@ class AccountPage extends StatelessWidget {
                               child: ListBody(
                                 children: <Widget>[
                                   Text('The amount of money you have in your wallet is:'),
-                                  Text('            1000000'),
+                                  Text('100000'),
 
                                 ],
                               ),
