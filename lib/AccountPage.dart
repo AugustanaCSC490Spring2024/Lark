@@ -4,21 +4,19 @@ class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Accounts'),
+          title: const Text('Accounts'),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,// Background color for the whole page
-          ),
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: [
               const Text(
-                'User Account',
+                'User Name',
                 style: TextStyle(
                   fontSize: 28.0,
                   fontWeight: FontWeight.bold,
@@ -29,8 +27,13 @@ class AccountPage extends StatelessWidget {
                   onPressed: () {
                     // Respond to button press
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(screenSize.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                  ),
                   child: const Text('Acheivements'),
-
               ),
                 ),
               Padding(padding: const EdgeInsets.only(top: 20.0),
@@ -38,15 +41,30 @@ class AccountPage extends StatelessWidget {
                   onPressed: () {
                     // Respond to button press
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(screenSize.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                ),
                   child: const Text('Wallet'),
 
-                ),
+
+                  ),
               ),
+
+
               Padding(padding: const EdgeInsets.only(top: 20.0),
                 child: ElevatedButton(
                   onPressed: () {
                     // Respond to button press
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(screenSize.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                  ),
                   child: const Text('change username/password'),
 
                 ),
@@ -56,6 +74,12 @@ class AccountPage extends StatelessWidget {
                   onPressed: () {
                     // Respond to button press
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(screenSize.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                  ),
                   child: const Text('log out'),
 
                 ),
@@ -64,8 +88,41 @@ class AccountPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Respond to button press
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('About Us'),
+                            content: const SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text('This is a betting app'),
+                                  Text('This app is for entertainment purposes only'),
+                                  Text('This app is not responsible for any losses'),
+                                  Text('This app is not responsible for any addiction'),
+                                  Text('Made by Group Lark')
+                                ],
+                              ),
+
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Close'),
+                              ),
+                            ],
+                          );
+                        });
                   },
+
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(screenSize.width, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                  ),
                   child: const Text('About Us'),
                 ),
               )
@@ -80,6 +137,7 @@ class AccountPage extends StatelessWidget {
 
 void main(){
 
-  runApp(AccountPage());
+  runApp(const AccountPage());
 
 }
+
