@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
 
 class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+  const AccountPage({Key? key}) : super(key: key); // Make key parameter nullable
+
+  Future<void> signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LogInPage()));
+    } catch (e) {
+      print('Sign out error: $e');
+      // Show SnackBar using ScaffoldMessenger
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error signing out. Please try again.'),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
     Size screenSize = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
@@ -128,6 +145,7 @@ class AccountPage extends StatelessWidget {
               )
             ]
           )
+
         ),
       ),
     );
@@ -135,9 +153,12 @@ class AccountPage extends StatelessWidget {
 }
 
 
-void main(){
-
-  runApp(const AccountPage());
+void main() {
+  runApp(MaterialApp(
+    home: ScaffoldMessenger(
+      child: AccountPage(),
+    ),
+  ));
 
 }
 

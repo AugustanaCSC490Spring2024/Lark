@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
+import 'dbHandler.dart';
 import 'sign_up_page.dart';
 
 
@@ -105,8 +106,6 @@ class _PageState extends State<Page> {
               onPressed: () {
                 String email = _emailController.text;
                 String password = _passwordController.text;
-
-                // Now you can use 'email' and 'password' for signing up the user
                 signInWithEmailAndPassword(email, password , context);
               },
               child: const Text('Log In'),
@@ -125,7 +124,6 @@ class _PageState extends State<Page> {
                 ),
               ),
             )
-
           ],
         ),
       ),
