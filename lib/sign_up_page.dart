@@ -1,11 +1,14 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
+import 'Bets.dart';
 import 'BottomNavigation.dart';
+import 'dbHandler.dart';
 
 void fireBaseSetUp() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure that Flutter bindings have been initialized.
@@ -111,7 +114,10 @@ Future<void> signUp(BuildContext context, String email, String password) async {
       email: email,
       password: password,
     );
+
     await dialog(context, "Congratulations!!! Welcome , now lark into the depth of Money ", "Whoop whoop!!");
+
+    newUserBonus(email);
 
     //Using async and await to make sure that runApp Does not happen
     Timer(Duration(seconds: 2), () {
