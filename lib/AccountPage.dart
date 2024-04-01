@@ -57,6 +57,31 @@ class AccountPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Respond to button press
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Your Wallet'),
+                            content: const SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text('The amount of money you have in your wallet is:'),
+                                  Text('            1000000'),
+
+                                ],
+                              ),
+
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Close'),
+                              ),
+                            ],
+                          );
+                        });
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(screenSize.width, 50),
@@ -90,6 +115,7 @@ class AccountPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Respond to button press
+                    runApp(LogInPage());
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(screenSize.width, 50),

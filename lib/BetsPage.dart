@@ -2,6 +2,9 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:larkcoins/dbHandler.dart';
+
+import 'Bets.dart';
 
 class BetsPage extends StatefulWidget {
   const BetsPage({Key? key}) : super(key: key);
@@ -13,12 +16,12 @@ class BetsPage extends StatefulWidget {
 
 
 class BetsPageState extends State<BetsPage> {
-  final List<String> images = [
-    'Icon-192.png',
-    'Icon-512.png',
-    'Icon-192.png',
-    // Add more image paths as needed
-  ];
+  // final List<String> images = [
+  //   'Icon-192.png',
+  //   'Icon-512.png',
+  //   'Icon-192.png',
+  //   // Add more image paths as needed
+  // ];
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
   TextEditingController _lowRangeController = TextEditingController();
@@ -46,20 +49,20 @@ class BetsPageState extends State<BetsPage> {
         
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: screenSize.height * 0.2,
-                width: screenSize.width,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset(images[index]),
-                    );
-                  },
-                ),
-              ),
+              // Container(
+              //   height: screenSize.height * 0.2,
+              //   width: screenSize.width,
+              //   child: ListView.builder(
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: images.length,
+              //     itemBuilder: (context, index) {
+              //       return Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Image.asset(images[index]),
+              //       );
+              //     },
+              //   ),
+              // ),
         
               const Text(
                 'Place Bets',
@@ -224,7 +227,11 @@ class BetsPageState extends State<BetsPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                     double winnings = calculateWinnings();
                       // Respond to button press
+                      Bets bets = Bets("email", _locationController.text.toString(),_dayController.text.toString(), int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
+                      setBet(bets);
+
                     },
                     child: Text('Place Bets'),
                   ),
