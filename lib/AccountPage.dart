@@ -117,7 +117,7 @@ class AccountPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Respond to button press
-                    runApp(LogInPage());
+                    signOut(context);
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(screenSize.width, 50),
