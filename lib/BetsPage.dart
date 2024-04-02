@@ -43,6 +43,11 @@ class BetsPageState extends State<BetsPage> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Place Bets'),
+        backgroundColor: Colors.green,
+      ),
+      backgroundColor: Color(0xffcdffd8),
       body: SingleChildScrollView(
         child: Padding(
         
@@ -66,14 +71,14 @@ class BetsPageState extends State<BetsPage> {
               //   ),
               // ),
         
-              const Text(
-                'Place Bets',
-                style: TextStyle(
-                  fontSize: 28.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: screenSize.height * 0.05),
+              // const Text(
+              //   'Place Bets',
+              //   style: TextStyle(
+              //     fontSize: 28.0,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // SizedBox(height: screenSize.height * 0.05),
               Row(
                 children:[
         

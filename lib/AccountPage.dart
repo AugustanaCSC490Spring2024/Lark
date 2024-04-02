@@ -29,7 +29,9 @@ class AccountPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Accounts'),
         ),
+        backgroundColor: Color(0xffcdffd8),
         body: SingleChildScrollView(
+
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
