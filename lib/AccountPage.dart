@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
 
+
+
+
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key); // Make key parameter nullable
 
@@ -180,15 +183,5 @@ class AccountPage extends StatelessWidget {
       ),
     );
   }
-}
-
-
-void main() {
-  runApp(MaterialApp(
-    home: ScaffoldMessenger(
-      child: AccountPage(),
-    ),
-  ));
-
 }
 

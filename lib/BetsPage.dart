@@ -1,10 +1,20 @@
 import 'dart:html';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
 
 import 'Bets.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final uid = user?.uid;
+
+
+void main() {
+
+}
 
 
 class BetsPage extends StatefulWidget {
@@ -236,14 +246,16 @@ class BetsPageState extends State<BetsPage> {
                     onPressed: () {
                      double winnings = calculateWinnings();
                       // Respond to button press
-                      Bets bets = Bets('username', _locationController.text.toString(),_dayController.text.toString(), int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
+                      if(uid != null ){
+                        print(uid);
+                      Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(), 1,false, double.parse(_betAmountController.text),winnings);
                       setBet(bets);
-
+                      }else{
+                          print("NO UID!");
+                      }
                     },
                     child: Text('Place Bets'),
                   ),
-        
-        
         
             ],
           ),
@@ -252,5 +264,3 @@ class BetsPageState extends State<BetsPage> {
     );
   }
 }
-
-
