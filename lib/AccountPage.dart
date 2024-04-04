@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
 
-
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final uid = user?.uid;
 
 
 class AccountPage extends StatelessWidget {
@@ -40,6 +42,7 @@ class AccountPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
+
                 'User Name',
                 style: TextStyle(
                   fontSize: 28.0,
