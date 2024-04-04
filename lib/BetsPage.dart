@@ -27,12 +27,12 @@ class BetsPage extends StatefulWidget {
 
 
 class BetsPageState extends State<BetsPage> {
-  // final List<String> images = [
-  //   'Icon-192.png',
-  //   'Icon-512.png',
-  //   'Icon-192.png',
-  //   // Add more image paths as needed
-  // ];
+  final List<String> images = [
+    'Icon-192.png',
+    'Icon-512.png',
+    'Icon-192.png',
+    // Add more image paths as needed
+  ];
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
   TextEditingController _lowRangeController = TextEditingController();
@@ -54,6 +54,7 @@ class BetsPageState extends State<BetsPage> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+
       appBar: AppBar(
         title: const Text('Place Bets'),
         backgroundColor: Colors.green,
@@ -111,6 +112,7 @@ class BetsPageState extends State<BetsPage> {
                           }
                           return null;
                         },
+
                         ),
                     ),
                     SizedBox(width: screenSize.width * 0.05),

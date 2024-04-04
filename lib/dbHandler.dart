@@ -1,25 +1,33 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'Bets.dart';
 
 var db = FirebaseFirestore.instance;
 
-Future<void> setBet(Bets bet) async {
-  int numberOfBets = await bet.getNumberOfBets() + 1;
-  String betID = numberOfBets.toString();
-  print(numberOfBets);
+final FirebaseAuth auth = FirebaseAuth.instance;
+
+
+Future<bool> setBet(Bets bet) async {
+
     final docRef = FirebaseFirestore.instance
-      .collection("Incomplete Bets")
+      .collection("Users")
       .doc(bet.userid)
-      .collection("Bets")
-      .doc(betID);
-  await docRef.set(bet.toFirestore());
+      .collection("Incomplete Bets");
+  await docRef.add(bet.toFirestore());
+  return true;
 }
 
 
-void newUserBonus(String email) {
-  db.collection("Users").doc(email).set({"Coin": 100});
+
+
+void newUserCreated(String name) {
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  db.collection("Users").doc(uid).set({"UserName": name, "Coin":100});
+
+
 }
 
 Future<int?> getUserMoney(String email) async {
@@ -33,6 +41,7 @@ Future<int?> getUserMoney(String email) async {
     return null;
   }
 }
+
 
 
 

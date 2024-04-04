@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
+import 'dbHandler.dart';
 
 void fireBaseSetUp() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure that Flutter bindings have been initialized.
@@ -38,11 +39,14 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -72,6 +76,14 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             const SizedBox(height: 20.0),
+            TextFormField( // Added this block for username input
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20.0),
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(
@@ -93,8 +105,8 @@ class _SignUpPageState extends State<SignUpPage> {
               onPressed: () {
                 String email = _emailController.text;
                 String password = _passwordController.text;
-                // You can add Firebase authentication logic here
-                signUp(context, email, password);
+                String userName = _usernameController.text;
+                signUp(context, email, password, userName);
               },
               child: const Text('Sign Up'),
             ),
@@ -105,14 +117,14 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
-Future<void> signUp(BuildContext context, String email, String password) async {
+Future<void> signUp(BuildContext context, String email, String password, String userName) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
     await dialog(context, "Congratulations!!! Welcome , now lark into the depth of Money ", "Whoop whoop!!");
-
+    newUserCreated(userName);
     //Using async and await to make sure that runApp Does not happen
     Timer(Duration(seconds: 2), () {
       runApp(NavigationBarApp());
