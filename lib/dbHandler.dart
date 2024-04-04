@@ -9,16 +9,14 @@ var db = FirebaseFirestore.instance;
 final FirebaseAuth auth = FirebaseAuth.instance;
 
 
-Future<void> setBet(Bets bet) async {
-  int numberOfBets = await bet.getNumberOfBets() + 1;
-  String betID = numberOfBets.toString();
-  print(numberOfBets);
+Future<bool> setBet(Bets bet) async {
+
     final docRef = FirebaseFirestore.instance
-      .collection("Incomplete Bets")
+      .collection("Users")
       .doc(bet.userid)
-      .collection("Bets")
-      .doc(betID);
-  await docRef.set(bet.toFirestore());
+      .collection("Incomplete Bets");
+  await docRef.add(bet.toFirestore());
+  return true;
 }
 
 
@@ -27,8 +25,9 @@ Future<void> setBet(Bets bet) async {
 void newUserCreated(String name) {
   User? user = auth.currentUser;
   String? uid = user?.uid;
-  db.collection("Users").doc(uid).set({"UserName": name});
-  db.collection("Coin").doc(uid).set({"Coin": 100});
+  db.collection("Users").doc(uid).set({"UserName": name, "Coin":100});
+
+
 }
 
 Future<int?> getUserMoney(String email) async {
