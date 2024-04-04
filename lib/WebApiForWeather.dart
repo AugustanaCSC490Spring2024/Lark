@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,9 +37,7 @@ getMinutelyData(String zipcode) async{
 
        var time = data["time"].toString();
        var temperature = data["values"]["temperature"].toString();
-
-
-      minutelyDataMap[time] = temperature;
+       minutelyDataMap[time] = temperature;
     }
     return minutelyDataMap;
 
@@ -51,9 +48,7 @@ getMinutelyData(String zipcode) async{
 
 void main() async{
 
-
   //this is how you get the getMinutelyDataFromAPI
-  var data = await getMinutelyData("61201");
-
-  print("This is the map: " +data.toString());
+   Map<String,String> data = await getMinutelyData("61201");
+  print("This is the size: " + data.length.toString());
 }
