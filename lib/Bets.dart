@@ -5,24 +5,16 @@ class Bets {
   final String userid;
   final String city;
   final String date;
-  final int predictedTemp;
+  final int predictedTempLow;
+  final int predictedTempHigh;
   bool complete;
   final double wager;
   final double expectedEarning;
 
-  Bets(this.userid, this.city, this.date, this.predictedTemp,
-      this.complete, this.wager, this.expectedEarning){
-  }
+  Bets(this.userid, this.city, this.date, this.predictedTempLow, this.predictedTempHigh,
+      this.complete, this.wager, this.expectedEarning);
 
-Future<int> getNumberOfBets() async {
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-    .collection("Incomplete Bets")
-      .doc(userid)
-      .collection("Bets")
-      .get();
 
-  return querySnapshot.size;
-}
 
   factory Bets.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -33,7 +25,8 @@ Future<int> getNumberOfBets() async {
       data?['userId'] ?? "", // Providing a default value if data is null
       data?['city'] ?? "", // Providing a default value if data is null
       data?['date'] ?? "", // Converting Firestore Timestamp to DateTime
-      data?['predictedTemp'] ?? 0, // Providing a default value if data is null
+      data?['predictedTempLow'] ?? 0, // Providing a default value if data is null
+      data?['predictedTempHigh'] ?? 0,
       data?['complete'] ?? false, // Providing a default value if data is null
       data?['wager'] ?? 0.0, // Providing a default value if data is null
       data?['expectedEarning'] ?? 0.0, // Providing a default value if data is null,
@@ -45,7 +38,8 @@ Future<int> getNumberOfBets() async {
       "userId": userid,
       "city": city,
       "date": date,
-      "predictedTemp": predictedTemp,
+      "predictedTempLow": predictedTempLow,
+      "predictedTempHigh": predictedTempHigh,
       "complete": complete,
       "wager": wager,
       "expectedEarning": expectedEarning,

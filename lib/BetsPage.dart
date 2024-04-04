@@ -243,7 +243,7 @@ class BetsPageState extends State<BetsPage> {
                       // Respond to button press
                       if(uid != null ){
                         print(uid);
-                      Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(), 1,false, double.parse(_betAmountController.text),winnings);
+                      Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(),1,2,false, double.parse(_betAmountController.text),winnings);
                       setBet(bets);
                       }else{
                           print("NO UID!");
