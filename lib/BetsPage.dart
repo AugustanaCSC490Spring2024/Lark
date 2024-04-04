@@ -254,6 +254,12 @@ class BetsPageState extends State<BetsPage> {
                             if (value == null || value.isEmpty) {
                             return 'Please enter the high range';
                             }
+                            final int lowRange = int.parse(_lowRangeController.text);
+                            final int highRange = int.parse(value);
+                            if (lowRange >= highRange) {
+                              return 'High range must be greater than the low range';
+                            }
+
                             if (int.tryParse(value) == null) {
                               return 'Please enter a valid number';
                             }
@@ -312,7 +318,7 @@ class BetsPageState extends State<BetsPage> {
                           // Respond to button press
                           if(uid != null ){
                             print(uid);
-                            Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(), 1,false, double.parse(_betAmountController.text),winnings);
+                            Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(),1,false, double.parse(_betAmountController.text),winnings);
                             setBet(bets);
                           }else{
                             print("NO UID!");
