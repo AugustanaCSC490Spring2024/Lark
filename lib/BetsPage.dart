@@ -124,9 +124,26 @@ class BetsPageState extends State<BetsPage> {
                           suffixIcon: Icon(Icons.calendar_today),
                           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         ),
+                        readOnly: true,
+                        onTap: () async{
+                          final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
+                          final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 6));
+
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: tomorrow,
+                            firstDate: tomorrow,
+                            lastDate: maxSelectableDate,
+                          );
+                          if (picked != null){
+                            String date = picked.toString();
+                            date = date.substring(0,10);
+                            _dayController.text = date;
+                          }
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please select a date';
                           }
                           return null;
                         },
@@ -205,10 +222,10 @@ class BetsPageState extends State<BetsPage> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Please enter the low range';
                               }
                               if (int.tryParse(value) == null) {
-                                return 'Please enter a valid integer';
+                                return 'Please enter a valid number';
                               }
                               return null;
                             },
@@ -233,10 +250,10 @@ class BetsPageState extends State<BetsPage> {
                             ),
                             validator: (value) {
                             if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please enter the high range';
                             }
                             if (int.tryParse(value) == null) {
-                              return 'Please enter a valid integer';
+                              return 'Please enter a valid number';
                             }
                             return null;
                             },
@@ -265,7 +282,7 @@ class BetsPageState extends State<BetsPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please enter the amount you want to bet';
                           }
                           return null;
                         },
