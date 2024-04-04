@@ -297,6 +297,7 @@ class BetsPageState extends State<BetsPage> {
                       ),
                     ),
 
+
                     SizedBox(height: 20.0),
 
                      Text(
@@ -318,7 +319,7 @@ class BetsPageState extends State<BetsPage> {
                           // Respond to button press
                           if(uid != null ){
                             print(uid);
-                            Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(),1,false, double.parse(_betAmountController.text),winnings);
+                            Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
                             setBet(bets);
                           }else{
                             print("NO UID!");
@@ -331,6 +332,7 @@ class BetsPageState extends State<BetsPage> {
 
               ],
             ),
+
           ),
         ),
       ),

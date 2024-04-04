@@ -36,7 +36,7 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String wallet = getUserMoney("email").toString();
+    String wallet = getUserMoney().toString();
     Size screenSize = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
