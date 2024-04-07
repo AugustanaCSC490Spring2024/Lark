@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:html';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
 import 'dbHandler.dart';
+import 'LoginPage.dart';
 
 void fireBaseSetUp() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure that Flutter bindings have been initialized.
@@ -110,6 +112,18 @@ class _SignUpPageState extends State<SignUpPage> {
               },
               child: const Text('Sign Up'),
             ),
+
+            Padding(padding: EdgeInsets.all(10),
+
+            child: ElevatedButton(
+              onPressed: () {
+                runApp(LogInPage());
+              },
+              child: const Text('< Back'),
+            ),
+            )
+
+
           ],
         ),
       ),
