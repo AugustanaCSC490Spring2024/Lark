@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:larkcoins/dbHandler.dart';
 
-import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
+import 'LoginPage.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
