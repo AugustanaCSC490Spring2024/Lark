@@ -8,7 +8,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
 
-final username = getUserName(); // Create an instance of dbHandler
+final username = getUserName(); 
 
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -19,7 +19,6 @@ class AccountPage extends StatelessWidget {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LogInPage()));
     } catch (e) {
       print('Sign out error: $e');
-      // Show SnackBar using ScaffoldMessenger
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error signing out. Please try again.'),
       ));
@@ -47,8 +46,7 @@ class AccountPage extends StatelessWidget {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return Text(
-                    'Hi ${snapshot.data ?? 'Username not available'}', // Here's the change
+                  return Text(// Here's the change
                     style: TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.bold,
