@@ -12,13 +12,14 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 
 
 Future<bool> setBet(Bets bet) async {
-
+   User? user = auth.currentUser;
+   String? uid = user?.uid;
    double curUserMoney = await getUserMoney();
    if(bet.wager<curUserMoney){
      addMoney(bet.wager*(-1));
      final docRef = FirebaseFirestore.instance
          .collection("Users")
-         .doc(bet.userid)
+         .doc(uid)
          .collection("Incomplete Bets");
      await docRef.add(bet.toFirestore());
      return true;
@@ -99,7 +100,7 @@ Future<List<Bets>> getBets(String betType) async {
 
     // Iterate over the documents and convert each one to a Bets object
     for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      Bets bet = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
+      Bets bet = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
       betsList.add(bet);
     }
   } catch (e) {
