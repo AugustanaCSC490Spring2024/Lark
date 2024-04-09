@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'Bets.dart';
+import 'IncompleteBets.dart';
+import 'CompleteBets.dart';
 
 var db = FirebaseFirestore.instance;
 
@@ -12,14 +14,13 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 
 
 Future<bool> setBet(Bets bet) async {
-   User? user = auth.currentUser;
-   String? uid = user?.uid;
+
    double curUserMoney = await getUserMoney();
    if(bet.wager<curUserMoney){
      addMoney(bet.wager*(-1));
      final docRef = FirebaseFirestore.instance
          .collection("Users")
-         .doc(uid)
+         .doc(bet.userid)
          .collection("Incomplete Bets");
      await docRef.add(bet.toFirestore());
      return true;
@@ -87,6 +88,7 @@ Future<List<Bets>> getBets(String betType) async {
   User? user = auth.currentUser;
   String? uid = user?.uid;
   List<Bets> betsList = [];
+  Bets bet;
 
   try {
     // Get a reference to the bets collection
@@ -100,8 +102,15 @@ Future<List<Bets>> getBets(String betType) async {
 
     // Iterate over the documents and convert each one to a Bets object
     for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      Bets bet = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+      if(betType == "Incomplete Bets"){
+       bet = IncompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
+      }else{
+
+       bet = CompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
+
+      }
       betsList.add(bet);
+
     }
   } catch (e) {
     print("Error getting all bets: $e");
