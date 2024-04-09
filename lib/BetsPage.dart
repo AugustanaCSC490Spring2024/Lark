@@ -290,7 +290,7 @@ class BetsPageState extends State<BetsPage> {
                         ),
 
                         validator: (value) {
-                          double currentBalance =  getUserMoney();
+
                           if (value == null || value.isEmpty) {
                             return 'Please enter the amount you want to bet';
                           }
@@ -321,7 +321,7 @@ class BetsPageState extends State<BetsPage> {
                           // Respond to button press
                           if(uid != null ){
                             print(uid);
-                            Bets bets = Bets(uid!, _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),false, double.parse(_betAmountController.text),winnings);
+                            Bets bets = Bets( _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),double.parse(_betAmountController.text),winnings);
                             setBet(bets);
                           }else{
                             print("NO UID!");
