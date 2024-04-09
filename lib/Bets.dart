@@ -29,7 +29,7 @@ class Bets {
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+   Map<String, dynamic> toFirestore() {
     return {
       "city": city,
       "date": date,
@@ -39,6 +39,6 @@ class Bets {
       "expectedEarning": expectedEarning,
     };
   }
-
-
+  
 }
+
