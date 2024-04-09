@@ -4,9 +4,7 @@ import 'package:larkcoins/dbHandler.dart';
 
 import 'LoginPage.dart'; // Assuming LoginPage.dart is in the same directory
 
-final FirebaseAuth auth = FirebaseAuth.instance;
-final User? user = auth.currentUser;
-final uid = user?.uid;
+
 
 
 
@@ -50,14 +48,26 @@ class AccountPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              FutureBuilder<String>(
+                future: getUserName(),
+                builder:(context,snapshot){
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return CircularProgressIndicator();
+                  } else if(snapshot.hasError){
+                    return Text('Error: ${snapshot.error}');
+                  }else{
+                    return Text(
+                      snapshot.data.toString(),
+                      style: TextStyle(
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
 
-                'User Name',
-                style: TextStyle(
-                  fontSize: 28.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                  }
+                }
               ),
+
 
                   Padding(padding: const EdgeInsets.only(top: 20.0),
                     child: ElevatedButton(
@@ -73,26 +83,51 @@ class AccountPage extends StatelessWidget {
                       child: const Text('Acheivements'),
                     ),
                   ),
-                  Padding(padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Respond to button press
-                        showDialog(
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: FutureBuilder<double>(
+                  future: getUserMoney(), // Fetching user's wallet amount
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // Display loading indicator while waiting for data
+                      return ElevatedButton(
+                        onPressed: () {}, // Disable button during loading
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(screenSize.width, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                          ),
+                        ),
+                        child: Text('Loading...'),
+                      );
+                    } else if (snapshot.hasError) {
+                      // Display error message if an error occurs
+                      return ElevatedButton(
+                        onPressed: () {}, // Disable button on error
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(screenSize.width, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                          ),
+                        ),
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    } else {
+                      // Display the wallet amount once it's fetched
+                      return ElevatedButton(
+                        onPressed: () {
+                          showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text('Your Wallet'),
-                                content: const SingleChildScrollView(
+                                content: SingleChildScrollView(
                                   child: ListBody(
                                     children: <Widget>[
                                       Text('The amount of money you have in your wallet is:'),
-                                      Text('100'),
-
-
+                                      Text(snapshot.data.toString()), // Display wallet amount
                                     ],
                                   ),
-
-
                                 ),
                                 actions: <Widget>[
                                   TextButton(
@@ -103,21 +138,21 @@ class AccountPage extends StatelessWidget {
                                   ),
                                 ],
                               );
-                            });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(screenSize.width, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1.0),
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(screenSize.width, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                          ),
                         ),
-                      ),
-                      child: const Text('Wallet'),
-
-
-
-
-                    ),
-                  ),
+                        child: const Text('Wallet'),
+                      );
+                    }
+                  },
+                ),
+              ),
 
 
 

@@ -288,7 +288,9 @@ class BetsPageState extends State<BetsPage> {
                           prefixIcon: Icon(Icons.attach_money),
 
                         ),
+
                         validator: (value) {
+                          double currentBalance =  getUserMoney();
                           if (value == null || value.isEmpty) {
                             return 'Please enter the amount you want to bet';
                           }
