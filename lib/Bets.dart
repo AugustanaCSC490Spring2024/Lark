@@ -14,10 +14,12 @@ class Bets {
 
 
 
+
+
   factory Bets.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
-      ) {
+      ){
     final data = snapshot.data();
     return Bets(
       data?['city'] ?? "", // Providing a default value if data is null
@@ -29,6 +31,8 @@ class Bets {
     );
   }
 
+  //Store it to firestore 
+
    Map<String, dynamic> toFirestore() {
     return {
       "city": city,
@@ -39,6 +43,6 @@ class Bets {
       "expectedEarning": expectedEarning,
     };
   }
-  
+
 }
 
