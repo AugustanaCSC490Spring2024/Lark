@@ -33,7 +33,7 @@ class Bets {
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+   Map<String, dynamic> toFirestore() {
     return {
       "userId": userid,
       "city": city,
@@ -45,6 +45,6 @@ class Bets {
       "expectedEarning": expectedEarning,
     };
   }
-
-
+  
 }
+
