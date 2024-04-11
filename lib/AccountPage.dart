@@ -46,7 +46,7 @@ class AccountPage extends StatelessWidget {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return Text(// Here's the change
+                  return Text("Something is supposed to be here",
                     style: TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.bold,
