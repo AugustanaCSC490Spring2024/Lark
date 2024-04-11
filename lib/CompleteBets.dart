@@ -1,12 +1,14 @@
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
+enum winLoss {W, L}
 class CompleteBets extends Bets {
 
+winLoss result;
 
- CompleteBets(String city, String date, int predictedTempLow, int predictedTempHigh, double wager, double expectedEarning)
-      : super(city, date, predictedTempLow, predictedTempHigh, wager, expectedEarning);
+ CompleteBets(String city, String date, int predictedTempLow, int predictedTempHigh, double wager, double expectedEarning, this.result) :
+       super(city, date, predictedTempLow, predictedTempHigh, wager, expectedEarning);
+
 
   factory CompleteBets.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot, 
@@ -20,7 +22,12 @@ class CompleteBets extends Bets {
       data?['predictedTempHigh'] ?? 0,
       data?['wager'] ?? 0.0,
       data?['expectedEarning'] ?? 0.0,
+      data?['result'] ,
     );
   }
+
+Map<String, dynamic> toFirestore() {
+  return super.toFirestore().putIfAbsent("result", () => result);
+}
 
 }

@@ -98,3 +98,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+  fonts:
+    - family: Casino3D
+      fonts:
+        - asset: assets/Casino3DFilledMarquee.ttf

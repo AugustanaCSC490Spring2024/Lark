@@ -8,7 +8,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
 
-final username = getUserName(); 
+final username = getUserName();
 
 class AccountPage extends StatelessWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -45,8 +45,9 @@ class AccountPage extends StatelessWidget {
                   return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else {
-                  return Text("Something is supposed to be here",
+                } else { 
+                  return Text(// Here's the change
+                    snapshot.data.toString(),
                     style: TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.bold,
