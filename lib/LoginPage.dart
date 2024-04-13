@@ -79,10 +79,23 @@ class _PageState extends State<Page> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'Clime Coin',
+              'CLIMECOIN',
               style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+                fontSize: 70,
+                fontFamily: 'Casino3D',
+                color: Color(0xffff8884),
+                shadows: [
+                  Shadow(
+                    blurRadius: 10,
+                    color: Color(0xffff8884),
+                    offset: Offset(-5, -5),
+                  ),
+                  Shadow(
+                    blurRadius: 10,
+                    color: Color(0xffffcbc8),
+                    offset: Offset(5, 5),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20.0),
