@@ -177,6 +177,9 @@ class AccountPage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         // Respond to button press
+
+                        auth.signOut();
+
                         signOut(context);
                       },
                       style: ElevatedButton.styleFrom(
