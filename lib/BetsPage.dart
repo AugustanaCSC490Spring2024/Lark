@@ -1,9 +1,12 @@
-import 'dart:html';
+//sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
+import 'dart:html';
+import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
+import 'HomePage.dart' ;
 
 import 'Bets.dart';
 
@@ -54,22 +57,41 @@ class BetsPageState extends State<BetsPage> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: CustomAppBar(leading: GestureDetector(
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        },
+        child: TopLeftLogo(),
+      )),
 
-      appBar: AppBar(
-        title: const Text('Place Bets'),
-        backgroundColor: Colors.green,
-      ),
+
+
       backgroundColor: Color(0xffcdffd8),
       body: Form(
+
         key: _formKey,
         child: SingleChildScrollView(
           child: Padding(
-
             padding: const EdgeInsets.all(20.0),
-            child: Column(
 
+
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+
+
               children: [
+                Text(
+                  'Please place your bets',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+
                 // Container(
                 //   height: screenSize.height * 0.2,
                 //   width: screenSize.width,
@@ -309,6 +331,7 @@ class BetsPageState extends State<BetsPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
