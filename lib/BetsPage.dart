@@ -351,7 +351,6 @@ class BetsPageState extends State<BetsPage> {
                           }
                         }
                       },
-
                       child: Text('Place Bets'),
                     ),
 
