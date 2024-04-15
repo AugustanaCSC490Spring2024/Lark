@@ -331,28 +331,58 @@ class BetsPageState extends State<BetsPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Processing Data')),
+
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Confirm Bet"),
+                            content: Text("Are you sure you want to place the bet?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Cancel"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  // Show a snackbar while processing the bet
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Processing Bet...')),
+                                  );
+                                  // Place the bet
+                                  double winnings = calculateWinnings();
+                                  if (uid != null) {
+                                    print(uid);
+                                    Bets bets = Bets(
+                                      _locationController.text.toString(),
+                                      _dayController.text.toString(),
+                                      int.parse(_lowRangeController.text),
+                                      int.parse(_highRangeController.text),
+                                      double.parse(_betAmountController.text),
+                                      winnings,
+                                    );
+                                    setBet(bets);
+                                  } else {
+                                    print("NO UID!");
+                                  }
+                                },
+                                child: Text("Place Bet"),
+                              ),
+                            ],
                           );
-                          double winnings = calculateWinnings();
-                          // Respond to button press
-                          if(uid != null ){
-                            print(uid);
-                            Bets bets = Bets( _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),double.parse(_betAmountController.text),winnings);
-                            setBet(bets);
-                          }else{
-                            print("NO UID!");
-                          }
-                        }
-                      },
-                      child: Text('Place Bets'),
-                    ),
+                        },
+                      );
+                    }
+                  },
+                  child: Text('Place Bets'),
+                ),
+
 
               ],
             ),
