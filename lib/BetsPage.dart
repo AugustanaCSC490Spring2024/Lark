@@ -386,6 +386,14 @@ class BetsPageState extends State<BetsPage> {
                                       winnings,
                                     );
                                     setBet(bets);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('You successfully placed a bet!')),
+                                    );
+                                    _locationController.clear();
+                                    _dayController.clear();
+                                    _lowRangeController.clear();
+                                    _highRangeController.clear();
+                                    _betAmountController.clear();
                                   } else {
                                     print("NO UID!");
                                   }
