@@ -302,23 +302,41 @@ class BetsPageState extends State<BetsPage> {
 
                     SizedBox(
                       width: screenSize.width * 0.5,
-                      child: TextFormField(
-                        controller: _betAmountController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                          prefixIcon: Icon(Icons.attach_money),
+                      child: FutureBuilder<double>(
+                        future: getUserMoney(),
+                        builder: (context, snapshot){
+                          if(snapshot.connectionState == ConnectionState.waiting){
+                            return Container();
+                          } else if(snapshot.hasError){
+                            return Text("Error: ${snapshot.error}");
+                          }else{
+                            double currentBalance = snapshot.data ?? 0.0;
 
-                        ),
+                            return TextFormField(
+                              controller: _betAmountController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                prefixIcon: Icon(Icons.attach_money),
 
-                        validator: (value) {
+                              ),
 
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the amount you want to bet';
+                              validator: (value) {
+
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the amount you want to bet';
+                                }
+                                double betAmount = double.tryParse(value) ?? 0.0;
+                                if (betAmount > currentBalance){
+                                  return 'Insufficient balance. Please top up your account';
+                                }
+                                return null;
+                              },
+                            );
                           }
-                          return null;
-                        },
-                      ),
+                        }
+                      )
+
                     ),
 
 
