@@ -32,6 +32,7 @@ Future<bool> setBet(Bets bet) async {
 
 
 
+
 void newUserCreated(String name) {
   User? user = auth.currentUser;
   String? uid = user?.uid;
