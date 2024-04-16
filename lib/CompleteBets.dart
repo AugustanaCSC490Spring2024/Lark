@@ -24,9 +24,9 @@ class CompleteBets extends Bets {
       data?['predictedTemp'] ?? 0,
       // Providing a default value if data is null
       data?['wager'] ?? 0.0,
-      
+
       // Providing a default value if data is null
-      data?['expectedEarning'] ?? 0.0,
+      data?['winnings'] ?? 0.0,
       // Providing a default value if data is null,
       data?['timeOfWager'] ?? "",
       data?['result'],
@@ -41,7 +41,7 @@ class CompleteBets extends Bets {
       "date": date,
       "predictedTemp": predictedTemp,
       "wager": wager,
-      "expectedEarning": expectedEarning,
+      "winnings": expectedEarning,
       "zipCode": zipCode,
       "result": result,
     };

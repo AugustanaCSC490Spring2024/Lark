@@ -385,7 +385,7 @@ class BetsPageState extends State<BetsPage> {
                                       double.parse(_betAmountController.text) as int,
                                       winnings as String,
                                     );
-                                    setBet(bets);
+                                   // setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),
                                     );
