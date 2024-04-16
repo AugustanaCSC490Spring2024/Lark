@@ -21,7 +21,7 @@ winLoss result;
       data?['predictedTempLow'] ?? 0,
       data?['predictedTempHigh'] ?? 0,
       data?['wager'] ?? 0.0,
-      data?['expectedEarning'] ?? 0.0,
+      data?['Winngs'] ?? 0.0,
       data?['result'] ,
     );
   }
