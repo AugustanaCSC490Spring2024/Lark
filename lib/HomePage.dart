@@ -9,6 +9,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         leading: TopLeftLogo(),
+
       ),
       body: Container(
         decoration: BoxDecoration(
