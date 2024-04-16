@@ -5,9 +5,15 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'WebApiForWeather.dart';
+
+
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
+
+
+
 
 class IncompleteBets extends Bets{
 
@@ -44,9 +50,11 @@ class IncompleteBets extends Bets{
    };
  }
 
- double getOdds(String zipCode, String date, int money){
 
-   
-   return money*2;
- }
+}
+Future<double> getOdds(String zipCode, String date, int money) async{
+   Map<String, String> map = await getMinutelyData(zipCode);
+
+
+  return money*2;
 }
