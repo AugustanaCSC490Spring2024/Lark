@@ -46,6 +46,8 @@ getMinutelyData(String zipcode) async{
 
 
 
+
+
 void main() async{
 
   //this is how you get the getMinutelyDataFromAPI

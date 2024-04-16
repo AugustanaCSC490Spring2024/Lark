@@ -1,6 +1,8 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
 import 'dart:html';
+import 'package:larkcoins/IncompleteBets.dart';
+
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -377,14 +379,8 @@ class BetsPageState extends State<BetsPage> {
                                   double winnings = calculateWinnings();
                                   if (uid != null) {
                                     print(uid);
-                                    Bets bets = Bets(
-                                      _locationController.text.toString(),
-                                      _dayController.text.toString(),
-                                      int.parse(_lowRangeController.text),
-                                      int.parse(_highRangeController.text),
-                                      double.parse(_betAmountController.text),
-                                      winnings,
-                                    );
+                                    IncompleteBets bets = IncompleteBets('', 1, 2, '', 1, "");
+                                      
                                     setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),
