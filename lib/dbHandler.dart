@@ -13,7 +13,7 @@ var db = FirebaseFirestore.instance;
 final FirebaseAuth auth = FirebaseAuth.instance;
 
 
-Future<bool> setBet(Bets bet) async {
+Future<bool> setBet(IncompleteBets bet) async {
    User? user = auth.currentUser;
    String? uid = user?.uid;
    double curUserMoney = await getUserMoney();
