@@ -379,11 +379,11 @@ class BetsPageState extends State<BetsPage> {
                                     print(uid);
                                     Bets bets = Bets(
                                       _locationController.text.toString(),
-                                      _dayController.text.toString(),
-                                      int.parse(_lowRangeController.text),
-                                      int.parse(_highRangeController.text),
-                                      double.parse(_betAmountController.text),
-                                      winnings,
+                                      _dayController.text.toString() as double,
+                                      int.parse(_lowRangeController.text) as double,
+                                      int.parse(_highRangeController.text) as String,
+                                      double.parse(_betAmountController.text) as int,
+                                      winnings as String,
                                     );
                                     setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
