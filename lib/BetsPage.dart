@@ -379,8 +379,10 @@ class BetsPageState extends State<BetsPage> {
                                   double winnings = calculateWinnings();
                                   if (uid != null) {
                                     print(uid);
+
                                     IncompleteBets bets = IncompleteBets('', 1, 2, '', 1, "");
                                       
+
                                     setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),
