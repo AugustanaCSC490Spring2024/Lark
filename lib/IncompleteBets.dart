@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -34,5 +36,11 @@ class IncompleteBets extends Bets{
      "expectedEarning": expectedEarning,
      "zipCode": zipCode,
    };
+ }
+
+ double getOdds(String zipCode, String date, int money){
+
+   
+   return money*2;
  }
 }
