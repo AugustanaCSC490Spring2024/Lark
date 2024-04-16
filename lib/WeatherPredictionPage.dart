@@ -15,18 +15,18 @@ class WeatherPredictionPage extends StatefulWidget {
 
 class WeatherPredictionPageState extends State<WeatherPredictionPage> {
   Map<String, String> data = {}; // Initialize data map
+  TextEditingController _locationController = TextEditingController();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchData(); // Fetch data when the widget initializes
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchData(); // Fetch data when the widget initializes
-  }
-
-  Future<void> fetchData() async {
-    // Fetch data here, for example:
-    data = await getMinutelyData("61201");
-    setState(() {}); // Trigger a rebuild to reflect changes
-  }
+  // Future<void> fetchData() async {
+  //   // Fetch data here, for example:
+  //   data = await getMinutelyData("61201");
+  //   setState(() {}); // Trigger a rebuild to reflect changes
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,36 +39,59 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
           appBar: AppBar(
             title: Text('Weather Prediction'),
           ),
-          body: ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 4,
-                margin: EdgeInsets.all(10),
-                child: Padding(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
                   padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Title ${index + 1}',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  child: TextField(
+                    controller: _locationController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter location',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () async {
+                          data = await getMinutelyData(_locationController.text);
+                          setState(() {});
+                        },
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Time ${"${keys[index]}\n${data[keys[index]]}"}',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              );
-            },
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 4,
+                      margin: EdgeInsets.all(10),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Title ${index + 1}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Time ${"${keys[index]}\n${data[keys[index]]}"}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

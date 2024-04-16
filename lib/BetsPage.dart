@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
+import 'package:async/async.dart';
 
 import 'Bets.dart';
 
@@ -39,16 +40,53 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _highRangeController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  double calculateWinnings() {
+  double _winnings = 0.0;
+  late TextEditingController _controller;
+  bool _typing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (!_typing) {
+      setState(() {
+        _typing = true;
+      });
+    }
+    _debounce(_saveData, Duration(milliseconds: 1000)); // Adjust the debounce delay as needed
+  }
+
+  void _saveData() {
+    // Perform your data saving or processing here
+    setState(() {
+      _typing = false;
+    });
+  }
+
+  Future<void> _debounce(callback, Duration duration) async {
+    Future.delayed(duration, callback);
+  }
+
+  void _updateWinnings() {
     double betAmount = double.tryParse(_betAmountController.text) ?? 0.0;
-
-    double winnings = betAmount * 2 ;
-
-    return winnings;
+    setState(() {
+      _winnings = betAmount * 2;
+    });
   }
-  void clearBetAmount() {
-    _betAmountController.clear();
-  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -296,6 +334,10 @@ class BetsPageState extends State<BetsPage> {
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                                 prefixIcon: Icon(Icons.attach_money),
+                                suffixIcon: IconButton(onPressed: () async {
+                                  _updateWinnings();
+                                }, icon: Icon(Icons.calculate)),
+
 
                               ),
 
@@ -321,7 +363,7 @@ class BetsPageState extends State<BetsPage> {
                     SizedBox(height: 20.0),
 
                      Text(
-                      'Your potential winnings are: \$${calculateWinnings().toStringAsFixed(2)}',
+                      'Your potential winnings are: \$${_winnings.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -335,11 +377,11 @@ class BetsPageState extends State<BetsPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Processing Data')),
                           );
-                          double winnings = calculateWinnings();
+
                           // Respond to button press
                           if(uid != null ){
                             print(uid);
-                            Bets bets = Bets( _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),double.parse(_betAmountController.text),winnings);
+                            Bets bets = Bets( _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),double.parse(_betAmountController.text),_winnings);
                             setBet(bets);
                           }else{
                             print("NO UID!");
