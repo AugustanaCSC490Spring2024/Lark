@@ -4,30 +4,45 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 enum winLoss {W, L}
 class CompleteBets extends Bets {
 
-winLoss result;
+  winLoss result;
 
- CompleteBets(String city, String date, int predictedTempLow, int predictedTempHigh, double wager, double expectedEarning, this.result) :
-       super(city, date, predictedTempLow, predictedTempHigh, wager, expectedEarning);
+  CompleteBets(String date, double wager, double expectedEarning,
+      String zipCode, int predictedTemp, String timeOfWager, this.result)
+      : super(
+      date, wager, expectedEarning, zipCode, predictedTemp, timeOfWager);
 
 
   factory CompleteBets.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot, 
-    SnapshotOptions? options,
-  ) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options,){
     final data = snapshot.data();
     return CompleteBets(
-      data?['city'] ?? "",
+      data?['zipCode'] ?? "",
+      // Providing a default value if data is null
       data?['date'] ?? "",
-      data?['predictedTempLow'] ?? 0,
-      data?['predictedTempHigh'] ?? 0,
+      // Converting Firestore Timestamp to DateTime
+      data?['predictedTemp'] ?? 0,
+      // Providing a default value if data is null
       data?['wager'] ?? 0.0,
+      // Providing a default value if data is null
       data?['expectedEarning'] ?? 0.0,
-      data?['result'] ,
+      // Providing a default value if data is null,
+      data?['timeOfWager'] ?? "",
+      data?['result'],
     );
   }
 
-Map<String, dynamic> toFirestore() {
-  return super.toFirestore().putIfAbsent("result", () => result);
-}
+//Store it to firestore
 
+  Map<String, dynamic> toFirestore() {
+    return {
+      "timeOfWager": timeOfWager,
+      "date": date,
+      "predictedTemp": predictedTemp,
+      "wager": wager,
+      "expectedEarning": expectedEarning,
+      "zipCode": zipCode,
+      "result": result,
+    };
+  }
 }

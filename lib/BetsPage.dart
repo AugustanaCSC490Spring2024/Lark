@@ -1,6 +1,7 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
 import 'dart:html';
+import 'IncompleteBets.dart';
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,7 +44,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
   TextEditingController _lowRangeController = TextEditingController();
-  TextEditingController _highRangeController = TextEditingController();
+  TextEditingController _predictedTempController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   double _winnings = 0.0;
@@ -308,7 +309,7 @@ class BetsPageState extends State<BetsPage> {
                         SizedBox(
                           width: 180,
                           child: TextFormField(
-                            controller: _highRangeController,
+                            controller: _predictedTempController,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -421,14 +422,9 @@ class BetsPageState extends State<BetsPage> {
 
                                   if (uid != null) {
                                     print(uid);
-                                    Bets bets = Bets(
-                                      _locationController.text.toString(),
-                                      _dayController.text.toString(),
-                                      int.parse(_lowRangeController.text),
-                                      int.parse(_highRangeController.text),
-                                      double.parse(_betAmountController.text),
-                                      _winnings,
-                                    );
+                                    double winnings = getOdds(_locationController.text,
+                                        _dayController.text, int.parse(_betAmountController.text)),
+                                    IncompleteBets bets = I
                                     setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),
@@ -436,7 +432,7 @@ class BetsPageState extends State<BetsPage> {
                                     _locationController.clear();
                                     _dayController.clear();
                                     _lowRangeController.clear();
-                                    _highRangeController.clear();
+                                    _predictedTempController.clear();
                                     _betAmountController.clear();
                                   } else {
                                     print("NO UID!");

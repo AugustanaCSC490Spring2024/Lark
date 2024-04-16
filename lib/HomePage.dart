@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
                         return Card(
                           color: Color(0xFFE3F2FF), // Set background color here
                           child: ListTile(
-                            title: Text(bets[index].city),
+                            title: Text(bets[index].zipCode),
                             subtitle: Text("Amount: \$${bets[index].wager.toString()}"),
                             trailing: Text("Expected: \$${bets[index].expectedEarning.toString()}"),
                           ),
