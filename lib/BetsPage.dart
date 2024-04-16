@@ -1,10 +1,16 @@
-import 'dart:html';
+//sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
+import 'dart:html';
+import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
+
 import 'package:async/async.dart';
+
+import 'HomePage.dart' ;
+
 
 import 'Bets.dart';
 
@@ -92,22 +98,41 @@ class BetsPageState extends State<BetsPage> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: CustomAppBar(leading: GestureDetector(
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        },
+        child: TopLeftLogo(),
+      )),
 
-      appBar: AppBar(
-        title: const Text('Place Bets'),
-        backgroundColor: Colors.green,
-      ),
+
+
       backgroundColor: Color(0xffcdffd8),
       body: Form(
+
         key: _formKey,
         child: SingleChildScrollView(
           child: Padding(
-
             padding: const EdgeInsets.all(20.0),
-            child: Column(
 
+
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+
+
               children: [
+                Text(
+                  'Please place your bets',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+
                 // Container(
                 //   height: screenSize.height * 0.2,
                 //   width: screenSize.width,
@@ -334,9 +359,7 @@ class BetsPageState extends State<BetsPage> {
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                                 prefixIcon: Icon(Icons.attach_money),
-                                suffixIcon: IconButton(onPressed: () async {
-                                  _updateWinnings();
-                                }, icon: Icon(Icons.calculate)),
+
 
 
                               ),
@@ -369,28 +392,67 @@ class BetsPageState extends State<BetsPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Processing Data')),
+
+
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Confirm Bet"),
+                            content: Text("Are you sure you want to place the bet?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Cancel"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  // Show a snackbar while processing the bet
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Processing Bet...')),
+                                  );
+                                  // Place the bet
+
+                                  if (uid != null) {
+                                    print(uid);
+                                    Bets bets = Bets(
+                                      _locationController.text.toString(),
+                                      _dayController.text.toString(),
+                                      int.parse(_lowRangeController.text),
+                                      int.parse(_highRangeController.text),
+                                      double.parse(_betAmountController.text),
+                                      _winnings,
+                                    );
+                                    setBet(bets);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('You successfully placed a bet!')),
+                                    );
+                                    _locationController.clear();
+                                    _dayController.clear();
+                                    _lowRangeController.clear();
+                                    _highRangeController.clear();
+                                    _betAmountController.clear();
+                                  } else {
+                                    print("NO UID!");
+                                  }
+                                },
+                                child: Text("Place Bet"),
+                              ),
+                            ],
                           );
+                        },
+                      );
+                    }
+                  },
+                  child: Text('Place Bets'),
+                ),
 
-                          // Respond to button press
-                          if(uid != null ){
-                            print(uid);
-                            Bets bets = Bets( _locationController.text.toString(),_dayController.text.toString(),int.parse(_lowRangeController.text),int.parse(_highRangeController.text),double.parse(_betAmountController.text),_winnings);
-                            setBet(bets);
-                          }else{
-                            print("NO UID!");
-                          }
-                        }
-                      },
-
-                      child: Text('Place Bets'),
-                    ),
 
               ],
             ),
