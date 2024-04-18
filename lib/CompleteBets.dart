@@ -37,13 +37,14 @@ class CompleteBets extends Bets {
 
   Map<String, dynamic> toFirestore() {
     return {
-      "timeOfWager": timeOfWager,
-      "date": date,
+       "date": date,
       "predictedTemp": predictedTemp,
+       "result": result,
+       "timeOfWager": timeOfWager,
       "wager": wager,
       "winnings": expectedEarning,
       "zipCode": zipCode,
-      "result": result,
+     
     };
   }
 }
