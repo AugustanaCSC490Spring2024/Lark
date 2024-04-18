@@ -1,7 +1,12 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
 import 'dart:html';
+
 import 'IncompleteBets.dart';
+
+import 'package:larkcoins/IncompleteBets.dart';
+
+
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,7 +52,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _predictedTempController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  double _winnings = 0.0;
+
   late TextEditingController _controller;
   bool _typing = false;
 
@@ -84,12 +89,7 @@ class BetsPageState extends State<BetsPage> {
     Future.delayed(duration, callback);
   }
 
-  void _updateWinnings() {
-    double betAmount = double.tryParse(_betAmountController.text) ?? 0.0;
-    setState(() {
-      _winnings = betAmount * 2;
-    });
-  }
+
 
 
 
@@ -387,7 +387,7 @@ class BetsPageState extends State<BetsPage> {
                     SizedBox(height: 20.0),
 
                      Text(
-                      'Your potential winnings are: \$${_winnings.toStringAsFixed(2)}',
+                      'Your potential winnings are: ',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -422,9 +422,12 @@ class BetsPageState extends State<BetsPage> {
 
                                   if (uid != null) {
                                     print(uid);
-                                    double winnings = getOdds(_locationController.text,
-                                        _dayController.text, int.parse(_betAmountController.text)),
-                                    IncompleteBets bets = I
+
+
+                                    IncompleteBets bets = IncompleteBets('', 1, 2, '', 1, "");
+                                      
+
+
                                     setBet(bets);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),

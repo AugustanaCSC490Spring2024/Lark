@@ -1,7 +1,9 @@
-import 'dart:ffi';
+
 
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'WebApiForWeather.dart';
 
 
 class IncompleteBets extends Bets{
@@ -40,8 +42,9 @@ class IncompleteBets extends Bets{
 
 
 }
-double getOdds(String zipCode, String date, int money){
 
+Future<double> getOdds(String zipCode, String date, int money) async{
+   Map<String, String> map = await getMinutelyData(zipCode);
 
   return money*2;
 }
