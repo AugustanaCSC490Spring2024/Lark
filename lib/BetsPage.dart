@@ -379,7 +379,6 @@ class BetsPageState extends State<BetsPage> {
                                   double winnings = calculateWinnings();
                                   if (uid != null) {
                                     print(uid);
-<<<<<<< HEAD
                                     Bets bets = Bets(
                                       _locationController.text.toString(),
                                       _dayController.text.toString() as double,
@@ -388,14 +387,6 @@ class BetsPageState extends State<BetsPage> {
                                       double.parse(_betAmountController.text) as int,
                                       winnings as String,
                                     );
-                                   // setBet(bets);
-=======
-
-                                    IncompleteBets bets = IncompleteBets('', 1, 2, '', 1, "");
-                                      
-
-                                    setBet(bets);
->>>>>>> bc6a2e1071a476353ca6d4c2533041cf055d920a
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('You successfully placed a bet!')),
                                     );
