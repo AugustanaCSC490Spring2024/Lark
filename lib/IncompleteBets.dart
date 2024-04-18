@@ -1,9 +1,20 @@
 
+//import 'dart:ffi';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'WebApiForWeather.dart';
+
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final uid = user?.uid;
+
+
 
 
 class IncompleteBets extends Bets{
@@ -37,6 +48,7 @@ class IncompleteBets extends Bets{
      "wager": wager,
      "expectedEarning": expectedEarning,
      "zipCode": zipCode,
+     "userid": uid.toString(),
    };
  }
 

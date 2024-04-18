@@ -14,8 +14,6 @@ class Bets {
 
 
 
-
-
   // factory Bets.fromFirestore(
   //     DocumentSnapshot<Map<String, dynamic>> snapshot,
   //     SnapshotOptions? options,
