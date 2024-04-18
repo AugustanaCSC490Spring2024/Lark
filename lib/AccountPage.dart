@@ -111,28 +111,6 @@ class AccountPage extends StatelessWidget {
               ),
             ),
 
-                  Padding(padding: const EdgeInsets.only(top: 20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Respond to button press
-
-                        auth.signOut();
-
-                        signOut(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(screenSize.width, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1.0),
-                        ),
-                      ),
-                      child: const Text('log out'),
-
-
-                    ),
-                  ),
-
-
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: ElevatedButton(

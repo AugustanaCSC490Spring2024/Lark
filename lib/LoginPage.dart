@@ -52,6 +52,18 @@ class Page extends StatefulWidget {
 class _PageState extends State<Page> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  double _logoOpacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set opacity to 1 gradually after 1 second
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _logoOpacity = 1.0;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -78,24 +90,30 @@ class _PageState extends State<Page> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'CLIMECOIN',
-              style: TextStyle(
-                fontSize: 70,
-                fontFamily: 'Casino3D',
-                color: Color(0xffff8884),
-                shadows: [
-                  Shadow(
-                    blurRadius: 10,
-                    color: Color(0xffff8884),
-                    offset: Offset(-5, -5),
-                  ),
-                  Shadow(
-                    blurRadius: 10,
-                    color: Color(0xffffcbc8),
-                    offset: Offset(5, 5),
-                  ),
-                ],
+
+            AnimatedOpacity(
+              duration: Duration(seconds: 2), // Adjust duration as needed
+              opacity: _logoOpacity,
+              child: const Text(
+
+                'CLIMECOIN',
+                style: TextStyle(
+                  fontSize: 70,
+                  fontFamily: 'Casino3D',
+                  color: Color(0xffff8884),
+                  shadows: [
+                    Shadow(
+                      blurRadius: 10,
+                      color: Color(0xffff8884),
+                      offset: Offset(-5, -5),
+                    ),
+                    Shadow(
+                      blurRadius: 10,
+                      color: Color(0xffffcbc8),
+                      offset: Offset(5, 5),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20.0),
