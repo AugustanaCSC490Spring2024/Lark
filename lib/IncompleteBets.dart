@@ -1,7 +1,9 @@
+
 //import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -52,9 +54,9 @@ class IncompleteBets extends Bets{
 
 
 }
+
 Future<double> getOdds(String zipCode, String date, int money) async{
    Map<String, String> map = await getMinutelyData(zipCode);
-
 
   return money*2;
 }
