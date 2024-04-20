@@ -1,8 +1,12 @@
 
 //import 'dart:ffi';
 
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:normal/normal.dart';
 
 
 import 'Bets.dart';
@@ -55,8 +59,14 @@ class IncompleteBets extends Bets{
 
 }
 
-Future<double> getOdds(String zipCode, String date, int money) async{
+Future<double> getExpectedWins(String zipCode, String year, String month, String day, String time, int money, double predictedTemp) async{
    Map<String, String> map = await getMinutelyData(zipCode);
-
-  return money*2;
+   String date= year +'-'+ month +"-"+day +"T"+time+"Z";
+   String? temp = map[date];
+   double zScore = (predictedTemp - int.parse(temp!))/1.25;
+   zScore = min(zScore, -1*(zScore));
+   var normal = Normal();
+   var prob = normal.cdf(zScore);
+   var odds = 0.9/prob;
+   return money*odds;
 }
