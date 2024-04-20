@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:larkcoins/NewUserName.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart';
 import 'dbHandler.dart';
@@ -150,6 +151,10 @@ class AccountPage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Respond to button press
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => NewUserName()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(screenSize.width, 50),
