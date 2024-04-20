@@ -7,7 +7,7 @@ class CompleteBets extends Bets {
   winLoss result;
 
   CompleteBets(String date, double wager, double expectedEarning,
-      String zipCode, int predictedTemp, String timeOfWager, this.result)
+      String zipCode, double predictedTemp, String timeOfWager, this.result)
       : super(
       date, wager, expectedEarning, zipCode, predictedTemp, timeOfWager);
 
@@ -17,17 +17,11 @@ class CompleteBets extends Bets {
       SnapshotOptions? options,){
     final data = snapshot.data();
     return CompleteBets(
-      data?['zipCode'] ?? "",
-      // Providing a default value if data is null
       data?['date'] ?? "",
-      // Converting Firestore Timestamp to DateTime
-      data?['predictedTemp'] ?? 0,
-      // Providing a default value if data is null
       data?['wager'] ?? 0.0,
-
-      // Providing a default value if data is null
-      data?['winnings'] ?? 0.0,
-      // Providing a default value if data is null,
+      data?['expectedEarning'] ?? 0.0,
+      data?['zipCode'] ?? "", // Providing a default value if data is null
+      data?['predictedTemp'] ?? 0, // Providing a default value if data is null
       data?['timeOfWager'] ?? "",
       data?['result'],
     );

@@ -483,7 +483,7 @@ class BetsPageState extends State<BetsPage> {
                                       IncompleteBets bets = IncompleteBets(
                                           _dayController.text, double.parse(
                                           _betAmountController.text), 2,
-                                          _locationController.text, int.parse(
+                                          _locationController.text, double.parse(
                                           _predictedTempController.text),
                                           _selectedHour.toString());
 

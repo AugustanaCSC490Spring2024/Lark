@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Bets {
   final String zipCode;
   final String date;
-  final int predictedTemp;
+  final double predictedTemp;
   final double wager;
   final double expectedEarning;
   final String timeOfWager;
