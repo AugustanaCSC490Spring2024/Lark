@@ -40,8 +40,14 @@ void newUserCreated(String name) {
   String? uid = user?.uid;
   db.collection("Users").doc(uid).set({"UserName": name, "Coin":100});
 
-
 }
+
+void changeUserName(String name){
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  db.collection("Users").doc(uid).set({"UserName": name});
+}
+
 
 Future<double> getUserMoney() async {
   User? user = auth.currentUser;
