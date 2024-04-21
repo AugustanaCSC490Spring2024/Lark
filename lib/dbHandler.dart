@@ -61,6 +61,7 @@ Future<double> getUserMoney() async {
   } catch (e) {
     return 0;
   }
+
 }
 
 Future<String> getUserName() async{
