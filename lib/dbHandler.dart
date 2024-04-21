@@ -40,14 +40,20 @@ void newUserCreated(String name) {
   String? uid = user?.uid;
   db.collection("Users").doc(uid).set({"UserName": name, "Coin":100});
 
-
 }
+
+void changeUserName(String name){
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  var coins = getUserMoney();
+  db.collection("Users").doc(uid).set({"UserName": name, "Coin":coins});
+}
+
 
 Future<double> getUserMoney() async {
   User? user = auth.currentUser;
   String? uid = user?.uid;
   final docRef = FirebaseFirestore.instance.collection("Users").doc(uid);
-
   try {
     final DocumentSnapshot doc = await docRef.get();
     final data = doc.data() as Map<String, dynamic>;
@@ -55,6 +61,7 @@ Future<double> getUserMoney() async {
   } catch (e) {
     return 0;
   }
+
 }
 
 Future<String> getUserName() async{
