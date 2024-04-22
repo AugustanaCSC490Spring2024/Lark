@@ -45,7 +45,7 @@ class AccountPage extends StatelessWidget {
                   return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else { 
+                } else {
                   return Text(// Here's the change
                     snapshot.data.toString(),
                     style: TextStyle(
@@ -73,67 +73,100 @@ class AccountPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
+              child: FutureBuilder<double>(
+                future: getUserMoney(), // Fetching user's wallet amount
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Display loading indicator while waiting for data
+                    return ElevatedButton(
+                      onPressed: () {}, // Disable button during loading
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(screenSize.width, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(1.0),
+                        ),
+                      ),
+                      child: Text('Loading...'),
+                    );
+                  } else if (snapshot.hasError) {
+                    // Display error message if an error occurs
+                    return ElevatedButton(
+                      onPressed: () {}, // Disable button on error
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(screenSize.width, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(1.0),
+                        ),
+                      ),
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else {
+                    // Display the wallet amount once it's fetched
+                    return ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Your Wallet'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('The amount of money you have in your wallet is:'),
+                                    Text(snapshot.data.toString()), // Display wallet amount
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Close'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(screenSize.width, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(1.0),
+                        ),
+                      ),
+                      child: const Text('Wallet'),
+                    );
+                  }
+                },
+              ),
+            ),
+
+
+
+
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
               child: ElevatedButton(
                 onPressed: () {
                   // Respond to button press
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Your Wallet'),
-                        content: const SingleChildScrollView(
-                          child: ListBody(
-                            children: <Widget>[
-                              Text('The amount of money you have in your wallet is:'),
-                              Text('100'),
-                            ],
-                          ),
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Close'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenSize.width, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(1.0),
+
                   ),
                 ),
-                child: const Text('Wallet'),
+                child: const Text('change username/password'),
               ),
             ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Respond to button press
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(screenSize.width, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1.0),
-
-                          ),
-                        ),
-                        child: const Text('change username/password'),
-                      ),
-                    ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: ElevatedButton(
                 onPressed: () {
+                  // Respond to button press
                   signOut(context);
-
-
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenSize.width, 50),

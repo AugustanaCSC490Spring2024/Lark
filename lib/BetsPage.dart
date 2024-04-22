@@ -1,19 +1,24 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
 import 'dart:html';
-import 'package:larkcoins/coin_effect.dart';
 
 import 'IncompleteBets.dart';
+
 import 'package:larkcoins/IncompleteBets.dart';
+
+
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
+
 import 'package:async/async.dart';
+
 import 'HomePage.dart' ;
+
+
 import 'Bets.dart';
-import 'coin_effect.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
@@ -478,7 +483,7 @@ class BetsPageState extends State<BetsPage> {
                                       IncompleteBets bets = IncompleteBets(
                                           _dayController.text, double.parse(
                                           _betAmountController.text), 2,
-                                          _locationController.text, int.parse(
+                                          _locationController.text, double.parse(
                                           _predictedTempController.text),
                                           _selectedHour.toString());
 

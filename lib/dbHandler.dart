@@ -1,5 +1,7 @@
 
 import 'dart:async';
+import 'dart:core';
+import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,14 +40,19 @@ void newUserCreated(String name) {
   String? uid = user?.uid;
   db.collection("Users").doc(uid).set({"UserName": name, "Coin":100});
 
-
 }
+
+void changeUserName(String name){
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  db.collection("Users").doc(uid).update({"UserName": name});
+}
+
 
 Future<double> getUserMoney() async {
   User? user = auth.currentUser;
   String? uid = user?.uid;
   final docRef = FirebaseFirestore.instance.collection("Users").doc(uid);
-
   try {
     final DocumentSnapshot doc = await docRef.get();
     final data = doc.data() as Map<String, dynamic>;
@@ -53,6 +60,7 @@ Future<double> getUserMoney() async {
   } catch (e) {
     return 0;
   }
+
 }
 
 Future<String> getUserName() async{
@@ -74,7 +82,7 @@ void addMoney(double money) async{
   String? uid = user?.uid;
   double curMoney = await getUserMoney();
   curMoney += money;
-  db.collection("Users").doc(uid).set({ "Coin":curMoney});
+  db.collection("Users").doc(uid).update({ "Coin":curMoney});
 }
 
 Future<List<Bets>> getIncompleteBets(){
