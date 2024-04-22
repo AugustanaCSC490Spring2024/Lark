@@ -131,8 +131,9 @@ class AccountPage extends StatelessWidget {
               padding: const EdgeInsets.only(top: 20.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Respond to button press
                   signOut(context);
+
+
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenSize.width, 50),
