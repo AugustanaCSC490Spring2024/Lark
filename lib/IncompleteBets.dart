@@ -63,6 +63,7 @@ Future<double> getExpectedWins(String zipCode, String year, String month, String
    Map<String, String> map = await getMinutelyData(zipCode);
    String date= year +'-'+ month +"-"+day +"T"+time+"Z";
    String? temp = map[date];
+   temp = "12";
    double zScore = (predictedTemp - int.parse(temp!))/1.25;
    zScore = min(zScore, -1*(zScore));
    var normal = Normal();
