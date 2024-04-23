@@ -56,28 +56,6 @@ class IncompleteBets extends Bets{
      "userid": uid.toString(),
    };
  }
-
-
 }
 
 
-
-
-Future<double> getExpectedWins(String zipCode, String day, String hour, int money, double predictedTemp) async{
-   Map<String, String> map = await getMinutelyData(zipCode);
-   String date= day +"T"+hour+":00:00Z";
-   String? temp = map[date];
-   temp = "12";
-   double zScore = (predictedTemp - int.parse(temp!))/1.25;
-   zScore = min(zScore, -1*(zScore));
-   var normal = Normal();
-   var prob = normal.cdf(zScore);
-   double odds = 0.9/prob;
-   return money*odds;
-}
-
-
-main() async {
-var v = await getExpectedWins("61201", "2024", "04", "23", "14:27:00", 100, 21.4);
-print(v);
-}
