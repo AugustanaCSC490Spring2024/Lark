@@ -45,8 +45,7 @@ void newUserCreated(String name) {
 void changeUserName(String name){
   User? user = auth.currentUser;
   String? uid = user?.uid;
-  var coins = getUserMoney();
-  db.collection("Users").doc(uid).set({"UserName": name, "Coin":coins});
+  db.collection("Users").doc(uid).update({"UserName": name});
 }
 
 
@@ -61,6 +60,7 @@ Future<double> getUserMoney() async {
   } catch (e) {
     return 0;
   }
+
 }
 
 Future<String> getUserName() async{
@@ -82,7 +82,7 @@ void addMoney(double money) async{
   String? uid = user?.uid;
   double curMoney = await getUserMoney();
   curMoney += money;
-  db.collection("Users").doc(uid).set({ "Coin":curMoney});
+  db.collection("Users").doc(uid).update({ "Coin":curMoney});
 }
 
 Future<List<Bets>> getIncompleteBets(){

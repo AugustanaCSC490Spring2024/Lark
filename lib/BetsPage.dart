@@ -53,7 +53,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _timeController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  double winnings = 0;
   TimeOfDay? _selectedTime;
   int _selectedHour = 0;
 
@@ -163,7 +163,7 @@ class BetsPageState extends State<BetsPage> {
                           border: const OutlineInputBorder(),
                           suffixIcon:  Icon(Icons.location_on),
                           contentPadding: EdgeInsets.symmetric(vertical: 10 , horizontal: 10),
-                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter some text';
@@ -171,7 +171,7 @@ class BetsPageState extends State<BetsPage> {
                           return null;
                         },
 
-                        ),
+                      ),
                     ),
                     SizedBox(width: screenSize.width * 0.05),
                     SizedBox(
@@ -207,11 +207,11 @@ class BetsPageState extends State<BetsPage> {
                           }
                           return null;
                         },
-                        ),
+                      ),
                     ),
 
-                    ],
-            ),
+                  ],
+                ),
                 SizedBox(height: screenSize.height * 0.05),
                 // TextFormField(
                 // controller: _timeController,
@@ -233,20 +233,20 @@ class BetsPageState extends State<BetsPage> {
                 // },
                 // ),
 
-    // Display the time picker
+                // Display the time picker
                 ElevatedButton(
-                onPressed: () {
-                _selectTime();
-                },
-                child: Text(_selectedTime != null ? _selectedTime!.format(context) : 'Select Time'),
+                  onPressed: () {
+                    _selectTime();
+                  },
+                  child: Text(_selectedTime != null ? _selectedTime!.format(context) : 'Select Time'),
                 ),
 
-    // Validator for the time picker
-              if (_selectedTime == null && _formKey.currentState != null)
-              Text(
-              'Please select a time',
-              style: TextStyle(color: Colors.red),
-              ),
+                // Validator for the time picker
+                if (_selectedTime == null && _formKey.currentState != null)
+                  Text(
+                    'Please select a time',
+                    style: TextStyle(color: Colors.red),
+                  ),
 
                 SizedBox(height: screenSize.height * 0.02),
                 Text(
@@ -257,141 +257,45 @@ class BetsPageState extends State<BetsPage> {
                   ),
                 ),
                 SizedBox(height: screenSize.height * 0.05),
-                    const Text(
-                      'What do we predict the temperature will be?',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                const Text(
+                  'What do we predict the temperature will be?',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
 
-                    SizedBox(
-                      width: screenSize.width * 0.3,
-                      child: TextFormField(
-                        controller: _predictedTempController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the predicted temperature';
-                          }
-                          if (int.tryParse(value) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
+                SizedBox(
+                  width: screenSize.width * 0.3,
+                  child: TextFormField(
+                    controller: _predictedTempController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                     ),
-                    // Row(
-                    //   children: [
-                    //     ElevatedButton(
-                    //       onPressed: () {
-                    //         // Respond to button press
-                    //       },
-                    //       child: Text('High'),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: Colors.white,
-                    //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1.0),
-                    //
-                    //         ),
-                    //     ),
-                    //     ),
-                    //     SizedBox(width: 20.0),
-                    //     ElevatedButton(
-                    //       onPressed: () {
-                    //         // Respond to button press
-                    //       },
-                    //       child: Text('Low'),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: Colors.white,
-                    //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1.0),
-                    //
-                    //       ),
-                    //     ),
-                    //     ),
-                    //
-                    //   ],
-                    // ),
-                    // const Text(
-                    //   'Please enter your range',
-                    //   style: TextStyle(
-                    //     fontSize: 20.0,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
-                    // Row(
-                    //
-                    //   children:[
-                    //
-                    //     SizedBox(
-                    //       width: 180,
-                    //       child: TextFormField(
-                    //         controller: _lowRangeController,
-                    //         decoration: const InputDecoration(
-                    //           border: const OutlineInputBorder(),
-                    //           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                    //         ),
-                    //         validator: (value) {
-                    //           if (value == null || value.isEmpty) {
-                    //             return 'Please enter the low range';
-                    //           }
-                    //           if (int.tryParse(value) == null) {
-                    //             return 'Please enter a valid number';
-                    //           }
-                    //           return null;
-                    //         },
-                    //       ),
-                    //     ),
-                    //     SizedBox(width: 10.0),
-                    //     const Text(
-                    //       'to',
-                    //       style: TextStyle(
-                    //         fontSize: 20.0,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //     SizedBox(width: 10.0),
-                    //     SizedBox(
-                    //       width: 180,
-                    //       child: TextFormField(
-                    //         controller: _predictedTempController,
-                    //         decoration: const InputDecoration(
-                    //           border: OutlineInputBorder(),
-                    //           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                    //         ),
-                    //         validator: (value) {
-                    //         if (value == null || value.isEmpty) {
-                    //         return 'Please enter the high range';
-                    //         }
-                    //         final int lowRange = int.parse(_lowRangeController.text);
-                    //         final int highRange = int.parse(value);
-                    //         if (lowRange >= highRange) {
-                    //           return 'High range must be greater than the low range';
-                    //         }
-                    //
-                    //         if (int.tryParse(value) == null) {
-                    //           return 'Please enter a valid number';
-                    //         }
-                    //         return null;
-                    //         },
-                    //       ),
-                    //     ),
-                    //
-                    //   ],
-                    // ),
-                    const Text(
-                      'How much do you want to bet?',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the predicted temperature';
+                      }
+                      if (int.tryParse(value) == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
 
-                    SizedBox(
-                      width: screenSize.width * 0.5,
-                      child: FutureBuilder<double>(
+                const Text(
+                  'How much do you want to bet?',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(
+                    width: screenSize.width * 0.5,
+                    child: FutureBuilder<double>(
                         future: getUserMoney(),
                         builder: (context, snapshot){
                           if(snapshot.connectionState == ConnectionState.waiting){
@@ -426,20 +330,28 @@ class BetsPageState extends State<BetsPage> {
                             );
                           }
                         }
-                      )
+                    )
 
-                    ),
+                ),
 
 
-                    SizedBox(height: 20.0),
+                SizedBox(height: 20.0),
 
-                     Text(
+                Row(
+                  children: [
+                    Text(
                       'Your potential winnings are: ',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(width: 10.0),
+                    // ElevatedButton(onPressed: () async{
+                    //   winnings = getExpectedWins(_locationController.text, _dayController.text, _selectedHour.text, _betAmountController.text, predictedTemp)
+                    // }, child: 'child')
+                  ],
+                ),
 
 
                 ElevatedButton(

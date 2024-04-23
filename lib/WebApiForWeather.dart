@@ -43,6 +43,26 @@ getMinutelyData(String zipcode) async{
 
 }
 
+//send h for hourly, m for minutely in timeFrame
+getData(String zipcode, String timeFrame) async{
+
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG";
+    var response = await getApiJson(apiUrl);
+    Map<String, dynamic>  jsonFile = json.decode(response);
+    var minutelyData = jsonFile["timelines"]['minutely'];
+
+    Map<String,String> dataMap = new Map<String,String>();
+
+    for(var data in minutelyData){
+
+       var time = data["time"].toString();
+       var temperature = data["values"]["temperature"].toString();
+       dataMap[time] = temperature;
+    }
+    return dataMap;
+
+}
+
 
 
 

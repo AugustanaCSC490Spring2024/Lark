@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:larkcoins/NewUserName.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart';
+import 'changePassword.dart';
 import 'dbHandler.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -47,7 +48,7 @@ class AccountPage extends StatelessWidget {
                   return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else { 
+                } else {
                   return Text(// Here's the change
                     snapshot.data.toString(),
                     style: TextStyle(
@@ -144,7 +145,7 @@ class AccountPage extends StatelessWidget {
               ),
             ),
 
-                 
+
 
 
                     Padding(
@@ -162,11 +163,35 @@ class AccountPage extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(1.0),
 
+
                           ),
                         ),
-                        child: const Text('change username/password'),
-                      ),
+                          child: const Text('change username'),
+
+            ),
                     ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Respond to button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChangePassword()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(screenSize.width, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(1.0),
+
+
+                  ),
+                ),
+                child: const Text('change password'),
+
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: ElevatedButton(

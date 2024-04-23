@@ -103,7 +103,11 @@ class _NewUserName extends State<NewUserName> {
             ElevatedButton(
               onPressed: () {
                 changeUserName(_newUserName.text);
-                //signUp(context, email, password, userName);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Username changed successfully'),
+                  ),
+                );
               },
               child: const Text('change user name'),
             ),
