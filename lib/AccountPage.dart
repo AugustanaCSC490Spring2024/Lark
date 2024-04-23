@@ -18,7 +18,7 @@ class AccountPage extends StatelessWidget {
   Future<void> signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LogInPage()));
+      runApp(LogInPage());
     } catch (e) {
       print('Sign out error: $e');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
