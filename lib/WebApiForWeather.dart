@@ -72,5 +72,7 @@ void main() async{
 
   //this is how you get the getMinutelyDataFromAPI
    Map<String,String> data = await getMinutelyData("61201");
-  print("This is the size: " + data.length.toString());
+
+   print("This is the size: " + data.length.toString());
+
 }
