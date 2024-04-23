@@ -60,10 +60,10 @@ class IncompleteBets extends Bets{
 }
 
 Future<double> getExpectedWins(String zipCode, String day, String hour, int money, double predictedTemp) async{
-   Map<String, String> map = await getMinutelyData(zipCode);
-   String date= day +"T"+hour+":00:00Z";
-   String? temp = map[date];
-   temp = "12";
+   // Map<String, String> map = await getMinutelyData(zipCode);
+   // String date= day +"T"+hour+":00:00Z";
+   // String? temp = map[date];
+   String temp = "12";
    double zScore = (predictedTemp - int.parse(temp!))/1.25;
    zScore = min(zScore, -1*(zScore));
    var normal = Normal();

@@ -53,7 +53,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _timeController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  double winnings = 0;
+  double _winnings = 0.0;
   TimeOfDay? _selectedTime;
   int _selectedHour = 0;
 
@@ -63,15 +63,19 @@ class BetsPageState extends State<BetsPage> {
 
 
   Future<void> _selectTime() async {
+    final DateTime now = DateTime.now();
+    final TimeOfDay initialTime = TimeOfDay(hour: now.hour, minute: 0);
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initialTime,
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
           child: child!,
         );
       },
+      initialEntryMode: TimePickerEntryMode.input, // Set entry mode to input
+
     );
 
     if (picked != null) {
@@ -347,9 +351,23 @@ class BetsPageState extends State<BetsPage> {
                       ),
                     ),
                     SizedBox(width: 10.0),
-                    // ElevatedButton(onPressed: () async{
-                    //   winnings = getExpectedWins(_locationController.text, _dayController.text, _selectedHour.text, _betAmountController.text, predictedTemp)
-                    // }, child: 'child')
+                    ElevatedButton(onPressed: () async {
+
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour.toString(), int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        ) as double;
+                        setState(() {
+                          _winnings = winnings;
+                        });
+                    },
+                        child:const Text('Calculate Winnings')),
+                    SizedBox(width: 10.0),
+                    Text(
+                      'Winnings: $_winnings', // Display the calculated winnings
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
 
@@ -394,7 +412,7 @@ class BetsPageState extends State<BetsPage> {
 
                                       IncompleteBets bets = IncompleteBets(
                                           _dayController.text, double.parse(
-                                          _betAmountController.text), 2,
+                                          _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
                                           _selectedHour.toString());
