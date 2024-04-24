@@ -58,19 +58,19 @@ class IncompleteBets extends Bets{
  }
 }
 
-String getDate(int hour){
+String getDate(int hour, String date){
   hour= (hour +5)%24;
+
   if(hour<10){
-    return "0${hour}:00:00Z";
+    return "${date}T0${hour}:00:00Z";
   }
-  return "${hour}:00:00Z";
+  return "${date}T${hour}:00:00Z";
 }
 
 Future<double> getExpectedWins(String zipCode, String day, int hour, int money, double predictedTemp) async{
-   Map<String, String> map = await getMinutelyData(zipCode);
-//   String date= day +"T"+getDate(hour);
-//   String? temp = map["2024-04-24T03:22:00Z"];
-   String temp = "12";
+   Map<String, String> map = await getDayTemp(zipCode);
+   day = day + map.keys.first.substring(10);
+   String? temp = map[day];
    double zScore = (predictedTemp - double.parse(temp!))/4;
    zScore = min(zScore, -1*(zScore));
    var normal = Normal();

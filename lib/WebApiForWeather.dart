@@ -71,7 +71,6 @@ getDayTemp(String zipcode) async{
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['daily'];
-
     Map<String,String> dataMap = new Map<String,String>();
 
     for(var data in minutelyData){
@@ -92,6 +91,5 @@ void main() async{
    Map<String,String> data = await getDayTemp("61201");
 
    print("This is the size: " + data.length.toString());
-   print(data.values.toString());
 
 }

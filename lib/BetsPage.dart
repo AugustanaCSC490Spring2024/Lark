@@ -415,7 +415,7 @@ class BetsPageState extends State<BetsPage> {
                                           _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
-                                          getDate(_selectedHour));
+                                          getDate(_selectedHour,_dayController.text));
 
 
                                       setBet(bets);
