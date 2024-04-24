@@ -31,14 +31,23 @@ class NewUserName extends StatefulWidget {
   _NewUserName createState() => _NewUserName();
 }
 class _NewUserName extends State<NewUserName> {
-  final TextEditingController _oldUserName = TextEditingController();
   final TextEditingController _newUserName = TextEditingController();
+  late Future<String> _usernameFuture;
 
-
+  @override
+  void initState() {
+    super.initState();
+    _usernameFuture = getUserName();
+    // Set opacity to 1 gradually after 1 second
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        // _logoOpacity = 1.0;
+      });
+    });
+  }
 
   @override
   void dispose() {
-    _oldUserName.dispose();
     _newUserName.dispose();
     super.dispose();
   }
@@ -99,16 +108,19 @@ class _NewUserName extends State<NewUserName> {
               ),
             ),
             const SizedBox(height: 20.0),
-            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                changeUserName(_newUserName.text);
-                ScaffoldMessenger.of(context).showSnackBar(
+                  changeUserName(_newUserName.text);
+                  setState(() {
+                  _usernameFuture = getUserName(); // Update the future to fetch the new username
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Username changed successfully'),
                   ),
                 );
-              },
+
+            },
               child: const Text('change user name'),
             ),
 
