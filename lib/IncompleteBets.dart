@@ -58,7 +58,7 @@ class IncompleteBets extends Bets{
  }
 }
 
-String getDate(int hour, String date){
+String getDate(int hour){
 //  hour= (hour +5)%24;
 
   if(hour<10){
@@ -67,7 +67,7 @@ String getDate(int hour, String date){
   return "${hour}:00";
 }
 
-Future<double> getExpectedWins(String zipCode, String day, int hour, int money, double predictedTemp) async{
+Future<double> getExpectedWins(String zipCode, String day, int money, double predictedTemp) async{
    Map<String, String> map = await getDayTemp(zipCode);
    day = day + map.keys.first.substring(10);
    String? temp = map[day];
