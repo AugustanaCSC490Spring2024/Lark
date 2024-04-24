@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-
-//debugged by chatgpt
+import 'dbHandler.dart';
+// sources :
+// https://api.flutter.dev/flutter/dart-async/Timer-class.html
+// https://api.flutter.dev/flutter/animation/AnimationController-class.html
+// https://www.dhiwise.com/post/unlock-the-power-of-flutter-tween-a-comprehensive-guide
 
 const int maxCoins = 5000000;
 
@@ -24,50 +27,58 @@ class _RainingCoinsState extends State<RainingCoins>
     with TickerProviderStateMixin {
   List<AnimationController> _coinAnimationControllers = [];
   List<Coin> coinList = [];
+  bool _isUserSignedIn = false;
+  late Timer _coinTimer;
 
   @override
   void initState() {
     super.initState();
+    _checkUserSignIn();
     _startCoinAnimation();
+  }
 
-
+  void _checkUserSignIn() {
+    _isUserSignedIn = isUserSignedIn();
   }
 
   @override
   void dispose() {
+    _coinTimer.cancel();
     _coinAnimationControllers.forEach((controller) => controller.dispose());
     super.dispose();
   }
 
+  void setUserSignIn(bool isSignedIn) {
+    setState(() {
+      _isUserSignedIn = isUserSignedIn();
+    });
+  }
+
   void _startCoinAnimation() {
-    Timer.periodic(Duration(milliseconds: 500), (_) {
-      _createCoin();
+    if (!mounted) {
+      return;
+    }
+
+    _coinTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (!_isUserSignedIn) {
+        _createCoin();
+      }
     });
   }
 
   void _createCoin() {
     if (coinList.length < maxCoins) {
-      double randomLeft =
-      Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
+      double randomLeft = Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
       double randomRotation = Random().nextDouble();
 
       int randDuration = Random().nextInt(6) + 2;
       Duration coinDuration = Duration(seconds: randDuration);
 
-      final AnimationController animationController = AnimationController(
-        vsync: this,
-        duration: coinDuration,
-      );
+      final AnimationController animationController = _createAnimationController(coinDuration);
 
-      final topAnimation = CurvedAnimation(
-        parent: animationController,
-        curve: Curves.linear,
-      );
+      final topAnimation = _createTopAnimation(animationController);
 
-      final rotationAnimation = Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(animationController);
+      final rotationAnimation = _createRotationAnimation(animationController);
 
       final coin = Coin(
         topAnimation,
@@ -76,22 +87,50 @@ class _RainingCoinsState extends State<RainingCoins>
         coinDuration,
       );
 
-      setState(() {
-        coinList.add(coin);
-        _coinAnimationControllers.add(animationController);
-      });
+      _addCoin(coin, animationController);
 
       animationController.forward();
 
-      // Remove the animation controller from the list when animation completes
       animationController.addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          setState(() {
-            _coinAnimationControllers.remove(animationController);
-          });
+          _removeCoin(animationController);
         }
       });
     }
+  }
+
+  AnimationController _createAnimationController(Duration duration) {
+    return AnimationController(
+      vsync: this,
+      duration: duration,
+    );
+  }
+
+  Animation<double> _createTopAnimation(AnimationController controller) {
+    return CurvedAnimation(
+      parent: controller,
+      curve: Curves.linear,
+    );
+  }
+
+  Animation<double> _createRotationAnimation(AnimationController controller) {
+    return Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(controller);
+  }
+
+  void _addCoin(Coin coin, AnimationController controller) {
+    setState(() {
+      coinList.add(coin);
+      _coinAnimationControllers.add(controller);
+    });
+  }
+
+  void _removeCoin(AnimationController controller) {
+    setState(() {
+      _coinAnimationControllers.remove(controller);
+    });
   }
 
   @override
@@ -102,8 +141,7 @@ class _RainingCoinsState extends State<RainingCoins>
           animation: coin.topAnimation,
           builder: (context, child) {
             return Positioned(
-              top: coin.topAnimation.value *
-                  MediaQuery.of(context).size.height,
+              top: coin.topAnimation.value * MediaQuery.of(context).size.height,
               left: coin.left,
               child: Transform.rotate(
                 angle: coin.rotationAnimation.value * 2 * pi,
@@ -120,15 +158,4 @@ class _RainingCoinsState extends State<RainingCoins>
       }).toList(),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: RainingCoins(),
-      ),
-    ),
-  ));
 }

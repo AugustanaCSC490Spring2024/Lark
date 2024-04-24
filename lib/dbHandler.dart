@@ -2,17 +2,22 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:core';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'Bets.dart';
 import 'IncompleteBets.dart';
 import 'CompleteBets.dart';
+import 'package:larkcoins/dbHandler.dart';
 
 var db = FirebaseFirestore.instance;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
+
+// check if user is signed/logged in
+bool isUserSignedIn() {
+  User? user = auth.currentUser;
+  return user != null;
+}
 
 
 Future<bool> setBet(IncompleteBets bet) async {

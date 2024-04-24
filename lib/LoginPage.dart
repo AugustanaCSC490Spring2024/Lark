@@ -1,11 +1,9 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/firebase_options.dart';
 import 'BottomNavigation.dart';
 import 'sign_up_page.dart';
-
 import 'package:larkcoins/raining_coins.dart';
 
 void main() async {
@@ -13,10 +11,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(LogInPage());
+  runApp(const LogInPage());
 }
 
 class LogInPage extends StatelessWidget {
+  const LogInPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,7 +44,7 @@ class _PageState extends State<Page> {
   void initState() {
     super.initState();
     // Set opacity to 1 gradually after 1 second
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _logoOpacity = 1.0;
       });
@@ -74,23 +74,18 @@ class _PageState extends State<Page> {
                 end: Alignment.bottomCenter,
               ),
             ),
-
             padding: const EdgeInsets.all(20.0),
           ),
-
           Positioned.fill(
             child: RainingCoins(),
-
           ),
-
-
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 AnimatedOpacity(
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                   opacity: _logoOpacity,
                   child: const Text(
                     'CLIMECOIN',
@@ -141,9 +136,9 @@ class _PageState extends State<Page> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    runApp(SignUpPageApp());
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SignUpPageApp()));
                   },
-                  child: Text(
+                  child: const Text(
                     'New to the lark world?',
                     style: TextStyle(
                       fontSize: 16,
@@ -161,20 +156,20 @@ class _PageState extends State<Page> {
   }
 }
 
-//Signin occurs here
+// Signin occurs here
 Future<void> signInWithEmailAndPassword(String email, String password, BuildContext context) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    User? user = userCredential.user;
+//    User? user = userCredential.user;
 
-    runApp(NavigationBarApp());
+    runApp(const NavigationBarApp());
 
     // Handle successful sign-in
   } catch (e) {
-    showErrorDialog(context, "Wrong credentials.Please try again.");
+    showErrorDialog(context, "Wrong credentials. Please try again.");
   }
 }
 
@@ -183,14 +178,14 @@ void showErrorDialog(BuildContext context, String errorMessage) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(errorMessage),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       );

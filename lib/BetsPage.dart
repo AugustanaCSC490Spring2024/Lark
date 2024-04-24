@@ -83,12 +83,6 @@ class BetsPageState extends State<BetsPage> {
 
   }
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
