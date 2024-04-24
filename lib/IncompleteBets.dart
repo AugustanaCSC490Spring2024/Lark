@@ -59,12 +59,12 @@ class IncompleteBets extends Bets{
 }
 
 String getDate(int hour, String date){
-  hour= (hour +5)%24;
+//  hour= (hour +5)%24;
 
   if(hour<10){
-    return "${date}T0${hour}:00:00Z";
+    return "0${hour}:00";
   }
-  return "${date}T${hour}:00:00Z";
+  return "${hour}:00";
 }
 
 Future<double> getExpectedWins(String zipCode, String day, int hour, int money, double predictedTemp) async{

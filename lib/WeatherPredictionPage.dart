@@ -51,7 +51,7 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                       suffixIcon: IconButton(
                         icon: Icon(Icons.search),
                         onPressed: () async {
-                          data = await getMinutelyData(_locationController.text);
+                          data = await getDayTemp(_locationController.text);
                           setState(() {});
                         },
                       ),
