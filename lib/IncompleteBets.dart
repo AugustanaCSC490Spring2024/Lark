@@ -1,6 +1,7 @@
 
 //import 'dart:ffi';
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,20 +56,27 @@ class IncompleteBets extends Bets{
      "userid": uid.toString(),
    };
  }
-
-
 }
 
-Future<double> getExpectedWins(String zipCode, String day, String hour, int money, double predictedTemp) async{
-   // Map<String, String> map = await getMinutelyData(zipCode);
-   // String date= day +"T"+hour+":00:00Z";
-   // String? temp = map[date];
-   String temp = "12";
-   double zScore = (predictedTemp - int.parse(temp!))/1.25;
+String getDate(int hour, String date){
+  hour= (hour +5)%24;
+
+  if(hour<10){
+    return "${date}T0${hour}:00:00Z";
+  }
+  return "${date}T${hour}:00:00Z";
+}
+
+Future<double> getExpectedWins(String zipCode, String day, int hour, int money, double predictedTemp) async{
+   Map<String, String> map = await getDayTemp(zipCode);
+   day = day + map.keys.first.substring(10);
+   String? temp = map[day];
+   double zScore = (predictedTemp - double.parse(temp!))/4;
    zScore = min(zScore, -1*(zScore));
    var normal = Normal();
    var prob = normal.cdf(zScore);
-   double odds = 0.9/prob;
-   return money*odds;
+   double odds = 0.55/prob;
+   return double.parse((money*odds).toStringAsFixed(2));
+
 }
 
