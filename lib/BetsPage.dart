@@ -47,7 +47,6 @@ class BetsPageState extends State<BetsPage> {
   ];
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
-  TextEditingController _lowRangeController = TextEditingController();
   TextEditingController _predictedTempController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
   final _betAmountController = TextEditingController();
@@ -70,17 +69,18 @@ class BetsPageState extends State<BetsPage> {
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          
           child: child!,
+
         );
       },
-      initialEntryMode: TimePickerEntryMode.input, // Set entry mode to input
 
     );
 
     if (picked != null) {
       setState(() {
         _selectedHour = picked.hour;
-        _selectedTime = picked;
+        //_selectedTime = picked;
       });
     }
 
@@ -163,7 +163,7 @@ class BetsPageState extends State<BetsPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please enter the zipcode';
                           }
                           return null;
                         },
@@ -235,11 +235,11 @@ class BetsPageState extends State<BetsPage> {
                   onPressed: () {
                     _selectTime();
                   },
-                  child: Text(_selectedTime != null ? _selectedTime!.format(context) : 'Select Time'),
+                  child: Text("selected time: $_selectedHour"),
                 ),
 
                 // Validator for the time picker
-                if (_selectedTime == null && _formKey.currentState != null)
+                if (_selectedHour == null && _formKey.currentState != null)
                   Text(
                     'Please select a time',
                     style: TextStyle(color: Colors.red),
@@ -247,7 +247,7 @@ class BetsPageState extends State<BetsPage> {
 
                 SizedBox(height: screenSize.height * 0.02),
                 Text(
-                  'Selected Hour: $_selectedHour',
+                  'The selected hour is according UTC timezone(24hr format): $_selectedHour',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -366,15 +366,20 @@ class BetsPageState extends State<BetsPage> {
 
 
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      if (_selectedTime == null) {
+                      if (_selectedHour == null) {
                         // Show an error message if time is not selected
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Please select a time')),
                         );
                       }
                       else {
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        ) as double;
+                        setState(() {
+                          _winnings = winnings;
+                        });
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -420,9 +425,10 @@ class BetsPageState extends State<BetsPage> {
                                       );
                                       _locationController.clear();
                                       _dayController.clear();
-                                      _lowRangeController.clear();
                                       _predictedTempController.clear();
                                       _betAmountController.clear();
+                                      _winnings = 0.0;
+                                      _selectedHour = 0;
                                     } else {
                                       print("NO UID!");
                                     }
