@@ -129,7 +129,7 @@ class _NewUserName extends State<NewUserName> {
               child:
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Navigate back to the previous screen
+                  Navigator.pop(context, _newUserName.text); // Navigate back to the previous screen
                 },
                 child: const Text('< Back'),
             )

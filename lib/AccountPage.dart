@@ -12,8 +12,31 @@ final uid = user?.uid;
 
 final username = getUserName();
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
+
+  @override
+  _AccountPageState createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the username here or fetch it from a source
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    // Fetch user data including username
+    final fetchedUsername = await getUserName();
+    setState(() {
+      username = fetchedUsername;
+    });
+  }
+
 
   Future<void> signOut(BuildContext context) async {
     try {
@@ -153,10 +176,16 @@ class AccountPage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // Respond to button press
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => NewUserName()),
-                          );
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => NewUserName()),
+                            ).then((newUsername) {
+                              if (newUsername != null) {
+                                setState(() {
+                                  username = newUsername;
+                                });
+                              }
+                            });
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(screenSize.width, 50),

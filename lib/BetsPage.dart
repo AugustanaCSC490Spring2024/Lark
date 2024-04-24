@@ -48,7 +48,6 @@ class BetsPageState extends State<BetsPage> {
   ];
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
-  TextEditingController _lowRangeController = TextEditingController();
   TextEditingController _predictedTempController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
   final _betAmountController = TextEditingController();
@@ -377,7 +376,7 @@ class BetsPageState extends State<BetsPage> {
                         );
                       }
                       else {
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour.toString(), int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
                         ) as double;
                         setState(() {
                           _winnings = winnings;
@@ -427,9 +426,10 @@ class BetsPageState extends State<BetsPage> {
                                       );
                                       _locationController.clear();
                                       _dayController.clear();
-                                      _lowRangeController.clear();
                                       _predictedTempController.clear();
                                       _betAmountController.clear();
+                                      _winnings = 0.0;
+                                      _selectedHour = 0;
                                     } else {
                                       print("NO UID!");
                                     }
