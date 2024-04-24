@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:larkcoins/NewUserName.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'LoginPage.dart';
+import 'changePassword.dart';
 import 'dbHandler.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -16,7 +18,7 @@ class AccountPage extends StatelessWidget {
   Future<void> signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LogInPage()));
+      runApp(LogInPage());
     } catch (e) {
       print('Sign out error: $e');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -24,6 +26,7 @@ class AccountPage extends StatelessWidget {
       ));
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,20 +148,48 @@ class AccountPage extends StatelessWidget {
 
 
 
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Respond to button press
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => NewUserName()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(screenSize.width, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+
+
+                          ),
+                        ),
+                          child: const Text('change username'),
+
+            ),
+                    ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: ElevatedButton(
                 onPressed: () {
                   // Respond to button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChangePassword()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenSize.width, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(1.0),
 
+
                   ),
                 ),
-                child: const Text('change username/password'),
+                child: const Text('change password'),
+
               ),
             ),
             Padding(
@@ -167,6 +198,7 @@ class AccountPage extends StatelessWidget {
                 onPressed: () {
                   // Respond to button press
                   signOut(context);
+                  //(LogInPage());
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenSize.width, 50),

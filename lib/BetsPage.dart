@@ -53,7 +53,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _timeController = TextEditingController();
   final _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  double _winnings = 0.0;
   TimeOfDay? _selectedTime;
   int _selectedHour = 0;
 
@@ -63,15 +63,19 @@ class BetsPageState extends State<BetsPage> {
 
 
   Future<void> _selectTime() async {
+    final DateTime now = DateTime.now();
+    final TimeOfDay initialTime = TimeOfDay(hour: now.hour, minute: 0);
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initialTime,
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
           child: child!,
         );
       },
+      initialEntryMode: TimePickerEntryMode.input, // Set entry mode to input
+
     );
 
     if (picked != null) {
@@ -278,103 +282,7 @@ class BetsPageState extends State<BetsPage> {
                     },
                   ),
                 ),
-                // Row(
-                //   children: [
-                //     ElevatedButton(
-                //       onPressed: () {
-                //         // Respond to button press
-                //       },
-                //       child: Text('High'),
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.white,
-                //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1.0),
-                //
-                //         ),
-                //     ),
-                //     ),
-                //     SizedBox(width: 20.0),
-                //     ElevatedButton(
-                //       onPressed: () {
-                //         // Respond to button press
-                //       },
-                //       child: Text('Low'),
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.white,
-                //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1.0),
-                //
-                //       ),
-                //     ),
-                //     ),
-                //
-                //   ],
-                // ),
-                // const Text(
-                //   'Please enter your range',
-                //   style: TextStyle(
-                //     fontSize: 20.0,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                // Row(
-                //
-                //   children:[
-                //
-                //     SizedBox(
-                //       width: 180,
-                //       child: TextFormField(
-                //         controller: _lowRangeController,
-                //         decoration: const InputDecoration(
-                //           border: const OutlineInputBorder(),
-                //           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                //         ),
-                //         validator: (value) {
-                //           if (value == null || value.isEmpty) {
-                //             return 'Please enter the low range';
-                //           }
-                //           if (int.tryParse(value) == null) {
-                //             return 'Please enter a valid number';
-                //           }
-                //           return null;
-                //         },
-                //       ),
-                //     ),
-                //     SizedBox(width: 10.0),
-                //     const Text(
-                //       'to',
-                //       style: TextStyle(
-                //         fontSize: 20.0,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     SizedBox(width: 10.0),
-                //     SizedBox(
-                //       width: 180,
-                //       child: TextFormField(
-                //         controller: _predictedTempController,
-                //         decoration: const InputDecoration(
-                //           border: OutlineInputBorder(),
-                //           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                //         ),
-                //         validator: (value) {
-                //         if (value == null || value.isEmpty) {
-                //         return 'Please enter the high range';
-                //         }
-                //         final int lowRange = int.parse(_lowRangeController.text);
-                //         final int highRange = int.parse(value);
-                //         if (lowRange >= highRange) {
-                //           return 'High range must be greater than the low range';
-                //         }
-                //
-                //         if (int.tryParse(value) == null) {
-                //           return 'Please enter a valid number';
-                //         }
-                //         return null;
-                //         },
-                //       ),
-                //     ),
-                //
-                //   ],
-                // ),
+
                 const Text(
                   'How much do you want to bet?',
                   style: TextStyle(
@@ -427,12 +335,34 @@ class BetsPageState extends State<BetsPage> {
 
                 SizedBox(height: 20.0),
 
-                Text(
-                  'Your potential winnings are: ',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Your potential winnings are: ',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 10.0),
+                    ElevatedButton(onPressed: () async {
+
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        ) as double;
+                        setState(() {
+                          _winnings = winnings;
+                        });
+                    },
+                        child:const Text('Calculate Winnings')),
+                    SizedBox(width: 10.0),
+                    Text(
+                      'Winnings: $_winnings', // Display the calculated winnings
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
 
 
@@ -476,10 +406,10 @@ class BetsPageState extends State<BetsPage> {
 
                                       IncompleteBets bets = IncompleteBets(
                                           _dayController.text, double.parse(
-                                          _betAmountController.text), 2,
+                                          _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
-                                          _selectedHour.toString());
+                                          getDate(_selectedHour,_dayController.text));
 
 
                                       setBet(bets);

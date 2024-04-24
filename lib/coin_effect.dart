@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import 'AccountPage.dart';
+
 const int maxCoins = 50;
 
 class Coin {
