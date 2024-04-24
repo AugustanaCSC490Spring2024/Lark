@@ -353,7 +353,7 @@ class BetsPageState extends State<BetsPage> {
                     SizedBox(width: 10.0),
                     ElevatedButton(onPressed: () async {
 
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour.toString(), int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
                         ) as double;
                         setState(() {
                           _winnings = winnings;
@@ -415,7 +415,7 @@ class BetsPageState extends State<BetsPage> {
                                           _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
-                                          _selectedHour.toString());
+                                          getDate(_selectedHour));
 
 
                                       setBet(bets);
