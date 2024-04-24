@@ -136,7 +136,7 @@ class _PageState extends State<Page> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SignUpPageApp()));
+                    runApp(SignUpPageApp());
                   },
                   child: const Text(
                     'New to the lark world?',
@@ -163,7 +163,7 @@ Future<void> signInWithEmailAndPassword(String email, String password, BuildCont
       email: email,
       password: password,
     );
-//    User? user = userCredential.user;
+    User? user = userCredential.user;
 
     runApp(const NavigationBarApp());
 

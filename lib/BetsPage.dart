@@ -1,6 +1,5 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 
-import 'dart:html';
 
 import 'IncompleteBets.dart';
 

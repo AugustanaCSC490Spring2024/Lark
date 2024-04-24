@@ -7,7 +7,7 @@ import 'dbHandler.dart';
 // https://api.flutter.dev/flutter/animation/AnimationController-class.html
 // https://www.dhiwise.com/post/unlock-the-power-of-flutter-tween-a-comprehensive-guide
 
-const int maxCoins = 5000000;
+const int maxCoins = 5000;
 
 class Coin {
   final Animation<double> topAnimation;
