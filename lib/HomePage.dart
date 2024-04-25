@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:larkcoins/CompleteBets.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'Bets.dart';
 import 'logo.dart';
@@ -34,9 +35,11 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
+                        Text("Pending Bets"),
+
             Expanded(
               child: FutureBuilder<List<Bets>>(
-                future: getIncompleteBets(),
+                future: getIncompleteBets(),                
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -49,6 +52,35 @@ class HomePage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return Card(
                           color: Color(0xFFE3F2FF), // Set background color here
+                          child: ListTile(
+                            title: Text(bets[index].zipCode),
+                            subtitle: Text("Amount: \$${bets[index].wager.toString()}"),
+                            trailing: Text("Expected: \$${bets[index].expectedEarning.toString()}"),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+
+            Text("Completed Bets"),
+            Expanded(
+              child: FutureBuilder<List<CompleteBets>>(
+                future: getCompletBets(),                
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    var bets = snapshot.data!;                    
+                    return ListView.builder(
+                      itemCount: bets.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: bets[index].result == true ? Color(0xFF00FF00) : Color(0xFFFF0000), // Set background color based on the result
                           child: ListTile(
                             title: Text(bets[index].zipCode),
                             subtitle: Text("Amount: \$${bets[index].wager.toString()}"),

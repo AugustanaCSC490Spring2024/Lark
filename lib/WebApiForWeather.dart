@@ -8,7 +8,6 @@ getApiJson(String url) async {
 
   if (response.statusCode == 200) {
     // If the server returned a 200 OK response,
-
     return response.body;
   
     // print(jsonFile["timelines"]['minutely']);
@@ -44,6 +43,7 @@ getMinutelyData(String zipcode) async{
 }
 
 //send h for hourly, m for minutely in timeFrame
+//4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG
 getData(String zipcode, String timeFrame) async{
 
     var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";

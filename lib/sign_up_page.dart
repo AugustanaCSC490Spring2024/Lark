@@ -115,14 +115,13 @@ class _SignUpPageState extends State<SignUpPage> {
             Padding(padding: EdgeInsets.all(10),
 
             child: ElevatedButton(
-              onPressed: () {
-                runApp(LogInPage());
+              onPressed: ()  {
+                 runApp(LogInPage());
+                 print("Go back");
               },
               child: const Text('< Back'),
             ),
             )
-
-
           ],
         ),
       ),

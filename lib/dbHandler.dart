@@ -91,15 +91,44 @@ void addMoney(double money) async{
 }
 
 Future<List<Bets>> getIncompleteBets(){
-  return getBets("Incomplete Bets");
+  return getIncompleteBetsHelper("Incomplete Bets");
 }
 
-Future<List<Bets>> getCompleteBets(){
-  return getBets("Complete Bets");
+Future<List<CompleteBets>> getCompletBets(){
+  return getCompleteBetHelper("Complete Bets");
+}
+
+Future<List<CompleteBets>> getCompleteBetHelper(String betType) async {
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  List<CompleteBets> betsList = [];
+  CompleteBets bet;
+
+  try {
+    // Get a reference to the bets collection
+    CollectionReference betsCollection = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(uid)
+        .collection(betType);
+
+    // Get all documents from the collection
+    QuerySnapshot querySnapshot = await betsCollection.get();
+
+    // Iterate over the documents and convert each one to a Bets object
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+       bet = CompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
+      betsList.add(bet);
+
+    }
+  } catch (e) {
+    print("Error getting all bets: $e");
+  }
+
+  return betsList;
 }
 
 
-Future<List<Bets>> getBets(String betType) async {
+Future<List<Bets>> getIncompleteBetsHelper(String betType) async {
   User? user = auth.currentUser;
   String? uid = user?.uid;
   List<Bets> betsList = [];
@@ -117,14 +146,9 @@ Future<List<Bets>> getBets(String betType) async {
 
     // Iterate over the documents and convert each one to a Bets object
     for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      if(betType == "Incomplete Bets"){
+    
        bet = IncompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
-      }else{
-
-       bet = CompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
-
-      }
-      betsList.add(bet);
+       betsList.add(bet);
 
     }
   } catch (e) {
