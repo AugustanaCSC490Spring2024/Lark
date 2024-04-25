@@ -137,8 +137,8 @@ class _PageState extends State<Page> {
                 ),
                 GestureDetector(
                   onTap: () {
-                 
-                   runApp(SignUpPage());
+                    runApp(SignUpPageApp());
+                  },
                   child: const Text(
                     'New to the lark world?',
                     style: TextStyle(

@@ -1,10 +1,10 @@
+
 import 'Bets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum winLoss {W, L}
 class CompleteBets extends Bets {
 
-  winLoss result;
+  bool result;
 
   CompleteBets(String date, double wager, double expectedEarning,
       String zipCode, double predictedTemp, String timeOfWager, this.result)

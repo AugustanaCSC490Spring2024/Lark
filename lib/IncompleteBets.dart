@@ -75,7 +75,7 @@ Future<double> getExpectedWins(String zipCode, String day, int hour, int money, 
    zScore = min(zScore, -1*(zScore));
    var normal = Normal();
    var prob = normal.cdf(zScore);
-   double odds = 0.55/prob;
+   double odds = 0.5/prob;
    return double.parse((money*odds).toStringAsFixed(2));
 
 }

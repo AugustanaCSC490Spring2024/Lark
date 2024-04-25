@@ -25,7 +25,7 @@ getApiJson(String url) async {
 
 getMinutelyData(String zipcode) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
 
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
@@ -44,9 +44,10 @@ getMinutelyData(String zipcode) async{
 }
 
 //send h for hourly, m for minutely in timeFrame
+//4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG
 getData(String zipcode, String timeFrame) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['minutely'];
@@ -67,7 +68,7 @@ getData(String zipcode, String timeFrame) async{
 
 getDayTemp(String zipcode) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['daily'];
