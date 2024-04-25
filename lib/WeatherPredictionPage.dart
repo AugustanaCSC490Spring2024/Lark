@@ -1,9 +1,14 @@
+// sources : https://pub.dev/packages/intl
+// https://stackoverflow.com/questions/67719259/how-to-render-full-html-document-with-flutter-html-package
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 import 'WebApiForWeather.dart';
 
+class WeatherForecast {
+  final DateTime date; // Change the type to DateTime
+  final String temperature;
 
-void main(List<String> args) {
-  runApp(WeatherPredictionPage());
+  WeatherForecast({required this.date, required this.temperature});
 }
 
 class WeatherPredictionPage extends StatefulWidget {
@@ -14,88 +19,96 @@ class WeatherPredictionPage extends StatefulWidget {
 }
 
 class WeatherPredictionPageState extends State<WeatherPredictionPage> {
-  Map<String, String> data = {}; // Initialize data map
-  TextEditingController _locationController = TextEditingController();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchData(); // Fetch data when the widget initializes
-  // }
+  List<WeatherForecast> forecasts = [];
+  TextEditingController _locationController = TextEditingController(text: '61201');
 
-  // Future<void> fetchData() async {
-  //   // Fetch data here, for example:
-  //   data = await getMinutelyData("61201");
-  //   setState(() {}); // Trigger a rebuild to reflect changes
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeatherForecasts();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> keys = data.keys.toList(); // Convert map keys to a list
-
-    return MaterialApp( // Add MaterialApp as the root widget
-      home: Directionality(
-        textDirection: TextDirection.ltr, // Set text direction to left-to-right
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Weather Prediction'),
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: TextField(
-                    controller: _locationController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter location',
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () async {
-                          data = await getDayTemp(_locationController.text);
-                          setState(() {});
-                        },
-                      ),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Weather Prediction'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: TextField(
+                  controller: _locationController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter location',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () async {
+                        await _fetchWeatherForecasts();
+                      },
                     ),
                   ),
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 4,
-                      margin: EdgeInsets.all(10),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Title ${index + 1}',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: forecasts.length,
+                itemBuilder: (context, index) {
+                  WeatherForecast forecast = forecasts[index];
+                  return Card(
+                    elevation: 4,
+                    margin: EdgeInsets.all(10),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '${_formatDate(forecast.date)}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Time ${"${keys[index]}\n${data[keys[index]]}"}',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Average Temperature: ${forecast.temperature}',
+                            style: TextStyle(
+                              fontSize: 16,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-}
 
+
+  Future<void> _fetchWeatherForecasts() async {
+    try {
+      Map<String, String> data = await getDayTemp(_locationController.text);
+      setState(() {
+        forecasts = data.entries
+            .map((entry) => WeatherForecast(date: DateTime.parse(entry.key), temperature: entry.value))
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching weather forecasts: $e');
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('EEEE MMMM d, yyyy').format(date);
+  }
+}
