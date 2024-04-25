@@ -8,7 +8,6 @@ getApiJson(String url) async {
 
   if (response.statusCode == 200) {
     // If the server returned a 200 OK response,
-
     return response.body;
   
     // print(jsonFile["timelines"]['minutely']);

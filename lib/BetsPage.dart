@@ -52,7 +52,7 @@ class BetsPageState extends State<BetsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   double _winnings = 0.0;
   TimeOfDay? _selectedTime;
-  int _selectedHour = 0;
+  String _selectedHour = '0';
 
 
 
@@ -78,7 +78,7 @@ class BetsPageState extends State<BetsPage> {
 
     if (picked != null) {
       setState(() {
-        _selectedHour = picked.hour;
+        _selectedHour = getDate(picked.hour);
         //_selectedTime = picked;
       });
     }
@@ -345,7 +345,7 @@ class BetsPageState extends State<BetsPage> {
                     SizedBox(width: 10.0),
                     ElevatedButton(onPressed: () async {
 
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text,  int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
                         ) as double;
                         setState(() {
                           _winnings = winnings;
@@ -374,7 +374,7 @@ class BetsPageState extends State<BetsPage> {
                         );
                       }
                       else {
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, _selectedHour, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
                         ) as double;
                         setState(() {
                           _winnings = winnings;
@@ -412,7 +412,7 @@ class BetsPageState extends State<BetsPage> {
                                           _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
-                                          getDate(_selectedHour,_dayController.text));
+                                          _selectedHour);
 
 
                                       setBet(bets);
@@ -427,7 +427,7 @@ class BetsPageState extends State<BetsPage> {
                                       _predictedTempController.clear();
                                       _betAmountController.clear();
                                       _winnings = 0.0;
-                                      _selectedHour = 0;
+                                      _selectedHour = "";
                                     } else {
                                       print("NO UID!");
                                     }
