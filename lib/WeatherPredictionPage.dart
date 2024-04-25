@@ -1,11 +1,11 @@
 // sources : https://pub.dev/packages/intl
 // https://stackoverflow.com/questions/67719259/how-to-render-full-html-document-with-flutter-html-package
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import the intl package for date formatting
+import 'package:intl/intl.dart';
 import 'WebApiForWeather.dart';
 
 class WeatherForecast {
-  final DateTime date; // Change the type to DateTime
+  final DateTime date;
   final String temperature;
 
   WeatherForecast({required this.date, required this.temperature});
