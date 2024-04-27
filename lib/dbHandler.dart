@@ -1,10 +1,10 @@
 
 import 'dart:async';
 import 'dart:core';
-import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Bets.dart';
+import 'BetsPool.dart';
 import 'IncompleteBets.dart';
 import 'CompleteBets.dart';
 import 'package:larkcoins/dbHandler.dart';
@@ -157,6 +157,47 @@ Future<List<Bets>> getIncompleteBetsHelper(String betType) async {
 
   return betsList;
 }
+
+Future<bool> setBetPool(String betID, BetsPool bp, double temp, int money) async {
+  double curUserMoney = await getUserMoney();
+  if (money < curUserMoney) {
+    bp.addUser(auth.currentUser!.uid, temp, money);
+    FirebaseFirestore.instance.collection("Pool").doc(betID).set(
+        bp.toFirestore());
+    return true;
+  }
+
+    return false;
+
+}
+
+Future<Map<String, BetsPool>> getBetPools() async{
+  Map<String, BetsPool> pool= {};
+
+  try {
+    // Get a reference to the bets collection
+    CollectionReference poolCollection = FirebaseFirestore.instance
+        .collection("Pool");
+
+    // Get all documents from the collection
+    QuerySnapshot querySnapshot = await poolCollection.get();
+
+    // Iterate over the documents and convert each one to a BetPool object
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+
+      BetsPool bp = BetsPool.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+      pool[documentSnapshot.id] =bp;
+    }
+  } catch (e) {
+    print("Error getting all bets: $e");
+  }
+  return pool;
+}
+
+bool hasParticipatedInPool(BetsPool bp){
+  return bp.userMoney.keys.contains(auth.currentUser!.uid);
+}
+
 
 
 
