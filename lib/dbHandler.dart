@@ -158,9 +158,10 @@ Future<List<Bets>> getIncompleteBetsHelper(String betType) async {
   return betsList;
 }
 
-Future<bool> setBetPool(String betID, BetsPool bp, double temp, int money) async {
+Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money) async {
   double curUserMoney = await getUserMoney();
   if (money < curUserMoney) {
+    addMoney(money * -1);
     bp.addUser(auth.currentUser!.uid, temp, money);
     FirebaseFirestore.instance.collection("Pool").doc(betID).set(
         bp.toFirestore());
