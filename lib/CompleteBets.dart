@@ -19,7 +19,7 @@ class CompleteBets extends Bets {
     return CompleteBets(
       data?['date'] ?? "",
       data?['wager'] ?? 0.0,
-      data?['expectedEarning'] ?? 0.0,
+      data?['winnings'] ?? 0.0,
       data?['zipCode'] ?? "", // Providing a default value if data is null
       data?['predictedTemp'] ?? 0, // Providing a default value if data is null
       data?['timeOfWager'] ?? "",
