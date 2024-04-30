@@ -48,7 +48,7 @@ class BetsPageState extends State<BetsPage> {
   TextEditingController _dayController = TextEditingController();
   TextEditingController _predictedTempController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
-  final _betAmountController = TextEditingController();
+  TextEditingController _betAmountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   double _winnings = 0.0;
   TimeOfDay? _selectedTime;
