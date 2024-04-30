@@ -3,19 +3,19 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dbHandler.dart';
 // sources :
+// https://docs.flutter.dev/ui/animations/tutorial
 // https://api.flutter.dev/flutter/dart-async/Timer-class.html
 // https://api.flutter.dev/flutter/animation/AnimationController-class.html
 // https://www.dhiwise.com/post/unlock-the-power-of-flutter-tween-a-comprehensive-guide
 
-const int maxCoins = 5000;
 
 class Coin {
   final Animation<double> topAnimation;
   final Animation<double> rotationAnimation;
-  final double left;
+  final double horizontalPosition;
   final Duration duration;
 
-  Coin(this.topAnimation, this.rotationAnimation, this.left, this.duration);
+  Coin(this.topAnimation, this.rotationAnimation, this.horizontalPosition, this.duration);
 }
 
 class RainingCoins extends StatefulWidget {
@@ -62,41 +62,42 @@ class _RainingCoinsState extends State<RainingCoins>
     _coinTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
       if (!_isUserSignedIn) {
         _createCoin();
+      } else {
+        _coinTimer.cancel(); // Cancel the timer when the user signs in
       }
     });
   }
 
   void _createCoin() {
-    if (coinList.length < maxCoins) {
-      double randomLeft = Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
-      double randomRotation = Random().nextDouble();
+    double randomLeft = Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
+    double randomRotation = Random().nextDouble();
 
-      int randDuration = Random().nextInt(6) + 2;
-      Duration coinDuration = Duration(seconds: randDuration);
+    int randDuration = Random().nextInt(6) + 2;
+    Duration coinDuration = Duration(seconds: randDuration);
 
-      final AnimationController animationController = _createAnimationController(coinDuration);
+    final AnimationController animationController = _createAnimationController(coinDuration);
 
-      final topAnimation = _createTopAnimation(animationController);
+    final topAnimation = _createTopAnimation(animationController);
 
-      final rotationAnimation = _createRotationAnimation(animationController);
+    final rotationAnimation = _createRotationAnimation(animationController);
 
-      final coin = Coin(
-        topAnimation,
-        rotationAnimation,
-        randomLeft,
-        coinDuration,
-      );
+    final coin = Coin(
+      topAnimation,
+      rotationAnimation,
+      randomLeft,
+      coinDuration,
+    );
 
-      _addCoin(coin, animationController);
+    _addCoin(coin, animationController);
 
-      animationController.forward();
+    animationController.forward();
 
-      animationController.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _removeCoin(animationController);
-        }
-      });
-    }
+    animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _removeCoin(animationController);
+      }
+    });
+
   }
 
   AnimationController _createAnimationController(Duration duration) {
@@ -142,7 +143,7 @@ class _RainingCoinsState extends State<RainingCoins>
           builder: (context, child) {
             return Positioned(
               top: coin.topAnimation.value * MediaQuery.of(context).size.height,
-              left: coin.left,
+              left: coin.horizontalPosition,
               child: Transform.rotate(
                 angle: coin.rotationAnimation.value * 2 * pi,
                 child: child,
@@ -159,3 +160,5 @@ class _RainingCoinsState extends State<RainingCoins>
     );
   }
 }
+
+
