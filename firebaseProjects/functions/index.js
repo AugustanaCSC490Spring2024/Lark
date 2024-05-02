@@ -11,15 +11,14 @@ const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require('firebase-admin');
 const { user } = require("firebase-functions/v1/auth");
-admin.initializeApp({
 
-});
+admin.initializeApp({});
+
 const db = admin.firestore();
 
 
 exports.helloWorld = onRequest(async (request, response) => {
   try{
-    
     checkIfBetsCompleted();
     const dt = getDateTime()
     response.send("success date: " + dt[0] + "time: " + dt[1] );
@@ -36,8 +35,8 @@ async function getAllIncompleteBets() {
   const snapshot = await collectionRef.get();
   var collectionData = {};
 
-  for (const doc of snapshot.docs) {
-    const incompleteBetsRef = doc.ref.collection("Incomplete Bets");
+  for (const userdoc of snapshot.docs) {
+    const incompleteBetsRef = userdoc.ref.collection("Incomplete Bets");
     const querySnapshot = await incompleteBetsRef.get();
 
     querySnapshot.forEach(incompleteBetDoc => {
@@ -54,7 +53,6 @@ async function getAllIncompleteBets() {
 
 
 async function checkIfBetsCompleted() {
-
   const incompleteBetsJson = await getAllIncompleteBets();
     const date = getDateTime();
     const currentDate = date[0]; // Get the current date
@@ -63,48 +61,47 @@ async function checkIfBetsCompleted() {
     // Iterate over the incomplete bets
     for (const docId in incompleteBetsJson) {
 
-    // Access the document name
-    var bet = incompleteBetsJson[docId];
-    console.log("docid : " + docId)
+      // Access the document name
+      var bet = incompleteBetsJson[docId];
+      console.log("docid : " + docId)
 
-    if(currentDate == bet["date"] && currentTime == bet["timeOfWager"]){
-          //get the zip and check for the temp
-          const zipcode = bet["zipCode"];
-          console.log("This is the zipcode: " + zipcode)
-          const actualTemp = await getTempForSpecificBet(zipcode)
-         
-          console.log("Temp we get : " )
-          console.log(actualTemp)
+      if(currentDate == bet["date"] && currentTime == bet["timeOfWager"]){
+            //get the zip and check for the temp
+            const zipcode = bet["zipCode"];
+            console.log("This is the zipcode: " + zipcode)
+            const actualTemp = await getTempForSpecificBet(zipcode)
+          
+            console.log("Temp we get : " )
+            console.log(actualTemp)
 
-          console.log("Parsed Temp we get : ")
-          console.log(parseInt(actualTemp).toString())
-
-
-          if(parseInt(actualTemp).toString() == parseInt(bet["predictedTemp"]).toString()){
-
-            console.log("Predicted temp: " + parseInt(bet["predictedTemp"]).toString())
-            console.log("Actual temp: " + parseInt(actualTemp).toString())
-
-            console.log("Bets exactly matched.");
-            changeBetsStatus(bet, true);
+            console.log("Parsed Temp we get : ")
+            console.log(parseInt(actualTemp).toString())
 
 
-          }else{
-            changeBetsStatus(bet, false);
+            if(parseInt(actualTemp).toString() === parseInt(bet["predictedTemp"]).toString()){
 
-            console.log("Wrong prediction");
-            console.log("Predicted temp: " +bet["predictedTemp"]);
-          }
+              console.log("Predicted temp: " + parseInt(bet["predictedTemp"]).toString())
+              console.log("Actual temp: " + parseInt(actualTemp).toString())
 
-          deleteBet(bet["userid"], docId);
+              console.log("Bets exactly matched.");
+              changeBetsStatus(bet, true);
 
-      }else{
-        //Do nothing as bet time is not yet there though could update the expected winnings probability something like that
-        console.log("Date has not hit yet");
-        console.log("Date: " + currentDate + " Time: " + currentTime );
-        console.log("Predicted Date: " + bet["date"] + " time:  " + bet["timeOfWager"]);
 
-      }
+            }else{
+              changeBetsStatus(bet, false);
+
+              console.log("Wrong prediction");
+              console.log("Predicted temp: " +bet["predictedTemp"]);
+            }
+
+            deleteBet(bet["userid"], docId);
+
+        }else{
+          //Do nothing as bet time is not yet there though could update the expected winnings probability something like that
+          console.log("Date has not hit yet");
+          console.log("Date: " + currentDate + " Time: " + currentTime );
+          console.log("Predicted Date: " + bet["date"] + " time:  " + bet["timeOfWager"]);
+        }
      
     }
 }
@@ -156,6 +153,27 @@ async function editCoins(coinValue, uid){
 
 
 
+async function getAllIncompleteBets() {
+  const collectionRef = db.collection("Users");
+  const snapshot = await collectionRef.get();
+  var collectionData = {};
+
+  for (const doc of snapshot.docs) {
+    const incompleteBetsRef = doc.ref.collection("Incomplete Bets");
+    const querySnapshot = await incompleteBetsRef.get();
+
+    querySnapshot.forEach(incompleteBetDoc => {
+      const data = incompleteBetDoc.data();
+
+      //make this a map
+      collectionData[incompleteBetDoc.id] = data;
+    });
+  }
+  const jsonString = JSON.stringify(collectionData);
+  console.log(jsonString);
+  return collectionData;
+}
+
 function getDateTime(){
 
     const dateTimeData = [];
@@ -193,3 +211,126 @@ function getTempForSpecificBet(zipcode) {
     })
   }
 
+
+
+async function getIncompletePool(){
+
+  const incompletePoolRef =await db.collection("Pool").get();
+  console.log("Incomplete pools info: \n")
+
+  const date = getDateTime();
+    const currentDate = date[0]; // Get the current date
+    const currentTime = date[1]; // Get the current time
+
+  
+
+  incompletePoolRef.docs.forEach(async doc => {
+
+    
+    var poolInfo = doc.data();
+
+    if(currentDate == poolInfo["date"] && currentTime == poolInfo["time"]){ 
+
+    const zipcode = poolInfo["zipCode"]
+    var allBets = poolInfo["userTemp"]
+    var sortedBets = await sortMap(zipcode, allBets)
+    var allWinners = await findMin(sortedBets)
+
+    console.log("All winners: ")
+    console.log(allWinners)
+
+      if(allWinners != null){
+        var winnings = poolInfo["totalWins"]
+        winnings = winnings / allWinners.size;
+        console.log("Total winngs: " + winnings)
+        var allWinnersKeys = allWinners.keys()
+
+        for(var winners of allWinnersKeys) {
+          console.log("Winner id: " + winners)
+          editCoins(winnings,winners)
+        }
+      }else{
+        console.log("No winnes at the map is empty after sorting and finding min")
+      }
+
+      console.log("Doc id: " + doc.id)
+      moveToCompletePool(allWinners, poolInfo)
+     // db.delete(doc)
+    }else{
+
+      console.log("For bet id: " + doc.id + " bets time has not matched")
+      confirm.log("Given data: " + poolInfo["date"] + " Time is : " + poolInfo["time"])
+    }
+
+  });
+}
+
+function moveToCompletePool(winner, poolInfo){
+
+  console.log("Printing winners in completed pool")
+  console.log(winner)
+
+  const winnerData = Object.fromEntries(winner);
+
+
+  db.collection("CompletedPools").add({
+    "winners": winnerData,
+   "date" : poolInfo["date"],
+   "time" : poolInfo["time"],
+   "totalWins" : poolInfo["totalWins"],
+   "userMoney" : poolInfo["userMoney"],
+   "userTemp" : poolInfo["userTemp"],
+   "zipCode": poolInfo["zipCode"],
+  })
+
+}
+
+
+function sortMap(zipcode, bets){ 
+  const tempNow = 1;
+    const betMap = new Map();
+
+      for(var userid in bets){
+        betMap[userid] = Math.abs(parseInt(bets[userid]) - tempNow)
+      }
+      console.log(betMap)
+      const entriesArray = Object.entries(betMap);
+      const sortedArray = entriesArray.sort((a, b) => a[1] - b[1]);
+      const sortedMap = new Map(sortedArray);
+      console.log(sortedMap);
+      return sortedArray; // Returning the sorted array, you might want to return sortedMap instead
+      
+}
+
+async function findMin(map) {
+  // Initialize variables to store the minimum value and pairs with that minimum value
+  let minValue = Infinity;
+  const minPairs = [];
+
+  // Find the minimum value
+  for (const [key, value] of map) {
+    if (value < minValue) {
+      minValue = value;
+    }
+  }
+
+  // Collect pairs with the minimum value
+  for (const [key, value] of map) {
+    if (value === minValue) {
+      minPairs.push([key, value]);
+    }
+  }
+
+  // Create a Map from the pairs with the minimum value
+  const minPairsMap = new Map(minPairs);
+
+  // Log the minPairsMap for debugging
+  console.log("Min pairs map:", minPairsMap);
+  return minPairsMap;
+}
+
+
+
+
+
+getIncompletePool()
