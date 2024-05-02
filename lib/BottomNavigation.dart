@@ -5,6 +5,7 @@ import 'package:dice_icons/dice_icons.dart';
 import 'AccountPage.dart';
 import 'HomePage.dart';
 import 'BetsPage.dart';
+import 'PoolPage.dart';
 import 'WeatherPredictionPage.dart';
 
  void main() => runApp(const NavigationBarApp());
@@ -35,6 +36,7 @@ class _NavigationExampleState extends State<NavigationExample> {
 
     HomePage(),
     BetsPage(),
+    PoolPage(),
     WeatherPredictionPage(),
     AccountPage(),
   ];
@@ -63,6 +65,10 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(
             icon: Icon(DiceIcons.dice6),
             label: 'Bets',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.pool),
+            label: 'Bets Pool',
           ),
           NavigationDestination(
             icon: Icon(WeatherIcons.day_cloudy),

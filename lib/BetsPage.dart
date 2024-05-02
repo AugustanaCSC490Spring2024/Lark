@@ -1,22 +1,14 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
-
-
+import 'package:flutter/widgets.dart';
 import 'IncompleteBets.dart';
-import 'package:larkcoins/IncompleteBets.dart';
-
-
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
-
-import 'package:async/async.dart';
-
 import 'HomePage.dart' ;
+import 'coin_effect.dart';
 
-
-import 'Bets.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
@@ -53,11 +45,7 @@ class BetsPageState extends State<BetsPage> {
   double _winnings = 0.0;
   TimeOfDay? _selectedTime;
   String _selectedHour = '0';
-
-
-
-
-
+  bool _showCoinEffect = false;
 
   Future<void> _selectTime() async {
     final DateTime now = DateTime.now();
@@ -68,7 +56,7 @@ class BetsPageState extends State<BetsPage> {
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          
+
           child: child!,
 
         );
@@ -99,9 +87,7 @@ class BetsPageState extends State<BetsPage> {
         child: TopLeftLogo(),
       )),
 
-
-
-      backgroundColor: Color(0xffcdffd8),
+      backgroundColor: Colors.transparent,
       body: Form(
 
         key: _formKey,
@@ -122,7 +108,12 @@ class BetsPageState extends State<BetsPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
+
+
                 SizedBox(height: 20),
+
+
 
                 // Container(
                 //   height: screenSize.height * 0.2,
@@ -405,23 +396,40 @@ class BetsPageState extends State<BetsPage> {
 
                                     if (uid != null) {
                                       print(uid);
-
-
                                       IncompleteBets bets = IncompleteBets(
                                           _dayController.text, double.parse(
                                           _betAmountController.text), _winnings,
                                           _locationController.text, double.parse(
                                           _predictedTempController.text),
                                           _selectedHour);
-
-
                                       setBet(bets);
+                                      // print('before effect');
+                                       Positioned.fill(child: coinEfffect());
+                                      // print('after effect');
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(
-                                            'You successfully placed a bet!')),
-                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Row(
+                                            children: [
+                                              Text('You successfully placed a bet!'),
+                                              SizedBox(width: 8), // Adjust spacing between text and coin effect
+                                              Visibility(
+                                                visible: _showCoinEffect,
+                                                child: coinEfffect(), // Replace coinEffect() with your actual coin effect widget
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ).closed.then((_) {
+                                        // Delay setting _showCoinEffect to true
+                                        Future.delayed(Duration(seconds: 2), () {
+                                          setState(() {
+                                            _showCoinEffect = true;
+                                          });
+                                        });
+                                      });
+
+
                                       _locationController.clear();
                                       _dayController.clear();
                                       _predictedTempController.clear();
@@ -445,6 +453,7 @@ class BetsPageState extends State<BetsPage> {
                 ),
 
 
+
               ],
             ),
 
@@ -454,3 +463,7 @@ class BetsPageState extends State<BetsPage> {
     );
   }
 }
+
+
+
+

@@ -121,13 +121,13 @@ class _RainingCoinsState extends State<coinEfffect>
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: coinEfffect(),
-      ),
-    ),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     home: Scaffold(
+//       appBar: AppBar(),
+//       body: Center(
+//         child: coinEfffect(),
+//       ),
+//     ),
+//   ));
+// }
