@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'BetsPool.dart';
+import 'HomePage.dart';
 import 'dbHandler.dart';
 import 'logo.dart';
 
@@ -19,10 +20,15 @@ class PoolPageState extends State<PoolPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        leading: TopLeftLogo(),
-
-      ),
+      appBar: CustomAppBar(leading: GestureDetector(
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        },
+        child: TopLeftLogo(),
+      )),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -64,12 +70,27 @@ class PoolPageState extends State<PoolPage> {
                       itemCount: poolsMap.length,
                       itemBuilder: (context, index){
                         return Card(
-                          color: hasParticipatedInPool(poolsMap[keys[index]]!) ? Colors.green : Color(0xFFE3F2FF),
+                          color: hasParticipatedInPool(poolsMap[keys[index]]!) ? Colors.green.withOpacity(0.5) : Color(0xFFE3F2FF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 3,
                           child: ListTile(
-
                             title: Text(poolsMap[keys[index]]!.zipCode.toString()),
-                            subtitle: Text("Amount: \$${poolsMap[keys[index]]!.totalWins.toString()} for date: ${poolsMap[keys[index]]!.date}"),
-                            trailing: Text("Total Gamblers ${poolsMap[keys[index]]!.userTemp.length.toString()}"),
+                            subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Amount: \$${poolsMap[keys[index]]!.totalWins.toString()}"),
+                                SizedBox(height: 5),
+                                Text("date: ${poolsMap[keys[index]]!.date}"),
+                              ]
+                            ),
+                            trailing: Column(
+                              children: [
+                                SizedBox(height: 10),
+                                Text("Total Gamblers ${poolsMap[keys[index]]!.userTemp.length.toString()}"),
+                              ],
+                            ),
                             onTap: (){
                               showDialog(
                                 context: context,

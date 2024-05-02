@@ -89,7 +89,6 @@ class BetsPageState extends State<BetsPage> {
 
       backgroundColor: Colors.transparent,
       body: Form(
-
         key: _formKey,
         child: SingleChildScrollView(
           child: Padding(
