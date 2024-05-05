@@ -109,6 +109,8 @@ async function checkIfBetsCompleted() {
 }
 
 
+
+
 function deleteBet(userid,docid){
 
   db.collection("Users").doc(userid).collection("Incomplete Bets").doc(docid).delete();
@@ -217,21 +219,20 @@ function getTempForSpecificBet(zipcode) {
 
 async function checkPoolsBets(){
 
-  const incompletePoolRef =await db.collection("Pool").get();
+  const incompletePoolRef = await db.collection("Pool").get();
   console.log("Incomplete pools info: \n")
 
   const date = getDateTime();
     const currentDate = date[0]; // Get the current date
     const currentTime = date[1]; // Get the current time
 
-  
-
   incompletePoolRef.docs.forEach(async doc => {
 
     
     var poolInfo = doc.data();
 
-    if(currentDate == poolInfo["date"] && currentTime == poolInfo["time"] ){ 
+    
+    if(currentDate == poolInfo["date"]  && currentTime == poolInfo["time"]    ){ 
 
     const zipcode = poolInfo["zipCode"]
     var allBets = poolInfo["userTemp"]
@@ -255,12 +256,16 @@ async function checkPoolsBets(){
         console.log("No winnes at the map is empty after sorting and finding min")
       }
 
-      console.log("Doc id: " + doc.id)
       console.log("All the winners information: ")
       console.log(allWinners)
       
-      moveToCompletePool(allWinners, poolInfo , winnings)
-      db.delete(doc)
+      await moveToCompletePool(allWinners, poolInfo , winnings)
+
+      console.log("Deleting the bet now: ")
+      console.log("Doc id: " + doc.id)
+      await db.collection("Pool").doc(doc.id).delete()
+
+      
     }else{
 
       console.log("For bet id: " + doc.id + " bets time has not matched")
@@ -284,6 +289,7 @@ function moveToCompletePool(winner, poolInfo){
    "userTemp" : poolInfo["userTemp"],
    "zipCode": poolInfo["zipCode"],
   })
+
 
 }
 
@@ -334,3 +340,4 @@ async function findMin(map) {
 
 
 
+checkPoolsBets()
