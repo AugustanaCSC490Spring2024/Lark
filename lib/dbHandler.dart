@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Bets.dart';
 import 'BetsPool.dart';
-import 'IncompleteBets.dart';
-import 'CompleteBets.dart';
 import 'package:larkcoins/dbHandler.dart';
 
 var db = FirebaseFirestore.instance;
@@ -20,7 +18,7 @@ bool isUserSignedIn() {
 }
 
 
-Future<bool> setBet(IncompleteBets bet) async {
+Future<bool> setBet(Bets bet) async {
    User? user = auth.currentUser;
    String? uid = user?.uid;
    double curUserMoney = await getUserMoney();
@@ -91,44 +89,14 @@ void addMoney(double money) async{
 }
 
 Future<List<Bets>> getIncompleteBets(){
-  return getIncompleteBetsHelper("Incomplete Bets");
+  return getBetsHelper("Incomplete Bets");
 }
 
-Future<List<CompleteBets>> getCompletBets(){
-  return getCompleteBetHelper("Complete Bets");
+Future<List<Bets>> getCompletBets(){
+  return getBetsHelper("Complete Bets");
 }
 
-Future<List<CompleteBets>> getCompleteBetHelper(String betType) async {
-  User? user = auth.currentUser;
-  String? uid = user?.uid;
-  List<CompleteBets> betsList = [];
-  CompleteBets bet;
-
-  try {
-    // Get a reference to the bets collection
-    CollectionReference betsCollection = FirebaseFirestore.instance
-        .collection("Users")
-        .doc(uid)
-        .collection(betType);
-
-    // Get all documents from the collection
-    QuerySnapshot querySnapshot = await betsCollection.get();
-
-    // Iterate over the documents and convert each one to a Bets object
-    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-       bet = CompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
-      betsList.add(bet);
-
-    }
-  } catch (e) {
-    print("Error getting all bets: $e");
-  }
-
-  return betsList;
-}
-
-
-Future<List<Bets>> getIncompleteBetsHelper(String betType) async {
+Future<List<Bets>> getBetsHelper(String betType) async {
   User? user = auth.currentUser;
   String? uid = user?.uid;
   List<Bets> betsList = [];
@@ -147,7 +115,7 @@ Future<List<Bets>> getIncompleteBetsHelper(String betType) async {
     // Iterate over the documents and convert each one to a Bets object
     for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
     
-       bet = IncompleteBets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null); 
+       bet = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
        betsList.add(bet);
 
     }

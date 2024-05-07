@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:larkcoins/CompleteBets.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'Bets.dart';
-import 'IncompleteBets.dart';
 import 'logo.dart';
 
 class HomePage extends StatelessWidget {
@@ -114,16 +112,16 @@ class _BetCardState extends State<BetCard> {
     String titleText = "";
     Widget? additionalInfo;
 
-    if (widget.bet is IncompleteBets) {
-      IncompleteBets incompleteBet = widget.bet as IncompleteBets;
-      titleText = incompleteBet.zipCode;
-      additionalInfo = _buildAdditionalInfo(incompleteBet);
-    } else if (widget.bet is CompleteBets) {
-      CompleteBets completeBet = widget.bet as CompleteBets;
-      titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
-      additionalInfo = _buildAdditionalInfo(completeBet);
-      cardColor = completeBet.result ? Colors.green : Colors.red;
-    }
+    // if (widget.bet is IncompleteBets) {
+    //   IncompleteBets incompleteBet = widget.bet as IncompleteBets;
+    //   titleText = incompleteBet.zipCode;
+    //   additionalInfo = _buildAdditionalInfo(incompleteBet);
+    // } else if (widget.bet is CompleteBets) {
+    //   CompleteBets completeBet = widget.bet as CompleteBets;
+    //   titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
+    //   additionalInfo = _buildAdditionalInfo(completeBet);
+    //   cardColor = completeBet.result ? Colors.green : Colors.red;
+    // }
 
     return Card(
       color: cardColor,
@@ -159,11 +157,11 @@ class _BetCardState extends State<BetCard> {
           leading: Icon(Icons.attach_money, size: 16),
           title: Text("Expected Wins: \$${bet.expectedEarning}", style: TextStyle(fontSize: 14)),
         ),
-        if (bet is IncompleteBets)
-          ListTile(
-            leading: Icon(Icons.thermostat, size: 16),
-            title: Text("Temperature: ${(bet as IncompleteBets).predictedTemp}", style: TextStyle(fontSize: 14)),
-          ),
+        // if (bet is IncompleteBets)
+        //   ListTile(
+        //     leading: Icon(Icons.thermostat, size: 16),
+        //     title: Text("Temperature: ${(bet as IncompleteBets).predictedTemp}", style: TextStyle(fontSize: 14)),
+        //   ),
       ],
     );
   }

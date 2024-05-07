@@ -1,5 +1,5 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
-import 'IncompleteBets.dart';
+import 'Bets.dart';
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -320,12 +320,12 @@ class BetsPageState extends State<BetsPage> {
                                         );
                                         // Place the bet
                                         if (uid != null) {
-                                          IncompleteBets bets = IncompleteBets(
+                                          Bets bets = Bets(
                                               _dayController.text, double.parse(
                                               _betAmountController.text), _winnings,
                                               _locationController.text, double.parse(
                                               _predictedTempController.text),
-                                              _selectedHour);
+                                              _selectedHour, false);
                                           setBet(bets);
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
@@ -389,4 +389,11 @@ class BetsPageState extends State<BetsPage> {
       ),
     );
   }
+}
+
+String getDate(int hour){
+  if(hour<10){
+    return "0${hour}:00";
+  }
+  return "${hour}:00";
 }
