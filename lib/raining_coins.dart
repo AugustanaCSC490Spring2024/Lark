@@ -70,8 +70,6 @@ class _RainingCoinsState extends State<RainingCoins>
 
   void _createCoin() {
     double randomLeft = Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
-    double randomRotation = Random().nextDouble();
-
     int randDuration = Random().nextInt(6) + 2;
     Duration coinDuration = Duration(seconds: randDuration);
 
@@ -131,7 +129,9 @@ class _RainingCoinsState extends State<RainingCoins>
   void _removeCoin(AnimationController controller) {
     setState(() {
       _coinAnimationControllers.remove(controller);
+
     });
+    controller.dispose();
   }
 
   @override
@@ -145,7 +145,7 @@ class _RainingCoinsState extends State<RainingCoins>
               top: coin.topAnimation.value * MediaQuery.of(context).size.height,
               left: coin.horizontalPosition,
               child: Transform.rotate(
-                angle: coin.rotationAnimation.value * 2 * pi,
+                angle: coin.rotationAnimation.value * 5 * pi,
                 child: child,
               ),
             );

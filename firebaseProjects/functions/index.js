@@ -17,9 +17,11 @@ admin.initializeApp({});
 const db = admin.firestore();
 
 
-exports.helloWorld = onRequest(async (request, response) => {
+exports.betsChecker = onRequest(async (request, response) => {
   try{
     checkIfBetsCompleted();
+    checkPoolsBets();
+
     const dt = getDateTime()
     response.send("success date: " + dt[0] + "time: " + dt[1] );
     
@@ -105,6 +107,8 @@ async function checkIfBetsCompleted() {
      
     }
 }
+
+
 
 
 function deleteBet(userid,docid){
@@ -213,31 +217,27 @@ function getTempForSpecificBet(zipcode) {
 
 
 
-async function getIncompletePool(){
+async function checkPoolsBets(){
 
-  const incompletePoolRef =await db.collection("Pool").get();
+  const incompletePoolRef = await db.collection("Pool").get();
   console.log("Incomplete pools info: \n")
 
   const date = getDateTime();
     const currentDate = date[0]; // Get the current date
     const currentTime = date[1]; // Get the current time
 
-  
-
   incompletePoolRef.docs.forEach(async doc => {
 
     
     var poolInfo = doc.data();
 
-    if(currentDate == poolInfo["date"] && currentTime == poolInfo["time"]){ 
+    
+    if(currentDate == poolInfo["date"]  && currentTime == poolInfo["time"]    ){ 
 
     const zipcode = poolInfo["zipCode"]
     var allBets = poolInfo["userTemp"]
     var sortedBets = await sortMap(zipcode, allBets)
     var allWinners = await findMin(sortedBets)
-
-    console.log("All winners: ")
-    console.log(allWinners)
 
       if(allWinners != null){
         var winnings = poolInfo["totalWins"]
@@ -248,18 +248,29 @@ async function getIncompletePool(){
         for(var winners of allWinnersKeys) {
           console.log("Winner id: " + winners)
           editCoins(winnings,winners)
+          allWinners.set(winners, winnings); 
         }
+
+
       }else{
         console.log("No winnes at the map is empty after sorting and finding min")
       }
 
+      console.log("All the winners information: ")
+      console.log(allWinners)
+      
+      await moveToCompletePool(allWinners, poolInfo , winnings)
+
+      console.log("Deleting the bet now: ")
       console.log("Doc id: " + doc.id)
-      moveToCompletePool(allWinners, poolInfo)
-     // db.delete(doc)
+      await db.collection("Pool").doc(doc.id).delete()
+
+      
     }else{
 
       console.log("For bet id: " + doc.id + " bets time has not matched")
-      confirm.log("Given data: " + poolInfo["date"] + " Time is : " + poolInfo["time"])
+      console
+      .log("Given data: " + poolInfo["date"] + " Time is : " + poolInfo["time"])
     }
 
   });
@@ -267,11 +278,7 @@ async function getIncompletePool(){
 
 function moveToCompletePool(winner, poolInfo){
 
-  console.log("Printing winners in completed pool")
-  console.log(winner)
-
   const winnerData = Object.fromEntries(winner);
-
 
   db.collection("CompletedPools").add({
     "winners": winnerData,
@@ -282,6 +289,7 @@ function moveToCompletePool(winner, poolInfo){
    "userTemp" : poolInfo["userTemp"],
    "zipCode": poolInfo["zipCode"],
   })
+
 
 }
 
@@ -332,5 +340,4 @@ async function findMin(map) {
 
 
 
-
-getIncompletePool()
+checkPoolsBets()

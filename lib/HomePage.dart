@@ -120,7 +120,7 @@ class _BetCardState extends State<BetCard> {
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else if (widget.bet is CompleteBets) {
       CompleteBets completeBet = widget.bet as CompleteBets;
-      titleText = completeBet.zipCode;
+      titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
       additionalInfo = _buildAdditionalInfo(completeBet);
       cardColor = completeBet.result ? Colors.green : Colors.red;
     }

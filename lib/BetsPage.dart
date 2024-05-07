@@ -1,5 +1,4 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
-import 'package:flutter/widgets.dart';
 import 'IncompleteBets.dart';
 import 'logo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,34 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
 import 'HomePage.dart' ;
 import 'coin_effect.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
-
-
-void main() {
-
-}
-
 
 class BetsPage extends StatefulWidget {
   const BetsPage({Key? key}) : super(key: key);
 
   @override
   BetsPageState createState() => BetsPageState();
-
 }
 
-
 class BetsPageState extends State<BetsPage> {
-  final List<String> images = [
-    'Icon-192.png',
-    'Icon-512.png',
-    'Icon-192.png',
-    // Add more image paths as needed
-  ];
   TextEditingController _locationController = TextEditingController();
   TextEditingController _dayController = TextEditingController();
   TextEditingController _predictedTempController = TextEditingController();
@@ -56,37 +42,51 @@ class BetsPageState extends State<BetsPage> {
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-
           child: child!,
-
         );
       },
-
     );
 
     if (picked != null) {
       setState(() {
         _selectedHour = getDate(picked.hour);
-        //_selectedTime = picked;
       });
     }
+  }
 
+  //location images
+  List<String> _imageUrls = [];
+  Future<void> fetchImages(String location) async {
+    final response = await http.get(Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$location&radius=5000&type=point_of_interest&key=YOUR_API_KEY'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        _imageUrls.clear();
+        for (final result in data['results']) {
+          _imageUrls.add(result['urls']['regular']);
+        }
+      });
+    } else {
+      throw Exception('Failed to load images');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CustomAppBar(leading: GestureDetector(
-        onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },
-        child: TopLeftLogo(),
-      )),
-
+      appBar: CustomAppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+          child: const TopLeftLogo(),
+        ),
+      ),
       backgroundColor: Colors.transparent,
       body: Form(
         key: _formKey,
@@ -159,310 +159,200 @@ class BetsPageState extends State<BetsPage> {
 
                       ),
                     ),
-                    SizedBox(width: screenSize.width * 0.05),
                     SizedBox(
                       width: screenSize.width * 0.3,
                       child: TextFormField(
-                        controller: _dayController,
+                        controller: _predictedTempController,
                         decoration: const InputDecoration(
-                          labelText: 'Day',
                           border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.calendar_today),
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                         ),
-                        readOnly: true,
-                        onTap: () async{
-                          final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
-                          final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 6));
-
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: tomorrow,
-                            firstDate: tomorrow,
-                            lastDate: maxSelectableDate,
-                          );
-                          if (picked != null){
-                            String date = picked.toString();
-                            date = date.substring(0,10);
-                            _dayController.text = date;
-                          }
-                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please select a date';
+                            return 'Please enter the predicted temperature';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Please enter a valid number';
                           }
                           return null;
                         },
                       ),
                     ),
-
-                  ],
-                ),
-                SizedBox(height: screenSize.height * 0.05),
-                // TextFormField(
-                // controller: _timeController,
-                // decoration: const InputDecoration(
-                // labelText: 'Time',
-                // border: OutlineInputBorder(),
-                // suffixIcon: Icon(Icons.access_time),
-                // contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                // ),
-                // readOnly: true,
-                // onTap: () async {
-                // _selectTime();
-                // },
-                // validator: (value) {
-                // if (_selectedTime == null) {
-                // return 'Please select a time';
-                // }
-                // return null;
-                // },
-                // ),
-
-                // Display the time picker
-                ElevatedButton(
-                  onPressed: () {
-                    _selectTime();
-                  },
-                  child: Text("selected time: $_selectedHour"),
-                ),
-
-                // Validator for the time picker
-                if (_selectedHour == null && _formKey.currentState != null)
-                  Text(
-                    'Please select a time',
-                    style: TextStyle(color: Colors.red),
-                  ),
-
-                SizedBox(height: screenSize.height * 0.02),
-                Text(
-                  'The selected hour is according UTC timezone(24hr format): $_selectedHour',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: screenSize.height * 0.05),
-                const Text(
-                  'What do we predict the temperature will be?',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                SizedBox(
-                  width: screenSize.width * 0.3,
-                  child: TextFormField(
-                    controller: _predictedTempController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    const Text(
+                      'How much do you want to bet?',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the predicted temperature';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'Please enter a valid number';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                    SizedBox(
+                        width: screenSize.width * 0.5,
+                        child: FutureBuilder<double>(
+                            future: getUserMoney(),
+                            builder: (context, snapshot){
+                              if(snapshot.connectionState == ConnectionState.waiting){
+                                return Container();
+                              } else if(snapshot.hasError){
+                                return Text("Error: ${snapshot.error}");
+                              }else{
+                                double currentBalance = snapshot.data ?? 0.0;
 
-                const Text(
-                  'How much do you want to bet?',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                                return TextFormField(
+                                  controller: _betAmountController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                    prefixIcon: Icon(Icons.attach_money),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter the amount you want to bet';
+                                    }
+                                    double betAmount = double.tryParse(value) ?? 0.0;
+                                    if (betAmount > currentBalance){
+                                      return 'Insufficient balance. Please top up your account';
+                                    }
+                                    return null;
+                                  },
+                                );
+                              }
+                            }
+                        )
+                    ),
+                    SizedBox(height: 20.0),
+                    Row(
+                      children: [
+                        Text(
+                          'Your potential winnings are: ',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10.0),
+                        ElevatedButton(onPressed: () async {
+                          double winnings = await getExpectedWins(_locationController.text, _dayController.text,  int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                          ) as double;
+                          setState(() {
+                            _winnings = winnings;
+                          });
+                        },
+                            child:const Text('Calculate Winnings')),
+                        SizedBox(width: 10.0),
+                        Text(
+                          'Winnings: $_winnings', // Display the calculated winnings
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          if (_selectedHour == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Please select a time')),
+                            );
+                          }
+                          else {
+                            double winnings = await getExpectedWins(_locationController.text, _dayController.text, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                            ) as double;
+                            setState(() {
+                              _winnings = winnings;
+                            });
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirm Bet"),
+                                  content: Text(
+                                      "Are you sure you want to place the bet?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        // Show a snackbar while processing the bet
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text('Processing Bet...')),
+                                        );
+                                        // Place the bet
+                                        if (uid != null) {
+                                          IncompleteBets bets = IncompleteBets(
+                                              _dayController.text, double.parse(
+                                              _betAmountController.text), _winnings,
+                                              _locationController.text, double.parse(
+                                              _predictedTempController.text),
+                                              _selectedHour);
+                                          setBet(bets);
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  Text('You successfully placed a bet!'),
+                                                  SizedBox(width: 8),
+                                                  Visibility(
+                                                    visible: _showCoinEffect,
+                                                    child: coinEfffect(),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ).closed.then((_) {
+                                            // Delay setting _showCoinEffect to true
+                                            print("Before setting _showCoinEffect: $_showCoinEffect");
+                                            Future.delayed(Duration(seconds: 2), () {
+                                              print("Setting _showCoinEffect to true");
+                                              setState(() {
+                                                _showCoinEffect = true;
+                                              });
+                                            });
+                                          });
 
-                SizedBox(
-                    width: screenSize.width * 0.5,
-                    child: FutureBuilder<double>(
-                        future: getUserMoney(),
-                        builder: (context, snapshot){
-                          if(snapshot.connectionState == ConnectionState.waiting){
-                            return Container();
-                          } else if(snapshot.hasError){
-                            return Text("Error: ${snapshot.error}");
-                          }else{
-                            double currentBalance = snapshot.data ?? 0.0;
-
-                            return TextFormField(
-                              controller: _betAmountController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                                prefixIcon: Icon(Icons.attach_money),
-
-
-
-                              ),
-
-                              validator: (value) {
-
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter the amount you want to bet';
-                                }
-                                double betAmount = double.tryParse(value) ?? 0.0;
-                                if (betAmount > currentBalance){
-                                  return 'Insufficient balance. Please top up your account';
-                                }
-                                return null;
+                                          _locationController.clear();
+                                          _dayController.clear();
+                                          _predictedTempController.clear();
+                                          _betAmountController.clear();
+                                          _winnings = 0.0;
+                                          _selectedHour = "";
+                                        } else {
+                                          print("NO UID!");
+                                        }
+                                      },
+                                      child: Text("Place Bet"),
+                                    ),
+                                  ],
+                                );
                               },
                             );
                           }
                         }
-                    )
-
-                ),
-
-
-                SizedBox(height: 20.0),
-
-                Row(
-                  children: [
-                    Text(
-                      'Your potential winnings are: ',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 10.0),
-                    ElevatedButton(onPressed: () async {
-
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text,  int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
-                        ) as double;
-                        setState(() {
-                          _winnings = winnings;
-                        });
-                    },
-                        child:const Text('Calculate Winnings')),
-                    SizedBox(width: 10.0),
-                    Text(
-                      'Winnings: $_winnings', // Display the calculated winnings
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      },
+                      child: Text('Place Bets'),
                     ),
                   ],
                 ),
 
 
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      if (_selectedHour == null) {
-                        // Show an error message if time is not selected
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please select a time')),
-                        );
-                      }
-                      else {
-                        double winnings = await getExpectedWins(_locationController.text, _dayController.text, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
-                        ) as double;
-                        setState(() {
-                          _winnings = winnings;
-                        });
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Confirm Bet"),
-                              content: Text(
-                                  "Are you sure you want to place the bet?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("Cancel"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    // Show a snackbar while processing the bet
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text('Processing Bet...')),
-                                    );
-                                    // Place the bet
 
-                                    if (uid != null) {
-                                      print(uid);
-                                      IncompleteBets bets = IncompleteBets(
-                                          _dayController.text, double.parse(
-                                          _betAmountController.text), _winnings,
-                                          _locationController.text, double.parse(
-                                          _predictedTempController.text),
-                                          _selectedHour);
-                                      setBet(bets);
-                                      // print('before effect');
-                                       Positioned.fill(child: coinEfffect());
-                                      // print('after effect');
-
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Row(
-                                            children: [
-                                              Text('You successfully placed a bet!'),
-                                              SizedBox(width: 8), // Adjust spacing between text and coin effect
-                                              Visibility(
-                                                visible: _showCoinEffect,
-                                                child: coinEfffect(), // Replace coinEffect() with your actual coin effect widget
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ).closed.then((_) {
-                                        // Delay setting _showCoinEffect to true
-                                        Future.delayed(Duration(seconds: 2), () {
-                                          setState(() {
-                                            _showCoinEffect = true;
-                                          });
-                                        });
-                                      });
+          // Add coinEfffect widget to the Stack if _showCoinEffect is true
+          // Display the coin effect
 
 
-                                      _locationController.clear();
-                                      _dayController.clear();
-                                      _predictedTempController.clear();
-                                      _betAmountController.clear();
-                                      _winnings = 0.0;
-                                      _selectedHour = "";
-                                    } else {
-                                      print("NO UID!");
-                                    }
-                                  },
-                                  child: Text("Place Bet"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    }
-                  },
-                  child: Text('Place Bets'),
-                ),
-
-
-
-              ],
-            ),
-
-          ),
+        ],
         ),
+        ),
+    ),
+
       ),
     );
   }
 }
-
-
-
-
