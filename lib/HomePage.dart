@@ -112,16 +112,16 @@ class _BetCardState extends State<BetCard> {
     String titleText = "";
     Widget? additionalInfo;
 
-    // if (widget.bet is IncompleteBets) {
-    //   IncompleteBets incompleteBet = widget.bet as IncompleteBets;
-    //   titleText = incompleteBet.zipCode;
-    //   additionalInfo = _buildAdditionalInfo(incompleteBet);
-    // } else if (widget.bet is CompleteBets) {
-    //   CompleteBets completeBet = widget.bet as CompleteBets;
-    //   titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
-    //   additionalInfo = _buildAdditionalInfo(completeBet);
-    //   cardColor = completeBet.result ? Colors.green : Colors.red;
-    // }
+    if (isIncompleteBet(widget.bet)) {
+      titleText = widget.bet.zipCode;
+      Bets incompleteBet= widget.bet;
+      additionalInfo = _buildAdditionalInfo(incompleteBet);
+    } else  {
+      Bets completeBet = widget.bet;
+      titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
+      additionalInfo = _buildAdditionalInfo(completeBet);
+      cardColor = completeBet.result ? Colors.green : Colors.red;
+    }
 
     return Card(
       color: cardColor,
@@ -157,13 +157,16 @@ class _BetCardState extends State<BetCard> {
           leading: Icon(Icons.attach_money, size: 16),
           title: Text("Expected Wins: \$${bet.expectedEarning}", style: TextStyle(fontSize: 14)),
         ),
-        // if (bet is IncompleteBets)
-        //   ListTile(
-        //     leading: Icon(Icons.thermostat, size: 16),
-        //     title: Text("Temperature: ${(bet as IncompleteBets).predictedTemp}", style: TextStyle(fontSize: 14)),
-        //   ),
+        if(isIncompleteBet(bet))
+          ListTile(
+            leading: Icon(Icons.thermostat, size: 16),
+            title: Text("Temperature: ${bet.predictedTemp}", style: TextStyle(fontSize: 14)),
+          ),
       ],
     );
   }
 }
 
+bool isIncompleteBet(Bets bet){
+  return !bet.result && bet.expectedEarning!=0;
+}

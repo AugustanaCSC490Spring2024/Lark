@@ -33,7 +33,7 @@ class Bets {
     return Bets(
         data?['date'] ?? "",
         data?['wager'] ?? 0.0,
-        data?['expectedEarning'] ?? 0.0,
+        data?['expectedEarning'] ?? data?['winnings'],
         data?['zipCode'] ?? "", // Providing a default value if data is null
         data?['predictedTemp'] ?? 0, // Providing a default value if data is null
         data?['timeOfWager'] ?? "",
