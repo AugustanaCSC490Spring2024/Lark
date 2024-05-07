@@ -92,7 +92,7 @@ Future<List<Bets>> getIncompleteBets(){
   return getBetsHelper("Incomplete Bets");
 }
 
-Future<List<Bets>> getCompletBets(){
+Future<List<Bets>> getCompleteBets(){
   return getBetsHelper("Complete Bets");
 }
 
