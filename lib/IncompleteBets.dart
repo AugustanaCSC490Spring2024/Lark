@@ -68,7 +68,8 @@ String getDate(int hour){
 }
 
 Future<double> getExpectedWins(String zipCode, String day, int money, double predictedTemp) async{
-   Map<String, String> map = await getDayTemp(zipCode);
+  var dataInfo = await getDayTemp(zipCode);
+   Map<String, String> map = dataInfo[0];
    day = day + map.keys.first.substring(10);
    String? temp = map[day];
    double zScore = (predictedTemp - double.parse(temp!))/4;

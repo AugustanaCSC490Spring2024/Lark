@@ -1,12 +1,16 @@
-// sources : https://pub.dev/packages/intl
-// https://stackoverflow.com/questions/67719259/how-to-render-full-html-document-with-flutter-html-package
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:larkcoins/Test.dart';
 import 'WebApiForWeather.dart';
+import 'WeatherPredictionPageHandler.dart';
+
 
 class WeatherForecast {
   final DateTime date;
   final String temperature;
+
 
   WeatherForecast({required this.date, required this.temperature});
 }
@@ -20,7 +24,8 @@ class WeatherPredictionPage extends StatefulWidget {
 
 class WeatherPredictionPageState extends State<WeatherPredictionPage> {
   List<WeatherForecast> forecasts = [];
-  TextEditingController _locationController = TextEditingController(text: '61201');
+  TextEditingController _locationController = TextEditingController();
+  
 
   @override
   void initState() {
@@ -48,12 +53,14 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                     suffixIcon: IconButton(
                       icon: Icon(Icons.search),
                       onPressed: () async {
-                        await _fetchWeatherForecasts();
+                        showSearchedDataInformation(context, _locationController.text);
+                       // await _fetchWeatherForecasts();
                       },
                     ),
                   ),
                 ),
               ),
+
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: forecasts.length,
@@ -95,9 +102,65 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
   }
 
 
-  Future<void> _fetchWeatherForecasts() async {
+
+
+showSearchedDataInformation(BuildContext context, String zipcode) async {
+
+  if (_locationController.text != null) {
+    var dataInfo = await getDayTemp(_locationController.text);
+    Map<String, String> temperatureInformation = dataInfo[0];
+    var location = dataInfo[1];
+    DateTime dt = DateTime.now();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        var screenSize = MediaQuery.of(context).size;
+        return Dialog(
+          child: Container(
+            width: screenSize.width,
+            height: screenSize.height * 0.9,
+            // Container properties and child widgets
+            child: Column(
+              children: [
+                Text(
+                  location + "\n" + dt.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: temperatureInformation.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      var key = temperatureInformation.keys.elementAt(i);
+                      var value = temperatureInformation[key];
+                      return ListTile(
+                        title: Text('$key: $value'),
+                      );
+                    },
+                  ),
+                ),
+                 ElevatedButton(
+                  onPressed: t ,
+                  child: Text("Add To Watch List"),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+t(){}
+
+Future<void> _fetchWeatherForecasts() async {
     try {
-      Map<String, String> data = await getDayTemp(_locationController.text);
+      var dataList = await getDayTemp(_locationController.text);
+      Map<String, String> data = dataList[0];
       setState(() {
         forecasts = data.entries
             .map((entry) => WeatherForecast(date: DateTime.parse(entry.key), temperature: entry.value))
@@ -108,7 +171,13 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
     }
   }
 
+
   String _formatDate(DateTime date) {
     return DateFormat('EEEE MMMM d, yyyy').format(date);
   }
+
+
+
+
+
 }
