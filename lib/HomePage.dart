@@ -80,70 +80,7 @@ class BetList extends StatelessWidget {
   }
 }
 
-// class _BetCardState extends State<BetCard> {
-//   bool _isExpanded = false;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     Color cardColor = Colors.blue;
-//     String titleText = "";
-//     Widget? additionalInfo;
-//
-//     if (isIncompleteBet(widget.bet)) {
-//       titleText = widget.bet.zipCode;
-//       Bets incompleteBet= widget.bet;
-//       additionalInfo = _buildAdditionalInfo(incompleteBet);
-//     } else  {
-//       Bets completeBet = widget.bet;
-//       titleText = completeBet.result? completeBet.expectedEarning.toString(): (-completeBet.wager).toString();
-//       additionalInfo = _buildAdditionalInfo(completeBet);
-//       cardColor = completeBet.result ? Colors.green : Colors.red;
-//     }
 
-
-//     return Card(
-//       color: cardColor,
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-//       elevation: 3,
-//       child: ExpansionTile(
-//         title: Text(
-//           titleText,
-//           style: TextStyle(fontWeight: FontWeight.bold),
-//         ),
-//         onExpansionChanged: (value) {
-//           setState(() {
-//             _isExpanded = value;
-//           });
-//         },
-//         children: [
-//           additionalInfo ?? SizedBox.shrink(),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildAdditionalInfo(Bets bet) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         SizedBox(height: 8),
-//         ListTile(
-//           leading: Icon(Icons.access_time, size: 16),
-//           title: Text("Time: ${bet.date}", style: TextStyle(fontSize: 14)),
-//         ),
-//         ListTile(
-//           leading: Icon(Icons.attach_money, size: 16),
-//           title: Text("Expected Wins: \$${bet.expectedEarning}", style: TextStyle(fontSize: 14)),
-//         ),
-//         if(isIncompleteBet(bet))
-//           ListTile(
-//             leading: Icon(Icons.thermostat, size: 16),
-//             title: Text("Temperature: ${bet.predictedTemp}", style: TextStyle(fontSize: 14)),
-//           ),
-//       ],
-//     );
-//   }
-// }
 
 class BetCard extends StatelessWidget {
   final Bets bet;

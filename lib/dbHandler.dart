@@ -141,12 +141,25 @@ Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money)
 }
 
 Future<Map<String, BetsPool>> getBetPools() async{
+  return await getBetPoolsHelper("Incomplete Pool");
+}
+
+Future<Map<String, BetsPool>> getCompletedPools() async{
+  Map<String, BetsPool> pool = await getBetPoolsHelper("Complete Pool");
+  for(String bet in pool.keys){
+    if(!hasParticipatedInPool(pool[bet]!)){
+      pool.remove(bet);
+    }
+  }
+  return pool;
+}
+Future<Map<String, BetsPool>> getBetPoolsHelper(String poolType) async{
   Map<String, BetsPool> pool= {};
 
   try {
     // Get a reference to the bets collection
     CollectionReference poolCollection = FirebaseFirestore.instance
-        .collection("Pool");
+        .collection(poolType);
 
     // Get all documents from the collection
     QuerySnapshot querySnapshot = await poolCollection.get();
