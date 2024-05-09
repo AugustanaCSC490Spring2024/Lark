@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:larkcoins/Test.dart';
 import 'WebApiForWeather.dart';
-import 'WeatherPredictionPageHandler.dart';
+import 'dbHandler.dart';
 
 
 class WeatherForecast {
   final DateTime date;
   final String temperature;
+  final String location;
 
+  WeatherForecast({required this.date, required this.temperature, required this.location});
 
-  WeatherForecast({required this.date, required this.temperature});
 }
 
 class WeatherPredictionPage extends StatefulWidget {
@@ -23,14 +24,16 @@ class WeatherPredictionPage extends StatefulWidget {
 }
 
 class WeatherPredictionPageState extends State<WeatherPredictionPage> {
-  List<WeatherForecast> forecasts = [];
+
+  List<String> forecasts = [];
   TextEditingController _locationController = TextEditingController();
   
-
+  Map<String, String> watchlist = {}; 
   @override
-  void initState() {
+  initState()  {
     super.initState();
-    _fetchWeatherForecasts();
+    watchlistForcastDispaly();
+
   }
 
   @override
@@ -53,20 +56,31 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                     suffixIcon: IconButton(
                       icon: Icon(Icons.search),
                       onPressed: () async {
-                        showSearchedDataInformation(context, _locationController.text);
-                       // await _fetchWeatherForecasts();
+                        await showSearchedDataInformation(context, _locationController.text, false);
+                        setState(() {});
                       },
                     ),
                   ),
                 ),
               ),
-
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: forecasts.length,
                 itemBuilder: (context, index) {
-                  WeatherForecast forecast = forecasts[index];
-                  return Card(
+                  String forecast = forecasts[index];
+
+                  return GestureDetector(
+                  onTap: () async {
+                          var zipcode;
+                          watchlist.forEach((key, value) {
+                            if (value == forecast) {
+                              zipcode = key;
+                            }
+                          }); 
+                           await showSearchedDataInformation (context, zipcode,true);
+                          },
+                
+                  child: Card(
                     elevation: 4,
                     margin: EdgeInsets.all(10),
                     child: Padding(
@@ -75,22 +89,23 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '${_formatDate(forecast.date)}',
+                            forecast.toString(),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Average Temperature: ${forecast.temperature}',
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+                        ElevatedButton(
+                            onPressed: () async {
+                              await deleteWatchlist(forecast);
+                              setState(() {});
+                            },
+                            child: Icon(Icons.delete_outline),
                           ),
                         ],
                       ),
                     ),
+                  )
                   );
                 },
               ),
@@ -101,13 +116,29 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
     );
   }
 
+deleteWatchlist(String zipcode) async{
+    print("Deleting");
+    print(zipcode);
+    watchlist.removeWhere((key, value) => value == zipcode);
+    addWatchlist(watchlist);
+    forecasts.remove(zipcode);
 
+}
 
+watchListUpdate(String zipcode, String location) async {
+    if(watchlist[zipcode] == null){
+      watchlist[zipcode] = location;
+    }else{
+      print("Nothing to update");
+    }
+      addWatchlist(watchlist);
+      await watchlistForcastDispaly();
+      Navigator.of(context).pop(); 
+}
 
-showSearchedDataInformation(BuildContext context, String zipcode) async {
-
-  if (_locationController.text != null) {
-    var dataInfo = await getDayTemp(_locationController.text);
+showSearchedDataInformation(BuildContext context, String zipcode, bool viewonly) async {
+  if (zipcode != null) {
+    var dataInfo = await getDayTemp(zipcode);
     Map<String, String> temperatureInformation = dataInfo[0];
     var location = dataInfo[1];
     DateTime dt = DateTime.now();
@@ -142,10 +173,22 @@ showSearchedDataInformation(BuildContext context, String zipcode) async {
                     },
                   ),
                 ),
-                 ElevatedButton(
-                  onPressed: t ,
-                  child: Text("Add To Watch List"),
-                )
+                
+                ElevatedButton(
+                      onPressed: () {
+                        if (viewonly) {
+                                Navigator.of(context).pop(); 
+                        }else{
+                          watchListUpdate(_locationController.text, location);
+
+                        }
+                      },
+                      child: viewonly
+                      ? Text("Cancle")
+                      : Text("Add To WatchList")
+
+                    )
+
               ],
             ),
           ),
@@ -155,29 +198,43 @@ showSearchedDataInformation(BuildContext context, String zipcode) async {
   }
 }
 
-t(){}
 
-Future<void> _fetchWeatherForecasts() async {
+
+
+Future<void> watchlistForcastDispaly() async {
+    await loadWatchlist();
     try {
-      var dataList = await getDayTemp(_locationController.text);
-      Map<String, String> data = dataList[0];
-      setState(() {
-        forecasts = data.entries
-            .map((entry) => WeatherForecast(date: DateTime.parse(entry.key), temperature: entry.value))
-            .toList();
-      });
+      var location = watchlist.values.toList();
+      forecasts = location;
+      print("Sucessfully loaded the location");
+      print("All locations");
+      print( forecasts.length);
     } catch (e) {
       print('Error fetching weather forecasts: $e');
     }
   }
 
 
+  Future<void> loadWatchlist() async {
+    Map<String, String> loadedWatchlist = await getWatchlist();
+    if (loadedWatchlist != null) {
+      setState(() {
+        watchlist = loadedWatchlist;
+      });
+      print("Sucessfully loaded watchlist");
+      print("Loaded watchlist size");
+      print(watchlist.length);
+    }else{
+      print("Wathcing list is null");
+    }
+  }
+
   String _formatDate(DateTime date) {
     return DateFormat('EEEE MMMM d, yyyy').format(date);
   }
 
-
-
-
-
 }
+
+
+
+ 
