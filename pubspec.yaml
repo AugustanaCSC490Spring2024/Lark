@@ -79,8 +79,14 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/coin.png
-
-
+    - assets/cloud.gif
+    - assets/cloud2.gif
+    - assets/cloud3.gif
+    - assets/cloud4.gif
+    - assets/cloud5.gif
+    - assets/cloud6.gif
+    - assets/cloud7.gif
+    - assets/cloud8.gif
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

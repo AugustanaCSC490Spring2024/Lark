@@ -341,14 +341,13 @@ class BetsPageState extends State<BetsPage> {
                                               ),
                                             ),
                                           ).closed.then((_) {
-                                            // Delay setting _showCoinEffect to true
-                                            print("Before setting _showCoinEffect: $_showCoinEffect");
-                                            Future.delayed(Duration(seconds: 2), () {
-                                              print("Setting _showCoinEffect to true");
-                                              setState(() {
-                                                _showCoinEffect = true;
+                                            if (mounted) {
+                                              Future.delayed(Duration(seconds: 2), () {
+                                                setState(() {
+                                                  _showCoinEffect = true;
+                                                });
                                               });
-                                            });
+                                            }
                                           });
 
                                           _locationController.clear();
@@ -377,12 +376,11 @@ class BetsPageState extends State<BetsPage> {
               ),
             ),
           ),
-          // Add coinEfffect widget to the Stack if _showCoinEffect is true
           if (_showCoinEffect)
             Positioned.fill(
               child: Align(
-                alignment: Alignment.topCenter, // Adjust alignment as needed
-                child: coinEfffect(), // Display the coin effect
+                alignment: Alignment.topCenter,
+                child: coinEfffect(),
               ),
             ),
         ],

@@ -72,7 +72,7 @@ class _RainingCoinsState extends State<RainingCoins>
     double randomLeft = Random().nextInt(MediaQuery.of(context).size.width.toInt()).toDouble();
     int randDuration = Random().nextInt(6) + 2;
     Duration coinDuration = Duration(seconds: randDuration);
-
+    print("coin created at ${randomLeft}");
     final AnimationController animationController = _createAnimationController(coinDuration);
 
     final topAnimation = _createTopAnimation(animationController);
@@ -92,7 +92,7 @@ class _RainingCoinsState extends State<RainingCoins>
 
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        _removeCoin(animationController);
+        _removeCoin(coin,animationController);
       }
     });
 
@@ -126,10 +126,12 @@ class _RainingCoinsState extends State<RainingCoins>
     });
   }
 
-  void _removeCoin(AnimationController controller) {
+  void _removeCoin(Coin coin, AnimationController controller) {
+    print("removeCoin for ${controller}");
+
     setState(() {
       _coinAnimationControllers.remove(controller);
-
+      coinList.remove(coin);
     });
     controller.dispose();
   }

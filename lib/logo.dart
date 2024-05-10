@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
+import 'dbHandler.dart';
 
 class TopLeftLogo extends StatelessWidget {
   const TopLeftLogo({Key? key}) : super(key: key);
