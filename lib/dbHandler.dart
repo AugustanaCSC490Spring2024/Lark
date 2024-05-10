@@ -141,6 +141,7 @@ Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money)
 
 }
 
+
 Future<Map<String, BetsPool>> getBetPools() async{
   return await getBetPoolsHelper("Incomplete Pool");
 }
@@ -195,15 +196,54 @@ Future<String> createPools(String zipCode, String date, String time,double temp,
     return "Max limit of Pools created";
   }
   addMoney(money*(-1));
-  BetsPool bp = BetsPool(zipCode, date, money, {uid!:money}, {uid:temp}, uid);
+  BetsPool bp = BetsPool(zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
   await docRef.add(bp.toFirestore());
   return "Bets Pool Created";
 
 
 }
 
+Future<void> addWatchlist(Map<String, String> zipcodes) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+   String uid = user.uid;
+    var watchlistRef = FirebaseFirestore.instance.collection("Users").doc(uid);
+    // Add the list of zipcodes as a field in the document
+    await watchlistRef.update({"Watchlist": zipcodes});
+    print("Watchlist added successfully for user with UID: $uid");
+  } else {
+    print("User is not authenticated");
+  }
+}
 
 
 
 
+Future<Map<String, String>> getWatchlist() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    String uid = user.uid;
+    var watchlistRef = FirebaseFirestore.instance.collection("Users").doc(uid);
+    // Retrieve the document data
+    var docSnapshot = await watchlistRef.get();
+    if (docSnapshot.exists) {
+      var docData = docSnapshot.data();
+      // Check if 'Watchlist' field exists in the document
+      if (docData != null && docData.containsKey('Watchlist')) {
+        // Extract and return the 'Watchlist' field value
+        var zipcodes = docData['Watchlist'];
+        return Map<String, String>.from(zipcodes);
+      } else {
+        print("Watchlist not found for user with UID: $uid");
+        return {};
+      }
+    } else {
+      print("Document not found for user with UID: $uid");
+      return {};
+    }
+  } else {
+    print("User is not authenticated");
+    return {};
+  }
 
+}

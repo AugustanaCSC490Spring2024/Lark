@@ -340,4 +340,3 @@ async function findMin(map) {
 
 
 
-checkPoolsBets()
