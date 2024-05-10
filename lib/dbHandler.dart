@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'Bets.dart';
 import 'BetsPool.dart';
 import 'package:larkcoins/dbHandler.dart';
@@ -181,7 +182,25 @@ bool hasParticipatedInPool(BetsPool bp){
 }
 
 
+Future<String> createPools(String zipCode, String date, String time,double temp, double money ) async{
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  double curUserMoney = await getUserMoney();
+  if(money>curUserMoney) {
+    return "Not enough Funds";
+  }
+  final docRef = FirebaseFirestore.instance.collection("Complete Pools");
+  final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
+  if(querySnapshot.docs.isNotEmpty) {
+    return "Max limit of Pools created";
+  }
+  addMoney(money*(-1));
+  BetsPool bp = BetsPool(zipCode, date, money, {uid!:money}, {uid:temp}, uid);
+  await docRef.add(bp.toFirestore());
+  return "Bets Pool Created";
 
+
+}
 
 
 

@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BetsPool{
   String zipCode;
   String date;
-  int totalWins;
+  double totalWins;
   Map<String,dynamic> userTemp;
   Map<String, dynamic> userMoney;
-
-  BetsPool(this.zipCode, this.date, this.totalWins, this.userMoney, this.userTemp){
+  String creator;
+  String time;
+  late Map<String, dynamic> winners;
+  BetsPool(this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator){
   }
 
   factory BetsPool.fromFirestore(
@@ -18,9 +20,11 @@ class BetsPool{
   return BetsPool(
     data?['zipCode'] ?? "",
     data?['date'] ?? "",
+    data?['time']?? '',
     data?['totalWins'] ?? 0,
     data?['userMoney'] ?? {},
     data?['userTemp']?? {},
+    data?['creator'] ?? "user1"
   );
 }
 
@@ -30,7 +34,9 @@ class BetsPool{
       "date": date,
       "totalWins": totalWins,
       "userMoney": userMoney,
-      "userTemp": userTemp
+      "userTemp": userTemp,
+      "creator": creator,
+      'time': time
     };
   }
 
