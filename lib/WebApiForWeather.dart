@@ -64,6 +64,7 @@ getData(String zipcode, String timeFrame) async{
 }
 
 
+//changed the function so that this can return a list instead of a map
 
 getDayTemp(String zipcode) async{
 
@@ -79,17 +80,13 @@ getDayTemp(String zipcode) async{
        var temperature = data["values"]["temperatureAvg"].toString();
        dataMap[time] = temperature;
     }
-    return dataMap;
+
+    var location = jsonFile["location"]["name"];
+
+    var dataList = [];
+    dataList.add(dataMap);
+    dataList.add(location);
+    return dataList;
 
 }
 
-
-
-void main() async{
-
-  //this is how you get the get daily temp predicted
-   Map<String,String> data = await getDayTemp("61201");
-
-   print("This is the size: " + data.length.toString());
-
-}
