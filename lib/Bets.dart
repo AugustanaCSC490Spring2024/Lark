@@ -11,7 +11,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
 
-class Bets {
+class Bets implements Comparable<Bets> {
   final String zipCode;
   final String date;
   final double predictedTemp;
@@ -54,6 +54,15 @@ class Bets {
       "userid": uid.toString(),
       "result": result
     };
+  }
+
+  @override
+  int compareTo(other) {
+    if(DateTime.parse(this.date).isBefore(DateTime.parse(other.date))){
+      return -1;
+    }else{
+      return 1;
+    }
   }
 }
 
