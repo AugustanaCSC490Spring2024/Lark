@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'BetsPool.dart';
 import 'dbHandler.dart';
-import 'logo.dart';
+import 'topNavigationBar.dart';
 
 class PoolPage extends StatefulWidget {
   const PoolPage({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class PoolPageState extends State<PoolPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        leading: TopLeftLogo(),
+        leading: TopNavigation(),
 
       ),
       body: Container(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'Bets.dart';
 import 'BetsPool.dart';
 import 'package:larkcoins/dbHandler.dart';
@@ -92,8 +93,9 @@ Future<List<Bets>> getIncompleteBets(){
   return getBetsHelper("Incomplete Bets");
 }
 
-Future<List<Bets>> getCompleteBets(){
-  return getBetsHelper("Complete Bets");
+Future<List<Bets>> getCompleteBets() async{
+  List<Bets> betList = await getBetsHelper("Complete Bets");
+  return betList.reversed.toList();
 }
 
 Future<List<Bets>> getBetsHelper(String betType) async {
@@ -122,7 +124,7 @@ Future<List<Bets>> getBetsHelper(String betType) async {
   } catch (e) {
     print("Error getting all bets: $e");
   }
-
+  betsList.sort();
   return betsList;
 }
 
@@ -182,13 +184,33 @@ bool hasParticipatedInPool(BetsPool bp){
 }
 
 
+Future<String> createPools(String zipCode, String date, String time,double temp, double money ) async{
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  double curUserMoney = await getUserMoney();
+  if(money>curUserMoney) {
+    return "Not enough Funds";
+  }
+  final docRef = FirebaseFirestore.instance.collection("Complete Pools");
+  final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
+  if(querySnapshot.docs.isNotEmpty) {
+    return "Max limit of Pools created";
+  }
+  addMoney(money*(-1));
+  BetsPool bp = BetsPool(zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
+  await docRef.add(bp.toFirestore());
+  return "Bets Pool Created";
+
+
+}
+
 Future<void> addWatchlist(Map<String, String> zipcodes) async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
    String uid = user.uid;
     var watchlistRef = FirebaseFirestore.instance.collection("Users").doc(uid);
     // Add the list of zipcodes as a field in the document
-    await watchlistRef.set({"Watchlist": zipcodes});
+    await watchlistRef.update({"Watchlist": zipcodes});
     print("Watchlist added successfully for user with UID: $uid");
   } else {
     print("User is not authenticated");

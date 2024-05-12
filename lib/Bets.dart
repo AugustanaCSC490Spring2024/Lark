@@ -11,7 +11,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final uid = user?.uid;
 
-class Bets {
+class Bets implements Comparable<Bets> {
   final String zipCode;
   final String date;
   final double predictedTemp;
@@ -52,13 +52,23 @@ class Bets {
       "expectedEarning": expectedEarning,
       "zipCode": zipCode,
       "userid": uid.toString(),
-      "reslut": result
+      "result": result
     };
+  }
+
+  @override
+  int compareTo(other) {
+    if(DateTime.parse(this.date).isBefore(DateTime.parse(other.date))){
+      return -1;
+    }else{
+      return 1;
+    }
   }
 }
 
 Future<double> getExpectedWins(String zipCode, String day, int money, double predictedTemp) async{
-  Map<String, String> map = await getDayTemp(zipCode);
+  List<dynamic> list1 = await getDayTemp(zipCode);
+  Map<String, String> map =list1.first;
   day = day + map.keys.first.substring(10);
   String? temp = map[day];
   double zScore = (predictedTemp - double.parse(temp!))/4;
