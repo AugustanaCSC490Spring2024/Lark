@@ -58,9 +58,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
       color: Colors.transparent,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align items to the ends
         children: [
           leading,
-          const SizedBox(width: 16),
           FutureBuilder<double>(
             future: getUserMoney(), // Fetch user's money from the database
             builder: (context, snapshot) {
@@ -72,9 +72,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 return Text('Error: ${snapshot.error}');
               } else {
                 // Once data is loaded, display the wallet
-                return Text(
-                  'Wallet: \$${snapshot.data}',
-                  style: TextStyle(fontSize: 18),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 16), // Add some space between wallet and right edge
+                  child: Text(
+                    'Wallet: \$${snapshot.data}',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 );
               }
             },
