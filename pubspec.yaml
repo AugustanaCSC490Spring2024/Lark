@@ -79,7 +79,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/coin.png
-
+    - assets/cloud7.gif
 
 
 
@@ -114,7 +114,9 @@ flutter:
     - family: Casino3D
       fonts:
         - asset: assets/Casino3DFilledMarquee.ttf
-
+    - family: Montserrat
+      fonts:
+        - asset: assets/Montserrat.ttf
 
 
 

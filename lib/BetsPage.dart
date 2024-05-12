@@ -1,6 +1,6 @@
 //sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
 import 'Bets.dart';
-import 'logo.dart';
+import 'topNavigationBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +84,7 @@ class BetsPageState extends State<BetsPage> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },
-          child: const TopLeftLogo(),
+          child: const TopNavigation(),
         ),
       ),
       backgroundColor: Colors.transparent,
@@ -103,6 +103,8 @@ class BetsPageState extends State<BetsPage> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+
                       ),
                     ),
                     SizedBox(height: 20),
@@ -183,12 +185,14 @@ class BetsPageState extends State<BetsPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
                       ),
                     ),
                     SizedBox(height: screenSize.height * 0.05),
                     const Text(
                       'What do we predict the temperature will be?',
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -215,6 +219,7 @@ class BetsPageState extends State<BetsPage> {
                     const Text(
                       'How much do you want to bet?',
                       style: TextStyle(
+                        fontFamily: 'Montserrat',
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -261,6 +266,8 @@ class BetsPageState extends State<BetsPage> {
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat',
+
                           ),
                         ),
                         SizedBox(width: 10.0),
@@ -278,6 +285,8 @@ class BetsPageState extends State<BetsPage> {
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat',
+
                           ),
                         ),
                       ],
@@ -342,14 +351,13 @@ class BetsPageState extends State<BetsPage> {
                                               ),
                                             ),
                                           ).closed.then((_) {
-                                            // Delay setting _showCoinEffect to true
-                                            print("Before setting _showCoinEffect: $_showCoinEffect");
-                                            Future.delayed(Duration(seconds: 2), () {
-                                              print("Setting _showCoinEffect to true");
-                                              setState(() {
-                                                _showCoinEffect = true;
+                                            if (mounted) {
+                                              Future.delayed(Duration(seconds: 2), () {
+                                                setState(() {
+                                                  _showCoinEffect = true;
+                                                });
                                               });
-                                            });
+                                            }
                                           });
 
                                           _locationController.clear();
@@ -378,12 +386,11 @@ class BetsPageState extends State<BetsPage> {
               ),
             ),
           ),
-          // Add coinEfffect widget to the Stack if _showCoinEffect is true
           if (_showCoinEffect)
             Positioned.fill(
               child: Align(
-                alignment: Alignment.topCenter, // Adjust alignment as needed
-                child: coinEfffect(), // Display the coin effect
+                alignment: Alignment.topCenter,
+                child: coinEfffect(),
               ),
             ),
         ],
