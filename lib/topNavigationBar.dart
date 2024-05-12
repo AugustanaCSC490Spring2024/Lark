@@ -17,8 +17,8 @@ class TopNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // the following two lines from chatgpt
-        Navigator.popUntil(context, (route) => route.isFirst); // Close all existing routes
-        Navigator.pushReplacementNamed(context, '/'); // Navigate to the home page
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, '/');
       },
       child: const Directionality(
         textDirection: TextDirection.ltr,
@@ -58,22 +58,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
       color: Colors.transparent,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align items to the ends
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           leading,
           FutureBuilder<double>(
-            future: getUserMoney(), // Fetch user's money from the database
+            future: getUserMoney(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                // While waiting for data, show a loading indicator
                 return CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                // If there's an error, display an error message
                 return Text('Error: ${snapshot.error}');
               } else {
-                // Once data is loaded, display the wallet
                 return Padding(
-                  padding: const EdgeInsets.only(right: 16), // Add some space between wallet and right edge
+                  padding: const EdgeInsets.only(right: 16),
                   child: Text(
                     'Wallet: \$${snapshot.data}',
                     style: TextStyle(fontSize: 18),

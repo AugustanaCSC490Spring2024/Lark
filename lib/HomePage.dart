@@ -14,19 +14,45 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Your Bets'),
-          bottom: TabBar(
-            tabs: [
-              Tab(text: 'Complete Bets'),
-              Tab(text: 'Incomplete Bets'),
-            ],
+        appBar: CustomAppBar(
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+            child: const TopNavigation(),
           ),
         ),
-        body: TabBarView(
+        body: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BetList(isComplete: true),
-            BetList(isComplete: false),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Your Bets',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TabBar(
+              tabs: [
+                Tab(text: 'Complete Bets'),
+                Tab(text: 'Incomplete Bets'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  BetList(isComplete: true),
+                  BetList(isComplete: false),
+                ],
+              ),
+            ),
           ],
         ),
       ),
