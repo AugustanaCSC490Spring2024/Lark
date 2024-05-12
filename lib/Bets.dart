@@ -52,13 +52,14 @@ class Bets {
       "expectedEarning": expectedEarning,
       "zipCode": zipCode,
       "userid": uid.toString(),
-      "reslut": result
+      "result": result
     };
   }
 }
 
 Future<double> getExpectedWins(String zipCode, String day, int money, double predictedTemp) async{
-  Map<String, String> map = await getDayTemp(zipCode);
+  List<dynamic> list1 = await getDayTemp(zipCode);
+  Map<String, String> map =list1.first;
   day = day + map.keys.first.substring(10);
   String? temp = map[day];
   double zScore = (predictedTemp - double.parse(temp!))/4;

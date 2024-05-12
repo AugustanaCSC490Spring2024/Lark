@@ -327,6 +327,7 @@ class BetsPageState extends State<BetsPage> {
                                               _predictedTempController.text),
                                               _selectedHour, false);
                                           setBet(bets);
+                                          print("bets stored");
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
                                               content: Row(
