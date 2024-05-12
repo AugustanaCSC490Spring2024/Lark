@@ -86,11 +86,10 @@ async function checkIfBetsCompleted() {
               console.log("Actual temp: " + parseInt(actualTemp).toString())
 
               console.log("Bets exactly matched.");
-              changeBetsStatus(bet, true);
-
+              changeBetsStatus(bet, true, actualTemp);
 
             }else{
-              changeBetsStatus(bet, false);
+              changeBetsStatus(bet, false, actualTemp);
 
               console.log("Wrong prediction");
               console.log("Predicted temp: " +bet["predictedTemp"]);
@@ -118,11 +117,10 @@ function deleteBet(userid,docid){
   console.log("Sucessfully deleted bet")
 }
 
-function changeBetsStatus(bet , betsMatched){
+function changeBetsStatus(bet , betsMatched , actualtemp){
 
   var winnings = 0;
   var userid = bet["userid"];
-
 
   if(betsMatched){
     winnings = bet["expectedEarning"];
@@ -139,6 +137,7 @@ function changeBetsStatus(bet , betsMatched){
       "wager": bet["wager"],
       "timeOfWager": bet["timeOfWager"],
       "zipCode": bet["zipCode"],
+      "actualTemp": actualtemp,
       "result": betsMatched,
     }
     
