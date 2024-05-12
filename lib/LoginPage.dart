@@ -80,7 +80,6 @@ class _PageState extends State<Page> {
               ),
             ),
             padding: const EdgeInsets.all(20.0),
-
           ),
 
           Positioned(

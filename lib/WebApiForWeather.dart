@@ -24,7 +24,7 @@ getApiJson(String url) async {
 
 getMinutelyData(String zipcode) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
 
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
@@ -46,7 +46,7 @@ getMinutelyData(String zipcode) async{
 //4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG
 getData(String zipcode, String timeFrame) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['minutely'];
@@ -68,7 +68,7 @@ getData(String zipcode, String timeFrame) async{
 
 getDayTemp(String zipcode) async{
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['daily'];
@@ -90,3 +90,37 @@ getDayTemp(String zipcode) async{
 
 }
 
+
+getBackGroundImageUrl(String zipcode) async {
+
+    var apiUrl = "https://api.tomorrow.io/v4/weather/realtime?location=$zipcode&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
+    var response = await getApiJson(apiUrl);
+    Map<String, dynamic>  jsonFile = json.decode(response);
+    var values = jsonFile['data']['values'];
+    var timeNow = DateTime.now();
+    var currentHour = timeNow.hour;
+    var dayNight = '';
+    var night = false;
+
+
+    if (currentHour >= 18 || currentHour < 5) {
+        dayNight = 'night';
+        night = true;
+      } 
+
+      if (values['snowIntensity'] > 0) {
+      return ['snowy.png', 'Snowy', Color.fromRGBO(255, 255, 255, 0.2)]; // White with 80% opacity
+    } else if (values['rainIntensity'] > 1) {
+      return ['rainy.png', 'Rainy', Color.fromRGBO(95, 95, 95, 0.2)]; // Dark gray with 50% opacity
+    } else if (values['cloudCover'] > 25) {
+      var url = dayNight + 'cloudy.png';
+      var color = night ? Color.fromRGBO(77, 77, 77, 0.25) : Color.fromRGBO(137, 168, 225, 0.498); // Dark blue with 50% opacity or light gray with 50% opacity
+      return [url, 'Cloudy', color];
+    } else {
+      var url = dayNight + 'sunny.png';
+      var color = night ? Color.fromRGBO(51, 51, 51, 0.2) : Color.fromRGBO(177, 208, 239, 0.349); // Dark blue with 50% opacity or light gray with 50% opacity
+      return [url, 'Clear Sky', color];
+    }
+
+
+}
