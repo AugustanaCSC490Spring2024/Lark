@@ -93,8 +93,9 @@ Future<List<Bets>> getIncompleteBets(){
   return getBetsHelper("Incomplete Bets");
 }
 
-Future<List<Bets>> getCompleteBets(){
-  return getBetsHelper("Complete Bets");
+Future<List<Bets>> getCompleteBets() async{
+  List<Bets> betList = await getBetsHelper("Complete Bets");
+  return betList.reversed.toList();
 }
 
 Future<List<Bets>> getBetsHelper(String betType) async {
@@ -123,7 +124,7 @@ Future<List<Bets>> getBetsHelper(String betType) async {
   } catch (e) {
     print("Error getting all bets: $e");
   }
-
+  betsList.sort();
   return betsList;
 }
 
