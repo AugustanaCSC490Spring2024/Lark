@@ -8,7 +8,6 @@ import 'package:larkcoins/dbHandler.dart';
 import 'HomePage.dart' ;
 import 'coin_effect.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
@@ -54,23 +53,7 @@ class BetsPageState extends State<BetsPage> {
     }
   }
 
-  //location images
-  List<String> _imageUrls = [];
-  Future<void> fetchImages(String location) async {
-    final response = await http.get(Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$location&radius=5000&type=point_of_interest&key=YOUR_API_KEY'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        _imageUrls.clear();
-        for (final result in data['results']) {
-          _imageUrls.add(result['urls']['regular']);
-        }
-      });
-    } else {
-      throw Exception('Failed to load images');
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
