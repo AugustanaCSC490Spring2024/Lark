@@ -61,7 +61,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           leading,
           const SizedBox(width: 16),
-          // (future assignment) Add wallet to the right side of appbar later
+          FutureBuilder<double>(
+            future: getUserMoney(), // Fetch user's money from the database
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // While waiting for data, show a loading indicator
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                // If there's an error, display an error message
+                return Text('Error: ${snapshot.error}');
+              } else {
+                // Once data is loaded, display the wallet
+                return Text(
+                  'Wallet: \$${snapshot.data}',
+                  style: TextStyle(fontSize: 18),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
