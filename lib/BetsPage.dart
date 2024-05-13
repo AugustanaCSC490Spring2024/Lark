@@ -159,10 +159,7 @@ class BetsPageState extends State<BetsPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please select a date';
                       }
-                      final numericError = _checkNumericInput(value);
-                      if (numericError != null) {
-                        return numericError;
-                      }
+
                       return null;
                     },
                   ),

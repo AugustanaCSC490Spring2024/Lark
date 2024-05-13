@@ -80,6 +80,12 @@ flutter:
   assets:
     - assets/coin.png
     - assets/cloud7.gif
+    - assets/PredictionPageImages/cloudy.png
+    - assets/PredictionPageImages/sunny.png
+    - assets/PredictionPageImages/rainy.png
+    - assets/PredictionPageImages/snowy.png
+    - assets/PredictionPageImages/nightsunny.png
+    - assets/PredictionPageImages/nightcloudy.png
 
 
 
