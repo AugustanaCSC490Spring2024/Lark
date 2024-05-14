@@ -348,7 +348,7 @@ class BetsPageState extends State<BetsPage> {
                                           _locationController.text,
                                           double.parse(_predictedTempController.text),
                                           _selectedHour,
-                                          false,
+                                          false, null
                                         );
                                         setBet(bets);
                                         print("bets stored");
