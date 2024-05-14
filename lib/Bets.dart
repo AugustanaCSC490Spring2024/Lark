@@ -18,11 +18,12 @@ class Bets implements Comparable<Bets> {
   final double wager;
   final double expectedEarning;
   final String timeOfWager;
-  bool result;
+  bool didWin;
+  double? actualTemp;
 
 
 
-  Bets(this.date, this.wager, this.expectedEarning, this.zipCode, this.predictedTemp, this.timeOfWager, this.result);
+  Bets(this.date, this.wager, this.expectedEarning, this.zipCode, this.predictedTemp, this.timeOfWager, this.didWin,{this.actualTemp});
 
 
   factory Bets.fromFirestore(
@@ -38,6 +39,7 @@ class Bets implements Comparable<Bets> {
         data?['predictedTemp'] ?? 0, // Providing a default value if data is null
         data?['timeOfWager'] ?? "",
         data?['result'] ?? false,
+        actualTemp:data?['actualTemp']
     );
   }
 
@@ -52,7 +54,8 @@ class Bets implements Comparable<Bets> {
       "expectedEarning": expectedEarning,
       "zipCode": zipCode,
       "userid": uid.toString(),
-      "result": result
+      "result": didWin,
+      "actualTemp": actualTemp,
     };
   }
 

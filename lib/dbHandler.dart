@@ -133,7 +133,7 @@ Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money)
   if (money < curUserMoney) {
     addMoney(money * -1);
     bp.addUser(auth.currentUser!.uid, temp, money);
-    FirebaseFirestore.instance.collection("Pool").doc(betID).set(
+    FirebaseFirestore.instance.collection("IncompletePools").doc(betID).set(
         bp.toFirestore());
     return true;
   }
@@ -144,11 +144,11 @@ Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money)
 
 
 Future<Map<String, BetsPool>> getBetPools() async{
-  return await getBetPoolsHelper("Incomplete Pool");
+  return await getBetPoolsHelper("IncompletePools");
 }
 
 Future<Map<String, BetsPool>> getCompletedPools() async{
-  Map<String, BetsPool> pool = await getBetPoolsHelper("Complete Pool");
+  Map<String, BetsPool> pool = await getBetPoolsHelper("CompletedPools");
   for(String bet in pool.keys){
     if(!hasParticipatedInPool(pool[bet]!)){
       pool.remove(bet);
@@ -184,22 +184,18 @@ bool hasParticipatedInPool(BetsPool bp){
 }
 
 
-Future<String> createPools(String zipCode, String date, String time,double temp, double money ) async{
+Future<bool> createPools(String zipCode, String date, String time,double temp, double money ) async{
   User? user = auth.currentUser;
   String? uid = user?.uid;
-  double curUserMoney = await getUserMoney();
-  if(money>curUserMoney) {
-    return "Not enough Funds";
-  }
-  final docRef = FirebaseFirestore.instance.collection("Complete Pools");
+  final docRef = FirebaseFirestore.instance.collection("IncompletePools");
   final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
   if(querySnapshot.docs.isNotEmpty) {
-    return "Max limit of Pools created";
+    return false;
   }
   addMoney(money*(-1));
   BetsPool bp = BetsPool(zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
   await docRef.add(bp.toFirestore());
-  return "Bets Pool Created";
+  return true;
 
 
 }

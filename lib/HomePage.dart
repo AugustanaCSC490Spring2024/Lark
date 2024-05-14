@@ -30,14 +30,6 @@ class HomePage extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Your Bets',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
             TabBar(
               tabs: [
@@ -77,11 +69,9 @@ class BetList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.indigo.shade900, Colors.indigo.shade700],
+          colors: [Color(0xffcdffd8), Color(0xff94b9ff)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.0, 0.5],
-          tileMode: TileMode.clamp,
         ),
       ),
       child: FutureBuilder<List<Bets>>(
@@ -118,7 +108,7 @@ class BetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color cardColor = Colors.blue;
+    Color textColor = Colors.black;
     String titleText = "";
     Widget? additionalInfo;
 
@@ -128,19 +118,20 @@ class BetCard extends StatelessWidget {
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
       Bets completeBet = bet;
-      titleText = completeBet.result? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
+      titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
       additionalInfo = _buildAdditionalInfo(completeBet);
-      cardColor = completeBet.result ? Colors.green.shade400 : Colors.red.shade400;
+      textColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
+
     }
 
     return Card(
-      color: cardColor,
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 3,
       child: ExpansionTile(
         title: Text(
           titleText,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: textColor), // Set text color
         ),
         children: [
           additionalInfo ?? SizedBox.shrink(),
@@ -160,7 +151,7 @@ Widget _buildAdditionalInfo(Bets bet) {
         ),
         ListTile(
           leading: Icon(Icons.location_pin, size: 16),
-          title: Text("Location: \$${bet.zipCode}", style: TextStyle(fontSize: 14)),
+          title: Text("Location: ${bet.zipCode}", style: TextStyle(fontSize: 14)),
         ),
         ListTile(
           leading: Icon(Icons.thermostat, size: 16),
@@ -169,12 +160,12 @@ Widget _buildAdditionalInfo(Bets bet) {
         if(!isIncompleteBet(bet))
           ListTile(
             leading: Icon(Icons.thermostat, size: 16),
-            title: Text("Actual Temperature: ${bet.predictedTemp}", style: TextStyle(fontSize: 14)),
+            title: Text("Actual Temperature: ${bet.actualTemp}", style: TextStyle(fontSize: 14)),
           ),
       ],
     );
   }
 
 bool isIncompleteBet(Bets bet){
-  return !bet.result && bet.expectedEarning!=0;
+  return !bet.didWin && bet.expectedEarning!=0;
 }
