@@ -1,14 +1,12 @@
-//sources: https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
-import 'IncompleteBets.dart';
-import 'logo.dart';
+import 'Bets.dart';
+import 'topNavigationBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:larkcoins/dbHandler.dart';
-import 'HomePage.dart' ;
+import 'HomePage.dart';
 import 'coin_effect.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
@@ -54,22 +52,25 @@ class BetsPageState extends State<BetsPage> {
     }
   }
 
-  //location images
-  List<String> _imageUrls = [];
-  Future<void> fetchImages(String location) async {
-    final response = await http.get(Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$location&radius=5000&type=point_of_interest&key=YOUR_API_KEY'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        _imageUrls.clear();
-        for (final result in data['results']) {
-          _imageUrls.add(result['urls']['regular']);
-        }
-      });
-    } else {
-      throw Exception('Failed to load images');
+  String? _checkNumericInput(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a value';
     }
+    if (double.tryParse(value) == null) {
+      return 'Values must consist of numbers only';
+    }
+    return null;
+  }
+
+  void _showBetPlacedSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('You successfully placed a bet!')),
+    ).closed.then((_) {
+      // Start the coin animation after the Snackbar is closed
+      setState(() {
+        _showCoinEffect = true;
+      });
+    });
   }
 
   @override
@@ -84,275 +85,325 @@ class BetsPageState extends State<BetsPage> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },
-          child: const TopLeftLogo(),
+          child: const TopNavigation(),
         ),
       ),
       backgroundColor: Colors.transparent,
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
 
-
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-
-              children: [
-                Text(
-                  'Please place your bets',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Please place your bets',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
+                    ),
                   ),
-                ),
-
-
-
-                SizedBox(height: 20),
-
-
-
-                // Container(
-                //   height: screenSize.height * 0.2,
-                //   width: screenSize.width,
-                //   child: ListView.builder(
-                //     scrollDirection: Axis.horizontal,
-                //     itemCount: images.length,
-                //     itemBuilder: (context, index) {
-                //       return Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: Image.asset(images[index]),
-                //       );
-                //     },
-                //   ),
-                // ),
-
-                // const Text(
-                //   'Place Bets',
-                //   style: TextStyle(
-                //     fontSize: 28.0,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                // SizedBox(height: screenSize.height * 0.05),
-                Row(
-                  children:[
-
-                    SizedBox(
-                      width: screenSize.width * 0.3,
-                      child: TextFormField(
-                        controller: _locationController,
-                        decoration: const InputDecoration(
-                          labelText: 'Location(zipcode)',
-                          border: const OutlineInputBorder(),
-                          suffixIcon:  Icon(Icons.location_on),
-                          contentPadding: EdgeInsets.symmetric(vertical: 10 , horizontal: 10),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the zipcode';
-                          }
-                          return null;
-                        },
-
-                      ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _locationController,
+                    decoration: const InputDecoration(
+                      labelText: 'Location (zipcode)',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.location_on),
                     ),
-                    SizedBox(
-                      width: screenSize.width * 0.3,
-                      child: TextFormField(
-                        controller: _predictedTempController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the predicted temperature';
-                          }
-                          if (int.tryParse(value) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const Text(
-                      'How much do you want to bet?',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                        width: screenSize.width * 0.5,
-                        child: FutureBuilder<double>(
-                            future: getUserMoney(),
-                            builder: (context, snapshot){
-                              if(snapshot.connectionState == ConnectionState.waiting){
-                                return Container();
-                              } else if(snapshot.hasError){
-                                return Text("Error: ${snapshot.error}");
-                              }else{
-                                double currentBalance = snapshot.data ?? 0.0;
 
-                                return TextFormField(
-                                  controller: _betAmountController,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                                    prefixIcon: Icon(Icons.attach_money),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter the amount you want to bet';
-                                    }
-                                    double betAmount = double.tryParse(value) ?? 0.0;
-                                    if (betAmount > currentBalance){
-                                      return 'Insufficient balance. Please top up your account';
-                                    }
-                                    return null;
-                                  },
-                                );
+
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the zipcode';
+                      }
+                      final numericError = _checkNumericInput(value);
+                      if (numericError != null) {
+                        return numericError;
+                      }
+
+                      return null;
+                      },
+                  ),
+
+
+
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _dayController,
+                    decoration: const InputDecoration(
+                      labelText: 'Day',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    readOnly: true,
+                    onTap: () async {
+                      final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
+                      final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 6));
+
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: tomorrow,
+                        firstDate: tomorrow,
+                        lastDate: maxSelectableDate,
+                      );
+                      if (picked != null) {
+                        String date = picked.toString();
+                        date = date.substring(0, 10);
+                        _dayController.text = date;
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a date';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _selectTime();
+                    },
+                    child: Text("Select Time: $_selectedHour"),
+                  ),
+                  SizedBox(height: 10),
+                  if (_selectedHour == '0' && _formKey.currentState != null)
+                    Text(
+                      'Please select a time',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  SizedBox(height: 20),
+                  Text(
+                    'The selected hour is according UTC timezone (24hr format): $_selectedHour',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'What do we predict the temperature will be?',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: screenSize.width * 0.3,
+                    child: TextFormField(
+                      controller: _predictedTempController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the predicted temperature';
+                        }
+                        final numericError = _checkNumericInput(value);
+                        if (numericError != null) {
+                          return numericError;
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'How much do you want to bet?',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: screenSize.width * 0.5,
+                    child: FutureBuilder<double>(
+                      future: getUserMoney(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Container();
+                        } else if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        } else {
+                          double currentBalance = snapshot.data ?? 0.0;
+
+                          return TextFormField(
+                            controller: _betAmountController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                              prefixIcon: Icon(Icons.attach_money),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the amount you want to bet';
                               }
-                            }
-                        )
+                              double betAmount = double.tryParse(value) ?? 0.0;
+                              if (betAmount > currentBalance) {
+                                return 'Insufficient balance. Please top up your account';
+                              }
+
+
+                              final numericError = _checkNumericInput(value);
+                              if (numericError != null) {
+                                return numericError;
+                              }
+
+                              return null;
+                            },
+                          );
+                        }
+                      },
                     ),
-                    SizedBox(height: 20.0),
-                    Row(
-                      children: [
-                        Text(
-                          'Your potential winnings are: ',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        'Your potential winnings are: ',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat',
                         ),
-                        SizedBox(width: 10.0),
-                        ElevatedButton(onPressed: () async {
-                          double winnings = await getExpectedWins(_locationController.text, _dayController.text,  int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
+                      ),
+                      SizedBox(width: 10.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          double winnings = await getExpectedWins(
+                            _locationController.text,
+                            _dayController.text,
+                            int.parse(_betAmountController.text),
+                            double.parse(_predictedTempController.text),
                           ) as double;
                           setState(() {
                             _winnings = winnings;
                           });
                         },
-                            child:const Text('Calculate Winnings')),
-                        SizedBox(width: 10.0),
-                        Text(
-                          'Winnings: $_winnings', // Display the calculated winnings
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Text('Calculate Winnings'),
+                      ),
+                      SizedBox(width: 10.0),
+                      Text(
+                        'Winnings: $_winnings', // Display the calculated winnings
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat',
                         ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (_selectedHour == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Please select a time')),
-                            );
-                          }
-                          else {
-                            double winnings = await getExpectedWins(_locationController.text, _dayController.text, int.parse(_betAmountController.text), double.parse(_predictedTempController.text),
-                            ) as double;
-                            setState(() {
-                              _winnings = winnings;
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Confirm Bet"),
-                                  content: Text(
-                                      "Are you sure you want to place the bet?"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text("Cancel"),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        // Show a snackbar while processing the bet
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text('Processing Bet...')),
-                                        );
-                                        // Place the bet
-                                        if (uid != null) {
-                                          IncompleteBets bets = IncompleteBets(
-                                              _dayController.text, double.parse(
-                                              _betAmountController.text), _winnings,
-                                              _locationController.text, double.parse(
-                                              _predictedTempController.text),
-                                              _selectedHour);
-                                          setBet(bets);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Row(
-                                                children: [
-                                                  Text('You successfully placed a bet!'),
-                                                  SizedBox(width: 8),
-                                                  Visibility(
-                                                    visible: _showCoinEffect,
-                                                    child: coinEfffect(),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ).closed.then((_) {
-                                            // Delay setting _showCoinEffect to true
-                                            print("Before setting _showCoinEffect: $_showCoinEffect");
-                                            Future.delayed(Duration(seconds: 2), () {
-                                              print("Setting _showCoinEffect to true");
-                                              setState(() {
-                                                _showCoinEffect = true;
-                                              });
-                                            });
-                                          });
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        if (_selectedHour == '0') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Please select a time')),
+                          );
+                        } else {
+                          double winnings = await getExpectedWins(
+                            _locationController.text,
+                            _dayController.text,
+                            int.parse(_betAmountController.text),
+                            double.parse(_predictedTempController.text),
+                          ) as double;
+                          setState(() {
+                            _winnings = winnings;
+                          });
 
-                                          _locationController.clear();
-                                          _dayController.clear();
-                                          _predictedTempController.clear();
-                                          _betAmountController.clear();
-                                          _winnings = 0.0;
-                                          _selectedHour = "";
-                                        } else {
-                                          print("NO UID!");
-                                        }
-                                      },
-                                      child: Text("Place Bet"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirm Bet"),
+                                content: Text("Are you sure you want to place the bet?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      // Show a snackbar while processing the bet
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Processing Bet...')),
+                                      );
+                                      // Place the bet
+                                      if (uid != null) {
+                                        Bets bets = Bets(
+                                          _dayController.text,
+                                          double.parse(_betAmountController.text),
+                                          _winnings,
+                                          _locationController.text,
+                                          double.parse(_predictedTempController.text),
+                                          _selectedHour,
+                                          false,
+                                        );
+                                        setBet(bets);
+                                        print("bets stored");
+
+                                        _showBetPlacedSnackbar(context);
+
+                                        _locationController.clear();
+                                        _dayController.clear();
+                                        _predictedTempController.clear();
+                                        _betAmountController.clear();
+                                        _winnings = 0.0;
+                                        _selectedHour = "0";
+                                      } else {
+                                        print("NO UID!");
+                                      }
+                                    },
+                                    child: Text("Place Bet"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         }
-                      },
-                      child: Text('Place Bets'),
-                    ),
-                  ],
+                      }
+                    },
+                    child: Text('Place Bets'),
+                  ),
+                  if (_showCoinEffect)
+                    SizedBox(height: 20),
+                ],
+              ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Visibility(
+                    visible: _showCoinEffect,
+                    child: coinEfffect(),
+                  ),
                 ),
 
-
-
-          // Add coinEfffect widget to the Stack if _showCoinEffect is true
-          // Display the coin effect
-
-
-        ],
-        ),
-        ),
-    ),
-
       ),
+
+    ],
+    ),
+    ),
+    ),
     );
+  }
+
+  String getDate(int hour) {
+    if (hour < 10) {
+      return "0${hour}:00";
+    }
+    return "${hour}:00";
   }
 }

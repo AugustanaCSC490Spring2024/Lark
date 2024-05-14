@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'BetsPool.dart';
 import 'HomePage.dart';
 import 'dbHandler.dart';
-import 'logo.dart';
+import 'topNavigationBar.dart';
 
 class PoolPage extends StatefulWidget {
   const PoolPage({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class PoolPageState extends State<PoolPage> {
             MaterialPageRoute(builder: (context) => HomePage()),
           );
         },
-        child: TopLeftLogo(),
+        child: const TopNavigation(),
       )),
       body: Container(
         decoration: BoxDecoration(

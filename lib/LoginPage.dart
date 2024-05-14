@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:larkcoins/firebase_options.dart';
@@ -40,6 +41,7 @@ class _PageState extends State<Page> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   double _logoOpacity = 0.0;
+  double _cloudOpacity = 0.0;
 
   @override
   void initState() {
@@ -47,7 +49,12 @@ class _PageState extends State<Page> {
     // Set opacity to 1 gradually after 1 second
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
-        _logoOpacity = 1.0;
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {
+            _logoOpacity = 1.0;
+          });
+        });
+        _cloudOpacity = 1.0;
       });
     });
   }
@@ -62,9 +69,6 @@ class _PageState extends State<Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
       body: Stack(
         children: [
           Container(
@@ -77,9 +81,27 @@ class _PageState extends State<Page> {
             ),
             padding: const EdgeInsets.all(20.0),
           ),
+
+          Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              child: AnimatedOpacity(
+                duration: const Duration(seconds: 2),
+                opacity: _cloudOpacity,
+                child: Image.asset(
+                  'assets/cloud7.gif',
+                  width: MediaQuery.of(context).size.width * 0.25, // Adjust the width percentage as needed
+                  height: MediaQuery.of(context).size.width * 0.25 , // Adjust the height proportionally
+                  fit: BoxFit.contain, // Use BoxFit.contain to prevent cutting the image
+                ),
+              ),
+          ),
+
           Positioned.fill(
             child: RainingCoins(),
           ),
+
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -152,6 +174,7 @@ class _PageState extends State<Page> {
             ),
           ),
         ],
+
       ),
     );
   }

@@ -7,19 +7,20 @@ import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
+import 'dbHandler.dart';
 
-class TopLeftLogo extends StatelessWidget {
-  const TopLeftLogo({Key? key}) : super(key: key);
+class TopNavigation extends StatelessWidget {
+  const TopNavigation({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         // the following two lines from chatgpt
-        Navigator.popUntil(context, (route) => route.isFirst); // Close all existing routes
-        Navigator.pushReplacementNamed(context, '/'); // Navigate to the home page
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, '/');
       },
-      child: Directionality(
+      child: const Directionality(
         textDirection: TextDirection.ltr,
         child: Text(
           'CLIMECOIN',
@@ -46,23 +47,38 @@ class TopLeftLogo extends StatelessWidget {
   }
 }
 
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leading;
 
-  const CustomAppBar({required this.leading});
+  const CustomAppBar({super.key, required this.leading});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
-      padding: EdgeInsets.fromLTRB(2, 1, 2, 1),
+      padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
       color: Colors.transparent,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           leading,
-          SizedBox(width: 16),
-          // (future assignment) Add wallet to the right side of appbar later
+          FutureBuilder<double>(
+            future: getUserMoney(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Text(
+                    'Wallet: \$${snapshot.data}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
@@ -70,4 +86,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(80);
+}
+
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  runApp(const TopNavigation());
 }
