@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BetsPool{
+class BetsPool implements Comparable<BetsPool>{
   String zipCode;
   String date;
   double totalWins;
@@ -9,6 +9,7 @@ class BetsPool{
   String creator;
   String time;
   Map<String, dynamic>? winners;
+
   BetsPool(this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator,{this.winners}){
   }
 
@@ -50,6 +51,15 @@ class BetsPool{
     }
     totalWins += money;
     userTemp[uid]=temp;
+  }
+
+  @override
+  int compareTo(BetsPool other) {
+    if(DateTime.parse(this.date).isBefore(DateTime.parse(other.date))){
+      return -1;
+    }else{
+      return 1;
+    }
   }
 
 }
