@@ -20,6 +20,29 @@ class PoolPageState extends State<PoolPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+
+  Future<TimeOfDay?> showHourPicker({
+    required BuildContext context,
+    required TimeOfDay initialTime,
+  }) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      // Set the selected minutes to 0
+      return TimeOfDay(hour: picked.hour, minute: 0);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,14 +109,32 @@ class PoolPageState extends State<PoolPage> {
                               ),
                               TextFormField(
                                 controller: dateController,
-                                decoration: InputDecoration(
-                                  labelText: "Date",
+                                decoration: const InputDecoration(
+                                  labelText: 'Day',
+                                  border: OutlineInputBorder(),
+                                  suffixIcon: Icon(Icons.calendar_today),
                                 ),
-                                keyboardType: TextInputType.datetime,
-                                validator: (value){
-                                  if (value == null || value.isEmpty){
-                                    return "Please enter a value";
+                                readOnly: true,
+                                onTap: () async {
+                                  final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
+
+                                  final DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: tomorrow,
+                                    firstDate: tomorrow,
+                                    lastDate: DateTime(2101),
+                                  );
+                                  if (picked != null) {
+                                    String date = picked.toString();
+                                    date = date.substring(0, 10);
+                                    dateController.text = date;
                                   }
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a date';
+                                  }
+
                                   return null;
                                 },
                               ),
@@ -110,19 +151,20 @@ class PoolPageState extends State<PoolPage> {
                                   return null;
                                 },
                               ),
-                              TextFormField(
-                                controller: timeController,
-                                decoration: InputDecoration(
-                                  labelText: "Time",
-                                ),
-                                keyboardType: TextInputType.datetime,
-                                validator: (value){
-                                  if (value == null || value.isEmpty){
-                                    return "Please enter a value";
+                              TextButton(
+                                onPressed: () async {
+                                  final TimeOfDay? selectedTime = await showHourPicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
+                                  if (selectedTime != null) {
+                                    setState(() {
+                                      timeController.text = selectedTime.format(context);
+                                    });
                                   }
-                                  return null;
                                 },
-                              )
+                                child: Text("Select Time ${timeController.text}"),
+                              ),
                             ],
                           ),
                         ),
@@ -133,11 +175,11 @@ class PoolPageState extends State<PoolPage> {
                             },
                             child: Text("Cancel"),
                           ),
-                          TextButton(
+                          ElevatedButton(
                             onPressed: () async{
                               if (_formKey.currentState!.validate()) {
-                                String added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
-                                if (added == "Bets Pool Created"){
+                                bool added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
+                                if (added){
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context){
@@ -162,6 +204,10 @@ class PoolPageState extends State<PoolPage> {
                               }
                             },
                             child: Text("Submit"),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                              enableFeedback: locationController.text.isNotEmpty && moneyController.text.isNotEmpty && dateController.text.isNotEmpty && tempController.text.isNotEmpty && timeController.text.isNotEmpty,
+                            )
                           ),
                         ],
                       );
@@ -273,44 +319,29 @@ class PoolPageState extends State<PoolPage> {
                                         onPressed: () async{
                                           if (_formKey.currentState!.validate()) {
                                             bool added = await addUserToBetPool(keys[index], poolsMap[keys[index]]!, double.parse(tempController.text), int.parse(moneyController.text));
-                                            if (added){
-                                            showDialog(
-                                            context: context,
-                                            builder: (BuildContext context){
-                                            return AlertDialog(
-                                              title: Text("Success"),
-                                              content: Text("You have successfully placed your bet"),
-                                              actions: [
-                                              TextButton(
-                                              onPressed: (){
-                                                Navigator.of(context).pop();
-                                                Navigator.of(context).pop();
-                                                },
-                                                child: Text("Close"),
-                                                ),
-                                              ],
-                                            );
-                                            }
-                                            );
-                                            }
-                                            else{
+                                            if (added) {
                                               showDialog(
-                                              context: context,
-                                              builder: (BuildContext context){
-                                            return AlertDialog(
-                                              title: Text("Error"),
-                                              content: Text("You do not have enough money to place this bet"),
-                                              actions: [
-                                              TextButton(
-                                                onPressed: (){
-                                                Navigator.of(context).pop();
-                                                },
-                                                child: Text("Close"),
-                                                ),
-                                              ],
-                                            );
-                                            }
-                                            );
+                                                  context: context,
+                                                  builder: (
+                                                      BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text("Success"),
+                                                      content: Text(
+                                                          "You have successfully placed your bet"),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                context).pop();
+                                                            Navigator.of(
+                                                                context).pop();
+                                                          },
+                                                          child: Text("Close"),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                              );
                                             }
                                             }
                                         },
