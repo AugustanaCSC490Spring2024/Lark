@@ -3,20 +3,57 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-getApiJson(String url) async {
-  final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    // If the server returned a 200 OK response,
-    return response.body;
-  
-    // print(jsonFile["timelines"]['minutely']);
-    // print("This is the response: "+response.toString());
-  } else {
-    // If the server did not return a 200 OK response,
-    // throw an exception.
-    throw Exception('Failed to load albums');
+var listOfApiKeys = ['RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL', 'r4912dPrSK0diXcDwL7WgYTiue0F7ZMP', 'Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW' ,'NZZMmUUu11yNeVFuM0MVyBWmef18ATnJ'];
+
+Map<String, String> jsonCache = {};
+Map<String, DateTime> lastCacheAccess = {};
+
+
+
+bool isWithinTenMinutes(DateTime dateTime1, DateTime dateTime2) {
+  // Calculate the time difference
+  Duration timeDifference = dateTime1.difference(dateTime2).abs();
+
+  // Check if the time difference is less than 10 minutes
+  return timeDifference < Duration(minutes: 10);
+}
+
+
+getApiJson(String urlWithoutAPIKey) async {
+
+  // if URL in lastCacheAccess and the time limit hasn't expired 
+  // return jsonCache[url]
+
+
+if(jsonCache.isNotEmpty && !lastCacheAccess.isNotEmpty){
+  if(isWithinTenMinutes(lastCacheAccess[urlWithoutAPIKey]!, DateTime.now())) {
+    return jsonCache[urlWithoutAPIKey];
   }
+}
+
+  int numAttempts = 0;
+  bool gotData = false;
+
+  while (!gotData && numAttempts < listOfApiKeys.length) {
+      String url = urlWithoutAPIKey + listOfApiKeys.first;
+      
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // If the server returned a 200 OK response,
+        lastCacheAccess [urlWithoutAPIKey] = DateTime.now();
+        jsonCache[urlWithoutAPIKey] = response.body;
+        gotData = true;
+        return response.body;
+        // print(jsonFile["timelines"]['minutely']);
+        // print("This is the response: "+response.toString());
+      } 
+      listOfApiKeys.add(listOfApiKeys.removeAt(0)); // cycle it to the end
+      numAttempts++;
+  }
+
+  return jsonCache[urlWithoutAPIKey];
+
 }
 
 
@@ -24,8 +61,7 @@ getApiJson(String url) async {
 
 getMinutelyData(String zipcode) async{
 
-
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1m&apikey=";
 
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
@@ -48,7 +84,7 @@ getMinutelyData(String zipcode) async{
 getData(String zipcode, String timeFrame) async{
 
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1$timeFrame&apikey=";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['minutely'];
@@ -71,7 +107,7 @@ getData(String zipcode, String timeFrame) async{
 getDayTemp(String zipcode) async{
 
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/forecast?location=$zipcode%20US&timesteps=1d&apikey=";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var minutelyData = jsonFile["timelines"]['daily'];
@@ -96,7 +132,7 @@ getDayTemp(String zipcode) async{
 
 getBackGroundImageUrl(String zipcode) async {
 
-    var apiUrl = "https://api.tomorrow.io/v4/weather/realtime?location=$zipcode&apikey=RKGfmqYZ1bjR8ILdi3dQWY2FBt4hFqCL";
+    var apiUrl = "https://api.tomorrow.io/v4/weather/realtime?location=$zipcode&apikey=";
     var response = await getApiJson(apiUrl);
     Map<String, dynamic>  jsonFile = json.decode(response);
     var values = jsonFile['data']['values'];

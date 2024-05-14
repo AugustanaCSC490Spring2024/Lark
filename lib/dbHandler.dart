@@ -84,9 +84,15 @@ Future<String> getUserName() async{
 void addMoney(double money) async{
   User? user = auth.currentUser;
   String? uid = user?.uid;
-  double curMoney = await getUserMoney();
-  curMoney += money;
-  db.collection("Users").doc(uid).update({ "Coin":curMoney});
+  final sfDocRef = db.collection("Users").doc(uid);
+  db.runTransaction((transaction) async {
+    final snapshot = await transaction.get(sfDocRef);
+    final updateMoney = snapshot.get("Coin") + money;
+    transaction.update(sfDocRef, {"Coin": updateMoney});
+  }).then(
+        (value) => print("DocumentSnapshot successfully updated!"),
+    onError: (e) => print("Error updating document $e"),
+  );
 }
 
 Future<List<Bets>> getIncompleteBets(){
@@ -147,14 +153,16 @@ Future<Map<String, BetsPool>> getBetPools() async{
   return await getBetPoolsHelper("IncompletePools");
 }
 
-Future<Map<String, BetsPool>> getCompletedPools() async{
+Future<List<BetsPool>> getCompletedPools() async{
   Map<String, BetsPool> pool = await getBetPoolsHelper("CompletedPools");
   for(String bet in pool.keys){
     if(!hasParticipatedInPool(pool[bet]!)){
       pool.remove(bet);
     }
   }
-  return pool;
+  List<BetsPool> list=pool.values.toList();
+  list.sort();
+  return list;
 }
 Future<Map<String, BetsPool>> getBetPoolsHelper(String poolType) async{
   Map<String, BetsPool> pool= {};

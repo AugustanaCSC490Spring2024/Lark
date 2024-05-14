@@ -155,7 +155,6 @@ async function editCoins(coinValue, uid){
 }
 
 
-
 async function getAllIncompleteBets() {
   const collectionRef = db.collection("Users");
   const snapshot = await collectionRef.get();
@@ -177,6 +176,7 @@ async function getAllIncompleteBets() {
   return collectionData;
 }
 
+
 function getDateTime(){
 
     const dateTimeData = [];
@@ -188,7 +188,6 @@ function getDateTime(){
     const month = String(now.getMonth() + 1).padStart(2, '0'); // Adding 1 to month since it is zero-based
     const day = String(now.getDate()).padStart(2, '0');
     const currentDate = `${year}-${month}-${day}`;
-
     dateTimeData.push(currentDate);
     dateTimeData.push(currentTime);
     return dateTimeData;
@@ -229,8 +228,6 @@ async function checkPoolsBets(){
 
     
     var poolInfo = doc.data();
-
-    
     if(currentDate == poolInfo["date"]  && currentTime == poolInfo["time"]    ){ 
 
     const zipcode = poolInfo["zipCode"]
@@ -250,7 +247,6 @@ async function checkPoolsBets(){
           allWinners.set(winners, winnings); 
         }
 
-
       }else{
         console.log("No winnes at the map is empty after sorting and finding min")
       }
@@ -262,7 +258,7 @@ async function checkPoolsBets(){
 
       console.log("Deleting the bet now: ")
       console.log("Doc id: " + doc.id)
-      await db.collection("Pool").doc(doc.id).delete()
+      await db.collection("IncompletePools").doc(doc.id).delete()
 
       
     }else{
@@ -280,13 +276,15 @@ function moveToCompletePool(winner, poolInfo){
   const winnerData = Object.fromEntries(winner);
 
   db.collection("CompletedPools").add({
-    "winners": winnerData,
+   "winners": winnerData,
    "date" : poolInfo["date"],
    "time" : poolInfo["time"],
    "totalWins" : poolInfo["totalWins"],
    "userMoney" : poolInfo["userMoney"],
    "userTemp" : poolInfo["userTemp"],
    "zipCode": poolInfo["zipCode"],
+
+
   })
 
 
@@ -317,7 +315,7 @@ async function findMin(map) {
   // Find the minimum value
   for (const [key, value] of map) {
     if (value < minValue) {
-      minValue = value;
+        minValue = value;    
     }
   }
 
