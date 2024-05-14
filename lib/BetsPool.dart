@@ -8,8 +8,8 @@ class BetsPool{
   Map<String, dynamic> userMoney;
   String creator;
   String time;
-  late Map<String, dynamic> winners;
-  BetsPool(this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator){
+  Map<String, dynamic>? winners;
+  BetsPool(this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator,{this.winners}){
   }
 
   factory BetsPool.fromFirestore(
@@ -24,7 +24,8 @@ class BetsPool{
     data?['totalWins'] ?? 0,
     data?['userMoney'] ?? {},
     data?['userTemp']?? {},
-    data?['creator'] ?? "user1"
+    data?['creator'] ?? "user1",
+    winners: data?['winners']
   );
 }
 
@@ -36,7 +37,8 @@ class BetsPool{
       "userMoney": userMoney,
       "userTemp": userTemp,
       "creator": creator,
-      'time': time
+      'time': time,
+      'winners': winners
     };
   }
 
