@@ -110,8 +110,10 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                             Text(
                               forecast.toString(),
                               style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
+                              
                               ),
                             ),
                             ElevatedButton(
@@ -131,9 +133,9 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
                 },
               );
 
-                }
+              }
 
-                }
+              }
 
               ),
             
