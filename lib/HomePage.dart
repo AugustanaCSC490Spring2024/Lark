@@ -128,9 +128,9 @@ class BetCard extends StatelessWidget {
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
       Bets completeBet = bet;
-      titleText = completeBet.result? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
+      titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
       additionalInfo = _buildAdditionalInfo(completeBet);
-      cardColor = completeBet.result ? Colors.green.shade400 : Colors.red.shade400;
+      cardColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
     }
 
     return Card(
@@ -176,5 +176,5 @@ Widget _buildAdditionalInfo(Bets bet) {
   }
 
 bool isIncompleteBet(Bets bet){
-  return !bet.result && bet.expectedEarning!=0;
+  return !bet.didWin && bet.expectedEarning!=0;
 }
