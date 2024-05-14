@@ -17,6 +17,9 @@ class PoolPageState extends State<PoolPage> {
   TextEditingController tempController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController moneyController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +46,132 @@ class PoolPageState extends State<PoolPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
+              padding: const EdgeInsets.all(8),
+              child: TextButton(
+                onPressed: (){
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context){
+                      return AlertDialog(
+                        title: Text("Create a new pool"),
+                        content: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: locationController,
+                                decoration: InputDecoration(
+                                  labelText: "Zip Code",
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please enter a value";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: moneyController,
+                                decoration: InputDecoration(
+                                  labelText: "Amount",
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please enter a value";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: dateController,
+                                decoration: InputDecoration(
+                                  labelText: "Date",
+                                ),
+                                keyboardType: TextInputType.datetime,
+                                validator: (value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please enter a value";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: tempController,
+                                decoration: InputDecoration(
+                                  labelText: "Temperature",
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please enter a value";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: timeController,
+                                decoration: InputDecoration(
+                                  labelText: "Time",
+                                ),
+                                keyboardType: TextInputType.datetime,
+                                validator: (value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please enter a value";
+                                  }
+                                  return null;
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async{
+                              if (_formKey.currentState!.validate()) {
+                                String added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
+                                if (added == "Bets Pool Created"){
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context){
+                                      return AlertDialog(
+                                        title: Text("Success"),
+                                        content: Text("You have successfully created a new pool"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: (){
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Close"),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  );
+                                }else{
+                                  print(added);
+                                }
+                              }
+                            },
+                            child: Text("Submit"),
+                          ),
+                        ],
+                      );
+                    }
+                  );
+                },
+                child: Text("Create a new pool"),
+              ),
+              ),
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Pool',
@@ -66,6 +195,7 @@ class PoolPageState extends State<PoolPage> {
                   else {
                     var poolsMap = snapshot.data!;
                     var keys = snapshot.data!.keys.toList();
+
                     return ListView.builder(
                       itemCount: poolsMap.length,
                       itemBuilder: (context, index){
@@ -91,7 +221,8 @@ class PoolPageState extends State<PoolPage> {
                                 Text("Total Gamblers ${poolsMap[keys[index]]!.userTemp.length.toString()}"),
                               ],
                             ),
-                            onTap: (){
+
+                            onTap: hasParticipatedInPool(poolsMap[keys[index]]!) ? null : (){
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context){
@@ -199,6 +330,7 @@ class PoolPageState extends State<PoolPage> {
               )
 
       ),
+
       ],
     ),
     ),
