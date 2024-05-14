@@ -118,9 +118,10 @@ class BetCard extends StatelessWidget {
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
       Bets completeBet = bet;
-      titleText = completeBet.result? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
+      titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
       additionalInfo = _buildAdditionalInfo(completeBet);
-      textColor = completeBet.result ? Colors.green.shade400 : Colors.red.shade400;
+      textColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
+
     }
 
     return Card(
@@ -150,7 +151,7 @@ Widget _buildAdditionalInfo(Bets bet) {
         ),
         ListTile(
           leading: Icon(Icons.location_pin, size: 16),
-          title: Text("Location: \$${bet.zipCode}", style: TextStyle(fontSize: 14)),
+          title: Text("Location: ${bet.zipCode}", style: TextStyle(fontSize: 14)),
         ),
         ListTile(
           leading: Icon(Icons.thermostat, size: 16),
@@ -159,12 +160,12 @@ Widget _buildAdditionalInfo(Bets bet) {
         if(!isIncompleteBet(bet))
           ListTile(
             leading: Icon(Icons.thermostat, size: 16),
-            title: Text("Actual Temperature: ${bet.predictedTemp}", style: TextStyle(fontSize: 14)),
+            title: Text("Actual Temperature: ${bet.actualTemp}", style: TextStyle(fontSize: 14)),
           ),
       ],
     );
   }
 
 bool isIncompleteBet(Bets bet){
-  return !bet.result && bet.expectedEarning!=0;
+  return !bet.didWin && bet.expectedEarning!=0;
 }
