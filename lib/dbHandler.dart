@@ -80,6 +80,19 @@ Future<String> getUserName() async{
     return "User1";
   }
 }
+Stream<double> getUserMoneyStream() {
+  return FirebaseFirestore.instance
+      .collection('Users')
+      .doc(uid)
+      .snapshots()
+      .map((snapshot) {
+    if (snapshot.exists && snapshot.data() != null) {
+      return snapshot.data()!['Coin']?.toDouble() ?? 0.0;
+    } else {
+      return 0.0;
+    }
+  });
+}
 
 void addMoney(double money) async{
   User? user = auth.currentUser;
