@@ -33,8 +33,8 @@ class HomePage extends StatelessWidget {
             ),
             TabBar(
               tabs: [
-                Tab(text: 'Complete Bets'),
-                Tab(text: 'Incomplete Bets'),
+                Tab(text: 'Bets Results'),
+                Tab(text: 'Pending Bets'),
               ],
             ),
             Expanded(
@@ -139,6 +139,7 @@ class BetCard extends StatelessWidget {
       ),
     );
   }
+
 }
 Widget _buildAdditionalInfo(Bets bet) {
     return Column(

@@ -10,7 +10,6 @@ Map<String, String> jsonCache = {};
 Map<String, DateTime> lastCacheAccess = {};
 
 
-
 bool isWithinTenMinutes(DateTime dateTime1, DateTime dateTime2) {
   // Calculate the time difference
   Duration timeDifference = dateTime1.difference(dateTime2).abs();
