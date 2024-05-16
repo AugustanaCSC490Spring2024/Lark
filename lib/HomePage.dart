@@ -146,6 +146,10 @@ Widget _buildAdditionalInfo(Bets bet) {
       children: [
         SizedBox(height: 8),
         ListTile(
+          leading: Icon(Icons.monetization_on_outlined, size: 16),
+          title: Text("Bet Amount: ${bet.wager}", style: TextStyle(fontSize: 14)),
+        ),
+        ListTile(
           leading: Icon(Icons.access_time, size: 16),
           title: Text("Time: ${bet.date}", style: TextStyle(fontSize: 14)),
         ),
