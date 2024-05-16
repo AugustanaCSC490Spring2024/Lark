@@ -122,7 +122,7 @@ Future<List<Bets>> getBetsHelper(String betType) async {
 
     // Iterate over the documents and convert each one to a Bets object
     for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-    
+
        bet = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
        betsList.add(bet);
 
@@ -141,6 +141,7 @@ Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money)
     bp.addUser(auth.currentUser!.uid, temp, money);
     FirebaseFirestore.instance.collection("IncompletePools").doc(betID).set(
         bp.toFirestore());
+    print("hojjaaa");
     return true;
   }
 
@@ -155,12 +156,12 @@ Future<Map<String, BetsPool>> getBetPools() async{
 
 Future<List<BetsPool>> getCompletedPools() async{
   Map<String, BetsPool> pool = await getBetPoolsHelper("CompletedPools");
+  List<BetsPool> list= [];
   for(String bet in pool.keys){
-    if(!hasParticipatedInPool(pool[bet]!)){
-      pool.remove(bet);
+    if(hasParticipatedInPool(pool[bet]!)){
+      list.add(pool[bet]!);
     }
   }
-  List<BetsPool> list=pool.values.toList();
   list.sort();
   return list;
 }
