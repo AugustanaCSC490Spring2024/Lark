@@ -52,6 +52,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   const CustomAppBar({super.key, required this.leading});
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -61,13 +62,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           leading,
-          FutureBuilder<double>(
-            future: getUserMoney(),
+          StreamBuilder<double>(
+            stream: getUserMoneyStream(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData) {
+                return Text('No data');
               } else {
                 return Padding(
                   padding: const EdgeInsets.only(right: 16),
