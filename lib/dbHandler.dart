@@ -80,6 +80,19 @@ Future<String> getUserName() async{
     return "User1";
   }
 }
+Stream<double> getUserMoneyStream() {
+  return FirebaseFirestore.instance
+      .collection('Users')
+      .doc(uid)
+      .snapshots()
+      .map((snapshot) {
+    if (snapshot.exists && snapshot.data() != null) {
+      return snapshot.data()!['Coin']?.toDouble() ?? 0.0;
+    } else {
+      return 0.0;
+    }
+  });
+}
 
 void addMoney(double money) async{
   User? user = auth.currentUser;
@@ -134,14 +147,21 @@ Future<List<Bets>> getBetsHelper(String betType) async {
   return betsList;
 }
 
-Future<bool> addUserToBetPool(String betID, BetsPool bp, double temp, int money) async {
+Future<bool> addUserToBetPool(String betID, double temp, int money) async {
   double curUserMoney = await getUserMoney();
   if (money < curUserMoney) {
     addMoney(money * -1);
-    bp.addUser(auth.currentUser!.uid, temp, money);
-    FirebaseFirestore.instance.collection("IncompletePools").doc(betID).set(
-        bp.toFirestore());
-    print("hojjaaa");
+    final sfDocRef = db.collection("IncompletePools").doc(betID);
+    db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(sfDocRef);
+      BetsPool bp = BetsPool.fromFirestore(snapshot , null);
+      bp.addUser(auth.currentUser!.uid, temp, money);
+      transaction.update(sfDocRef, {"totalWins": bp.totalWins, "userMoney":bp.userMoney, "userTemp":bp.userTemp});
+    }).then(
+          (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"),
+    );
+
     return true;
   }
 

@@ -65,12 +65,7 @@ class BetsPageState extends State<BetsPage> {
   void _showBetPlacedSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('You successfully placed a bet!')),
-    ).closed.then((_) {
-      // Start the coin animation after the Snackbar is closed
-      setState(() {
-        _showCoinEffect = true;
-      });
-    });
+    );
   }
 
   @override
@@ -129,8 +124,6 @@ class BetsPageState extends State<BetsPage> {
                       return null;
                       },
                   ),
-
-
 
                   SizedBox(height: 20),
                   TextFormField(
@@ -337,11 +330,9 @@ class BetsPageState extends State<BetsPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      // Show a snackbar while processing the bet
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(content: Text('Processing Bet...')),
                                       );
-                                      // Place the bet
                                       if (uid != null) {
                                         Bets bets = Bets(
                                           _dayController.text,
@@ -354,6 +345,12 @@ class BetsPageState extends State<BetsPage> {
                                         );
                                         setBet(bets);
                                         print("bets stored");
+
+
+                                        setState(() {
+                                          _showCoinEffect = true;
+                                        });
+
 
                                         _showBetPlacedSnackbar(context);
 
@@ -391,12 +388,11 @@ class BetsPageState extends State<BetsPage> {
                   ),
                 ),
 
+              ),
+            ],
+          ),
+        ),
       ),
-
-    ],
-    ),
-    ),
-    ),
     );
   }
 

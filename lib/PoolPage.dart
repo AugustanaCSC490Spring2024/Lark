@@ -306,7 +306,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   TextButton(
                                   onPressed: () async{
                                     if (_formKey.currentState!.validate()) {
-                                    bool added = await addUserToBetPool(keys[index], poolsMap[keys[index]]!, double.parse(tempController.text), int.parse(moneyController.text));
+                                    bool added = await addUserToBetPool(keys[index], double.parse(tempController.text), int.parse(moneyController.text));
                                     if (added) {
                                     showDialog(
                                    context: context,
@@ -346,10 +346,12 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                   },
                 ),
               ),
+
             ],
           );
         }
       },
+
     );
   }
 
