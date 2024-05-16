@@ -101,10 +101,17 @@ class BetList extends StatelessWidget {
 
 
 
-class BetCard extends StatelessWidget {
+class BetCard extends StatefulWidget {
   final Bets bet;
 
   const BetCard({Key? key, required this.bet}) : super(key: key);
+
+  @override
+  _BetCardState createState() => _BetCardState();
+}
+
+class _BetCardState extends State<BetCard> {
+  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -112,35 +119,57 @@ class BetCard extends StatelessWidget {
     String titleText = "";
     Widget? additionalInfo;
 
-    if (isIncompleteBet(bet)) {
-      titleText = "\$"+bet.expectedEarning.toString();
-      Bets incompleteBet= bet;
+    if (isIncompleteBet(widget.bet)) {
+      titleText = "\$"+widget.bet.expectedEarning.toString();
+      Bets incompleteBet= widget.bet;
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
-      Bets completeBet = bet;
+      Bets completeBet = widget.bet;
       titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
       additionalInfo = _buildAdditionalInfo(completeBet);
       textColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
-
     }
-
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 3,
-      child: ExpansionTile(
-        title: Text(
-          titleText,
-          style: TextStyle(fontWeight: FontWeight.bold, color: textColor), // Set text color
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          additionalInfo ?? SizedBox.shrink(),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isExpanded = !isExpanded;
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                titleText,
+                style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+              ),
+            ),
+          ),
+          if (isExpanded)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: additionalInfo ?? SizedBox.shrink(),
+            ),
+          if (!isExpanded)
+            Center(
+              child: Text(
+                "Big Text", // your big text here
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
         ],
       ),
     );
   }
-
 }
+  
+
+
 Widget _buildAdditionalInfo(Bets bet) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
