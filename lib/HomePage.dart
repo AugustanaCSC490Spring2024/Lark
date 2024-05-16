@@ -111,20 +111,25 @@ class BetCard extends StatelessWidget {
     Color textColor = Colors.black;
     String titleText = "";
     Widget? additionalInfo;
+    var winningAmount;
 
     if (isIncompleteBet(bet)) {
       titleText = "\$"+bet.expectedEarning.toString();
+      winningAmount = bet.expectedEarning;
       Bets incompleteBet= bet;
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
       Bets completeBet = bet;
       titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
+      winningAmount = completeBet.expectedEarning - completeBet.wager;
       additionalInfo = _buildAdditionalInfo(completeBet);
       textColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
-
     }
 
+    var winningPercentage = ( winningAmount/bet.wager ) * 100;
+
     return Card(
+
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 3,
@@ -134,12 +139,35 @@ class BetCard extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, color: textColor), // Set text color
         ),
         children: [
-          additionalInfo ?? SizedBox.shrink(),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: additionalInfo ?? SizedBox.shrink()),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(
+                      '${winningPercentage.toStringAsFixed(2)}%', // Display winning percentage
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+                        color: winningPercentage < 0 ? Colors.red : Colors.green,
+
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
+
       ),
     );
   }
-
 }
 Widget _buildAdditionalInfo(Bets bet) {
     return Column(
