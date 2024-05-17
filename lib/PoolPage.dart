@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'BetsPool.dart';
 import 'HomePage.dart';
 import 'dbHandler.dart';
-import 'topNavigationBar.dart';
+
 
 class PoolPage extends StatefulWidget {
   const PoolPage({Key? key}) : super(key: key);
 
   @override
   PoolPageState createState() => PoolPageState();
-
 }
 
-class PoolPageState extends State<PoolPage> {
+class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   TextEditingController tempController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController moneyController = TextEditingController();
@@ -21,6 +20,14 @@ class PoolPageState extends State<PoolPage> {
   TextEditingController locationController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
+  // Add a TabController for handling tabs
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
   Future<TimeOfDay?> showHourPicker({
     required BuildContext context,
     required TimeOfDay initialTime,
@@ -46,32 +53,61 @@ class PoolPageState extends State<PoolPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(leading: GestureDetector(
-        onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },
-        child: const TopNavigation(),
-      )),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.lightBlue.shade50, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.5],
-            tileMode: TileMode.clamp,
-          ),
+      appBar: AppBar(
+        title: Text('Pools'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: 'All Pools'),
+            Tab(text: 'My Pools'),
+            Tab(text: 'Completed Pools'),
+          ],
         ),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // First Tab: All Pools
+          _buildAllPoolsTab(),
+          // Second Tab: My Pools
+          _buildMyPoolsTab(),
+          // Third Tab: Completed Pools
+          _buildCompletedPoolsTab(),
+
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAllPoolsTab() {
+    return FutureBuilder<Map<String, BetsPool>>(
+      future: getBetPools(),
+      builder: (context, snapshot) {
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+
+
+          var poolsMap = snapshot.data!;
+          var allPools = poolsMap.values.where((pool) => !hasParticipatedInPool(pool)).toList();
+
+
+
+          return Column(
+
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+          Padding(
               padding: const EdgeInsets.all(8),
               child: TextButton(
                 onPressed: (){
+
+                  setState(() {
+                    
+                  
                   showDialog(
                     context: context,
                     builder: (BuildContext context){
@@ -138,6 +174,8 @@ class PoolPageState extends State<PoolPage> {
                                   return null;
                                 },
                               ),
+
+
                               TextFormField(
                                 controller: tempController,
                                 decoration: InputDecoration(
@@ -151,6 +189,8 @@ class PoolPageState extends State<PoolPage> {
                                   return null;
                                 },
                               ),
+
+
                               TextButton(
                                 onPressed: () async {
                                   final TimeOfDay? selectedTime = await showHourPicker(
@@ -168,18 +208,27 @@ class PoolPageState extends State<PoolPage> {
                             ],
                           ),
                         ),
+
                         actions: [
                           TextButton(
                             onPressed: (){
                               Navigator.of(context).pop();
+
                             },
                             child: Text("Cancel"),
                           ),
+
+
+
                           ElevatedButton(
                             onPressed: () async{
                               if (_formKey.currentState!.validate()) {
                                 bool added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
+                              
                                 if (added){
+
+                                setState(() {                               
+
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context){
@@ -189,6 +238,8 @@ class PoolPageState extends State<PoolPage> {
                                         actions: [
                                           TextButton(
                                             onPressed: (){
+                                            
+
                                               Navigator.of(context).pop();
                                               Navigator.of(context).pop();
                                             },
@@ -198,6 +249,10 @@ class PoolPageState extends State<PoolPage> {
                                       );
                                     }
                                   );
+
+                                 });
+
+
                                 }else{
                                   print(added);
                                 }
@@ -207,164 +262,225 @@ class PoolPageState extends State<PoolPage> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white, backgroundColor: Colors.blue,
                               enableFeedback: locationController.text.isNotEmpty && moneyController.text.isNotEmpty && dateController.text.isNotEmpty && tempController.text.isNotEmpty && timeController.text.isNotEmpty,
-                            )
+                            ),
                           ),
                         ],
                       );
                     }
                   );
+
+                  });
                 },
                 child: Text("Create a new pool"),
               ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Pool',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+
+              Expanded(
+                child: ListView.builder(
+                  itemCount: allPools.length,
+                  itemBuilder: (context, index) {
+                    var pool = allPools[index];
+                    return Card(
+                      // Customize card appearance as needed
+
+
+                      child: ListTile(
+                        title: Text('Zip Code: ${pool.zipCode}'),
+                        subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+                        onTap: () {
+                          // Handle onTap event
+                          showDialog(
+                          context: context,
+                          builder: (BuildContext context){
+                            return AlertDialog(
+                                  title: Text("Place your bet"),
+                                  content: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                    children: [
+                                      TextFormField(
+                                      controller: tempController,
+                                      decoration: InputDecoration(
+                                      labelText: "Temperature",
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                        validator: (value){
+                                      if (value == null || value.isEmpty){
+                                      return "Please enter a value";
+                                      }
+                                      return null;
+                                      },
+                                      ),
+                                       TextFormField(
+                                        controller: moneyController,
+                                        decoration: InputDecoration(
+                                        labelText: "Amount",
+                                        ),
+                                  keyboardType: TextInputType.number,
+                                  validator: (value){
+                                  if (value == null || value.isEmpty){
+                                      return "Please enter a value";
+                                  }
+                                  return null;
+                                  },
+                                       ),
+                                  ],
+                                  ),
+                                  ),
+                                  actions: [
+                                  TextButton(
+                                  onPressed: (){
+                                    Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                  onPressed: () async{
+                                    if (_formKey.currentState!.validate()) {
+                                    bool added = await addUserToBetPool(allPools[index].docID, double.parse(tempController.text), int.parse(moneyController.text));
+                                 
+                                      
+                            
+                                    if (added) {
+
+                                    showDialog(
+                                   context: context,
+                                    builder: (
+                                    BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Success"),
+                                      content: Text(
+                                      "You have successfully placed your bet"),
+                                  actions: [
+                                      TextButton(
+                                      onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        
+                                      });
+                                  },
+
+
+
+                                        child: Text("Close"),
+                                  ),
+                                  ],
+                                  );
+                                  }
+                                  );
+                                  }
+                               
+                                  }
+                                  },
+                                  child: Text("Submit"),
+
+
+                                  ),
+                                  ],
+                                  );
+                                  }
+                                  );
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
-            Text("Current Pool"),
-            Expanded(
-              child: FutureBuilder<Map<String, BetsPool>>(
-                future: getBetPools(),
-                builder: (context, snapshot){
-                  if (snapshot.connectionState == ConnectionState.waiting){
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  else if (snapshot.hasError){
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  else {
-                    var poolsMap = snapshot.data!;
-                    var keys = snapshot.data!.keys.toList();
 
-                    return ListView.builder(
-                      itemCount: poolsMap.length,
-                      itemBuilder: (context, index){
-                        return Card(
-                          color: hasParticipatedInPool(poolsMap[keys[index]]!) ? Colors.green.withOpacity(0.5) : Color(0xFFE3F2FF),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          elevation: 3,
-                          child: ListTile(
-                            title: Text(poolsMap[keys[index]]!.zipCode.toString()),
-                            subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Amount: \$${poolsMap[keys[index]]!.totalWins.toString()}"),
-                                SizedBox(height: 5),
-                                Text("date: ${poolsMap[keys[index]]!.date}"),
-                              ]
-                            ),
-                            trailing: Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Text("Total Gamblers ${poolsMap[keys[index]]!.userTemp.length.toString()}"),
-                              ],
-                            ),
+            ],
+          );
+          
+        }
+      },
 
-                            onTap: hasParticipatedInPool(poolsMap[keys[index]]!) ? null : (){
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context){
-                                  return AlertDialog(
-                                    title: Text("Place your bet"),
-                                    content: Form(
-                                      key: _formKey,
-                                      child: Column(
-
-                                        children: [
-                                          TextFormField(
-                                            controller: tempController,
-                                            decoration: InputDecoration(
-                                              labelText: "Temperature",
-                                            ),
-                                            keyboardType: TextInputType.number,
-                                            validator: (value){
-                                              if (value == null || value.isEmpty){
-                                                return "Please enter a value";
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          TextFormField(
-                                            controller: moneyController,
-                                            decoration: InputDecoration(
-                                              labelText: "Amount",
-                                            ),
-                                            keyboardType: TextInputType.number,
-                                            validator: (value){
-                                              if (value == null || value.isEmpty){
-                                                return "Please enter a value";
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: (){
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text("Cancel"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async{
-                                          if (_formKey.currentState!.validate()) {
-                                            bool added = await addUserToBetPool(keys[index], double.parse(tempController.text), int.parse(moneyController.text));
-                                            if (added) {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (
-                                                      BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text("Success"),
-                                                      content: Text(
-                                                          "You have successfully placed your bet"),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                context).pop();
-                                                            Navigator.of(
-                                                                context).pop();
-                                                          },
-                                                          child: Text("Close"),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  }
-                                              );
-                                            }
-                                            }
-                                        },
-                                        child: Text("Submit"),
-                                      ),
-                                    ],
-                                  );
-                                }
-                              );
-                            },
-                          ),
-                        );
-                      }
-                    );
-                  }
-                }
-              )
-
-      ),
-
-      ],
-    ),
-    ),
     );
   }
+
+
+  Widget _buildMyPoolsTab() {
+    return FutureBuilder<Map<String, BetsPool>>(
+      future: getBetPools(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+
+
+          var poolsMap = snapshot.data!;
+          var keys = poolsMap.keys.toList();
+
+          // Filter out pools that the user has participated in
+          var myPools = poolsMap.values.where((pool) => hasParticipatedInPool(pool)).toList();
+
+          return ListView.builder(
+            itemCount: myPools.length,
+            itemBuilder: (context, index) {
+              var pool = myPools[index];
+              return Card(
+
+                // Customize card appearance as needed
+                child: ListTile(
+                  title: Text('Zip Code: ${pool.zipCode}'),
+                  subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+
+                  onTap: () {
+                    // Handle onTap event
+                  },
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+
+  Widget _buildCompletedPoolsTab() {
+
+    return FutureBuilder<List<BetsPool>>(
+      future: getCompletedPools(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          // Create a copy of the list only when data is not null and not empty
+          var completedPools = snapshot.data!;
+          return ListView.builder(
+            itemCount: completedPools.length,
+            itemBuilder: (context, index) {
+              var pool = completedPools[index];
+
+
+
+              return Card(
+                // Customize card appearance as needed
+                child: ListTile(
+                  title: Text('Zip Code: ${pool.zipCode}'),
+                  subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+                  onTap: () {
+                    // Handle onTap event
+                  },
+                ),
+              );
+
+
+
+
+            },
+          );
+        } else {
+          return Center(child: Text('No completed pools to show'));
+        }
+      },
+    );
+  }
+
+
+
 }

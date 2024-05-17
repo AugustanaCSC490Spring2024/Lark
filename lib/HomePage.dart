@@ -101,80 +101,83 @@ class BetList extends StatelessWidget {
 
 
 
-class BetCard extends StatefulWidget {
+class BetCard extends StatelessWidget {
   final Bets bet;
 
   const BetCard({Key? key, required this.bet}) : super(key: key);
-
-  @override
-  _BetCardState createState() => _BetCardState();
-}
-
-class _BetCardState extends State<BetCard> {
-  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     Color textColor = Colors.black;
     String titleText = "";
     Widget? additionalInfo;
+    var winningAmount;
 
-    if (isIncompleteBet(widget.bet)) {
-      titleText = "\$"+widget.bet.expectedEarning.toString();
-      Bets incompleteBet= widget.bet;
+    if (isIncompleteBet(bet)) {
+      titleText = "\$"+bet.expectedEarning.toString();
+      winningAmount = bet.expectedEarning;
+      Bets incompleteBet= bet;
       additionalInfo = _buildAdditionalInfo(incompleteBet);
     } else  {
-      Bets completeBet = widget.bet;
+      Bets completeBet = bet;
       titleText = completeBet.didWin? "\$${completeBet.expectedEarning}": "-\$${(completeBet.wager).toString()}";
+      winningAmount = completeBet.expectedEarning - completeBet.wager;
       additionalInfo = _buildAdditionalInfo(completeBet);
       textColor = completeBet.didWin ? Colors.green.shade400 : Colors.red.shade400;
     }
+
+    var winningPercentage = ( winningAmount/bet.wager ) * 100;
+
     return Card(
+
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: ExpansionTile(
+        title: Text(
+          titleText,
+          style: TextStyle(fontWeight: FontWeight.bold, color: textColor), // Set text color
+        ),
         children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isExpanded = !isExpanded;
-              });
-            },
-            child: Container(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                titleText,
-                style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: additionalInfo ?? SizedBox.shrink()),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(
+                      '${winningPercentage.toStringAsFixed(2)}%', // Display winning percentage
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+                        color: winningPercentage < 0 ? Colors.red : Colors.green,
+
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: additionalInfo ?? SizedBox.shrink(),
-            ),
-          if (!isExpanded)
-            Center(
-              child: Text(
-                "Big Text", // your big text here
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
         ],
+
       ),
     );
   }
 }
-  
-
-
 Widget _buildAdditionalInfo(Bets bet) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 8),
+        ListTile(
+          leading: Icon(Icons.monetization_on_outlined, size: 16),
+          title: Text("Bet Amount: ${bet.wager}", style: TextStyle(fontSize: 14)),
+        ),
         ListTile(
           leading: Icon(Icons.access_time, size: 16),
           title: Text("Time: ${bet.date}", style: TextStyle(fontSize: 14)),
