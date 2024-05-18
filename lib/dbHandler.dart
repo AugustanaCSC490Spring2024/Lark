@@ -19,6 +19,10 @@ bool isUserSignedIn() {
   return user != null;
 }
 
+String getuserID(){
+  User? user = auth.currentUser;
+  return user!.uid;
+}
 
 Future<bool> setBet(Bets bet) async {
    User? user = auth.currentUser;

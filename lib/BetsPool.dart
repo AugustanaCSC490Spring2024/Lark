@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:larkcoins/dbHandler.dart';
 
 class BetsPool implements Comparable<BetsPool>{
   String docID;
@@ -60,6 +61,13 @@ class BetsPool implements Comparable<BetsPool>{
     }
     totalWins += money;
     userTemp[uid]=temp;
+  }
+
+  double getCurUserMoneyBet(){
+    return userMoney[getuserID()];
+  }
+  int getCurUserTemp(){
+    return userTemp[getuserID()];
   }
 
   @override
