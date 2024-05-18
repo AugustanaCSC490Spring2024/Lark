@@ -300,3 +300,13 @@ Future<Map<String, String>> getWatchlist() async {
   }
 
 }
+
+double getBetsPoolWInnings(BetsPool bp){
+  String uid =  FirebaseAuth.instance.currentUser!.uid;
+  if(bp.winners!.containsKey(uid)){
+    return bp.winners![uid] as double;
+  }else{
+    return bp.userMoney[uid] as double;
+
+  }
+}

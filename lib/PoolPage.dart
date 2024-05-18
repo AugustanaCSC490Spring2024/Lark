@@ -144,6 +144,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   return null;
                                 },
                               ),
+                              SizedBox(height: 10),
                               TextFormField(
                                 controller: dateController,
                                 decoration: const InputDecoration(
@@ -191,9 +192,16 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                 },
                               ),
 
-
-                              TextButton(
-                                onPressed: () async {
+                            SizedBox(height: 10),
+                              TextFormField(
+                                controller: timeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Time',
+                                  border: OutlineInputBorder(),
+                                  suffixIcon: Icon(Icons.access_time),
+                                ),
+                                readOnly: true,
+                                onTap: () async {
                                   final TimeOfDay? selectedTime = await showHourPicker(
                                     context: context,
                                     initialTime: TimeOfDay.now(),
@@ -204,7 +212,13 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                     });
                                   }
                                 },
-                                child: Text("Select Time ${timeController.text}"),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a time';
+                                  }
+
+                                  return null;
+                                },
                               ),
                             ],
                           ),
@@ -335,13 +349,13 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                     },
                                     child: Text("Cancel"),
                                   ),
+
                                   TextButton(
                                   onPressed: () async{
                                     if (_formKey.currentState!.validate()) {
+
                                     bool added = await addUserToBetPool(allPools[index].docID, double.parse(tempController.text), int.parse(moneyController.text));
-                                 
-                                      
-                            
+
                                     if (added) {
 
                                     showDialog(
