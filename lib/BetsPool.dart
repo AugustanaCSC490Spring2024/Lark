@@ -10,8 +10,10 @@ class BetsPool implements Comparable<BetsPool>{
   String creator;
   String time;
   Map<String, dynamic>? winners;
+  int actualTemp;
 
-  BetsPool(this.docID, this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator,{this.winners}){
+  BetsPool(this.docID, this.zipCode, this.date, this.time,this.totalWins,
+  this.userMoney, this.userTemp, this.creator,{this.winners},{this.actualTemp}){
   }
 
   factory BetsPool.fromFirestore(
@@ -29,6 +31,7 @@ class BetsPool implements Comparable<BetsPool>{
     data?['userTemp']?? {},
     data?['creator'] ?? "user1",
     winners: data?['winners'],
+    actualTemp: data?['actualTemp']
   );
 }
 

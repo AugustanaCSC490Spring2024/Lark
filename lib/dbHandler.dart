@@ -306,7 +306,7 @@ double getBetsPoolWInnings(BetsPool bp){
   if(bp.winners!.containsKey(uid)){
     return bp.winners![uid] as double;
   }else{
-    return bp.userMoney[uid] as double;
+    return bp.userMoney[uid]*-1 as double;
 
   }
 }
