@@ -20,7 +20,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   TextEditingController dateController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-
+  double UserMoney = 0.0;
   // Add a TabController for handling tabs
   late TabController _tabController;
 
@@ -50,6 +50,21 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
       return TimeOfDay(hour: picked.hour, minute: 0);
     }
     return null;
+  }
+  StreamBuilder<double> _buildUserMoney() {
+    return StreamBuilder<double>(
+      stream: getUserMoneyStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Loading...');
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          UserMoney = snapshot.data!;
+          return Text('User Money: \$${snapshot.data}');
+        }
+      },
+    );
   }
 
   @override
