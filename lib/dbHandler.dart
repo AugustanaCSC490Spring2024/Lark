@@ -81,6 +81,8 @@ Future<String> getUserName() async{
   }
 }
 Stream<double> getUserMoneyStream() {
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
   return FirebaseFirestore.instance
       .collection('Users')
       .doc(uid)
