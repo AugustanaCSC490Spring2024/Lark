@@ -153,7 +153,7 @@ Future<bool> addUserToBetPool(String betID, double temp, int money) async {
   if (money < curUserMoney) {
     await addMoney(money * -1);
 
-    print("This si th bet id: $betID");
+    print("This is the bet id: $betID");
     final sfDocRef = db.collection("IncompletePools").doc(betID);
 
 
@@ -240,7 +240,7 @@ Future<bool> createPools(String zipCode, String date, String time,double temp, d
   final docRef = FirebaseFirestore.instance.collection("IncompletePools");
   final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
   
-  if(querySnapshot.docs.length > 10) {
+  if(querySnapshot.docs.length >= 1) {
     return false;
   }
 
