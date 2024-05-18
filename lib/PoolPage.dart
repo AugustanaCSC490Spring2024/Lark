@@ -20,7 +20,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   TextEditingController dateController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-
+  double UserMoney = 0.0;
   // Add a TabController for handling tabs
   late TabController _tabController;
 
@@ -51,42 +51,69 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     }
     return null;
   }
+  // StreamBuilder<double> _buildUserMoney() {
+  //   return StreamBuilder<double>(
+  //     stream: getUserMoneyStream(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Text('Loading...');
+  //       } else if (snapshot.hasError) {
+  //         return Text('Error: ${snapshot.error}');
+  //       } else {
+  //         UserMoney = snapshot.data!;
+  //         return Text('User Money: \$${snapshot.data}');
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          },
-          child: const TopNavigation(),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: CustomAppBar(
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+            child: const TopNavigation(),
+          ),
         ),
+        backgroundColor: Colors.transparent,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+            ),
+            TabBar(
+              controller: _tabController,
+              tabs: [
+                Tab(text: 'All Pools'),
+                Tab(text: 'My Pools'),
+                Tab(text: 'Completed Pools'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildAllPoolsTab(),
+                  _buildMyPoolsTab(),
+                  _buildCompletedPoolsTab(),
+                ],
+              ),
+            ),
+            // Expanded widget to make the TabBarView take the remaining space
+           ] // (after the TabBar and the padding above it
+        )
+
+
       ),
-
-      backgroundColor: Colors.transparent,
-      body: Column(children: [
-       
-
-      TabBarView(
-        controller: _tabController,
-        children: [
-          // First Tab: All Pools
-          _buildAllPoolsTab(),
-          // Second Tab: My Pools
-          _buildMyPoolsTab(),
-          // Third Tab: Completed Pools
-          _buildCompletedPoolsTab(),
-        ],
-      ),
-
-
-      ],)   
-
      
 
     );

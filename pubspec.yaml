@@ -35,6 +35,7 @@ dependencies:
   intl: ^0.18.0
   google_maps_flutter: ^2.0.12
   geocoding: ^3.0.0
+  connectivity_plus: ^3.0.3  # Add this line
 
 
 
@@ -123,6 +124,8 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/Montserrat.ttf
+
+
 
 
 

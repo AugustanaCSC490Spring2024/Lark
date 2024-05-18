@@ -57,7 +57,8 @@ async function getAllIncompleteBets() {
 
 
 async function checkIfBetsCompleted() {
-  const incompleteBetsJson = await getAllIncompleteBets();
+
+    const incompleteBetsJson = await getAllIncompleteBets();
     const date = getDateTime();
     const currentDate = date[0]; // Get the current date
     const currentTime = date[1]; // Get the current time
@@ -198,7 +199,7 @@ function getDateTime(){
 
 
 function getTempForSpecificBet(zipcode) {
-  const apiUrl = "https://api.tomorrow.io/v4/weather/realtime?location="+ zipcode + "&apikey=Wd0DoXa1Tdi5pKtt0d2tdeNJwLQv2mRW";
+  const apiUrl = "https://api.tomorrow.io/v4/weather/realtime?location="+ zipcode + "&apikey=4VNofUUMjYU4nUaNYbYqS35jkoRHQ6fG";
   return fetch(apiUrl)
     .then(response => {
       if (!response.ok) {
@@ -233,22 +234,44 @@ async function checkPoolsBets(){
 
     const zipcode = poolInfo["zipCode"]
     var allBets = poolInfo["userTemp"]
-    const tempNow = getTempForSpecificBet(zipcode);
+
+    var tempNow = await getTempForSpecificBet(zipcode);
+
+    console.log('This is the temp now!!! = ' )
+    console.log( tempNow )
 
     var sortedBets = await sortMap(zipcode, allBets,tempNow)
     var allWinners = await findMin(sortedBets)
 
+
       if(allWinners != null){
 
-        var winnings = poolInfo["totalWins"]
-        winnings = winnings / allWinners.size;
-        console.log("Total winngs: " + winnings)
-        var allWinnersKeys = allWinners.keys()
+        var winnings = poolInfo["totalWins"] * 0.95
+        console.log("Total winngs after house cut: " + winnings)
 
-        for(var winners of allWinnersKeys) {
+        var allWinnersKeys = allWinners.keys()
+        var totalWinnersBetMoeny = 0;
+
+        for( var winner of allWinnersKeys){
+          console.log("Each user money:" )
+          console.log(poolInfo["userMoney"][winner])
+          totalWinnersBetMoeny = totalWinnersBetMoeny + poolInfo["userMoney"][winner];
+        }
+        
+        console.log("Total Money Of Users: ")
+        console.log(totalWinnersBetMoeny)
+
+        for(var winners of allWinners.keys()) {
+
           console.log("Winner id: " + winners)
-          editCoins(winnings,winners)
-          allWinners.set(winners, winnings); 
+          var wightedWinnings = (poolInfo["userMoney"][winners] / totalWinnersBetMoeny) * winnings;
+          var roundedWightedWinnings = Math.round(wightedWinnings);          
+          console.log("Weighted for this winner")
+          console.log(roundedWightedWinnings)
+          
+          editCoins(roundedWightedWinnings,winners)
+          allWinners.set(winners, roundedWightedWinnings); 
+
         }
 
       }else{
@@ -258,7 +281,7 @@ async function checkPoolsBets(){
       console.log("All the winners information: ")
       console.log(allWinners)
       
-      await moveToCompletePool(allWinners, poolInfo , winnings)
+      await moveToCompletePool(allWinners, poolInfo , tempNow)
 
       console.log("Deleting the bet now: ")
       console.log("Doc id: " + doc.id)
