@@ -622,8 +622,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   // }
   Widget _buildAllPoolsTab() {
     Size screenSize = MediaQuery.of(context).size;
-    return FutureBuilder<Map<String, BetsPool>>(
-      future: getBetPools(),
+    return StreamBuilder<Map<String, BetsPool>>(
+      stream: getIncompletePoolsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -975,8 +975,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   }
 
   Widget _buildMyPoolsTab() {
-    return FutureBuilder<Map<String, BetsPool>>(
-      future: getBetPools(),
+    return StreamBuilder<Map<String, BetsPool>>(
+      stream: getIncompletePoolsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -1036,8 +1036,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   }
 
   Widget _buildCompletedPoolsTab() {
-    return FutureBuilder<List<BetsPool>>(
-      future: getCompletedPools(),
+    return StreamBuilder<List<BetsPool>>(
+      stream: getCompletePoolsParticipatedStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

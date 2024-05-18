@@ -61,7 +61,7 @@ class BetList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<List<Bets>> Function() betFuture;
+    Stream<List<Bets>> Function() betFuture;
     if (isComplete) {
       betFuture = getCompleteBets;
     } else {
@@ -77,8 +77,8 @@ class BetList extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
       ),
-      child: FutureBuilder<List<Bets>>(
-        future: betFuture(),
+      child: StreamBuilder<List<Bets>>(
+        stream: betFuture(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());

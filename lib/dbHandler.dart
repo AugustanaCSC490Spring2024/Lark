@@ -115,13 +115,12 @@ Future<void> addMoney(double money) async{
   );
 }
 
-Future<List<Bets>> getIncompleteBets(){
-  return getBetsHelper("Incomplete Bets");
+Stream<List<Bets>> getIncompleteBets(){
+  return getBetsHelperStream("Incomplete Bets");
 }
 
-Future<List<Bets>> getCompleteBets() async{
-  List<Bets> betList = await getBetsHelper("Complete Bets");
-  return betList.reversed.toList();
+Stream<List<Bets>> getCompleteBets(){
+  return getBetsHelperStream("Complete Bets");
 }
 
 Future<List<Bets>> getBetsHelper(String betType) async {
@@ -197,21 +196,21 @@ Future<bool> addUserToBetPool(String betID, double temp, int money) async {
 }
 
 
-Future<Map<String, BetsPool>> getBetPools() async{
-  return await getBetPoolsHelper("IncompletePools");
-}
-
-Future<List<BetsPool>> getCompletedPools() async{
-  Map<String, BetsPool> pool = await getBetPoolsHelper("CompletedPools");
-  List<BetsPool> list= [];
-  for(String bet in pool.keys){
-    if(hasParticipatedInPool(pool[bet]!)){
-      list.add(pool[bet]!);
-    }
-  }
-  list.sort();
-  return list;
-}
+// Future<Map<String, BetsPool>> getBetPools() async{
+//   return await getBetPoolsHelper("IncompletePools");
+// }
+//
+// Future<List<BetsPool>> getCompletedPools() async{
+//   Map<String, BetsPool> pool = await getBetPoolsHelper("CompletedPools");
+//   List<BetsPool> list= [];
+//   for(String bet in pool.keys){
+//     if(hasParticipatedInPool(pool[bet]!)){
+//       list.add(pool[bet]!);
+//     }
+//   }
+//   list.sort();
+//   return list;
+// }
 Future<Map<String, BetsPool>> getBetPoolsHelper(String poolType) async{
   Map<String, BetsPool> pool= {};
 
