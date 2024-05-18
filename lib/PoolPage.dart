@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:larkcoins/topNavigationBar.dart';
 import 'BetsPool.dart';
 import 'HomePage.dart';
 import 'dbHandler.dart';
@@ -53,17 +54,18 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pools'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: 'All Pools'),
-            Tab(text: 'My Pools'),
-            Tab(text: 'Completed Pools'),
-          ],
+      appBar: CustomAppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+          child: const TopNavigation(),
         ),
       ),
+      backgroundColor: Colors.transparent,
       body: TabBarView(
         controller: _tabController,
         children: [
@@ -301,6 +303,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                       child: ListTile(
                         title: Text('Zip Code: ${pool.zipCode}'),
                         subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+                        trailing: Text('Total gamblers: ${pool.userMoney.length}'),
                         onTap: () {
                           // Handle onTap event
                           showDialog(
@@ -439,7 +442,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                 child: ListTile(
                   title: Text('Zip Code: ${pool.zipCode}'),
                   subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
-
+                  trailing: Text('Total gamblers: ${pool.userMoney.length}'),
                   onTap: () {
                     // Handle onTap event
                   },
@@ -469,6 +472,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             itemCount: completedPools.length,
             itemBuilder: (context, index) {
               var pool = completedPools[index];
+              double totalWinnings = getBetsPoolWInnings(pool);
+
+
 
 
 
@@ -476,7 +482,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                 // Customize card appearance as needed
                 child: ListTile(
                   title: Text('Zip Code: ${pool.zipCode}'),
-                  subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+                  subtitle: Text('Amount: \$${totalWinnings}, Date: ${pool.date}'),
+                  trailing: Text('Total gamblers: ${pool.userMoney.length}'),
                   onTap: () {
                     // Handle onTap event
                   },
