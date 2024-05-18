@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BetsPool implements Comparable<BetsPool>{
+  String docID;
   String zipCode;
   String date;
   double totalWins;
@@ -10,7 +11,7 @@ class BetsPool implements Comparable<BetsPool>{
   String time;
   Map<String, dynamic>? winners;
 
-  BetsPool(this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator,{this.winners}){
+  BetsPool(this.docID, this.zipCode, this.date, this.time,this.totalWins, this.userMoney, this.userTemp, this.creator,{this.winners}){
   }
 
   factory BetsPool.fromFirestore(
@@ -19,6 +20,7 @@ class BetsPool implements Comparable<BetsPool>{
     ){
   final data = snapshot.data();
   return BetsPool(
+    snapshot.id,
     data?['zipCode'] ?? "",
     data?['date'] ?? "",
     data?['time']?? '',
@@ -26,7 +28,7 @@ class BetsPool implements Comparable<BetsPool>{
     data?['userMoney'] ?? {},
     data?['userTemp']?? {},
     data?['creator'] ?? "user1",
-    winners: data?['winners']
+    winners: data?['winners'],
   );
 }
 
@@ -60,6 +62,12 @@ class BetsPool implements Comparable<BetsPool>{
     }else{
       return 1;
     }
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "{" +docID + "userMoney $userMoney }";
   }
 
 }
