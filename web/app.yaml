@@ -1,0 +1,31 @@
+runtime: python38
+
+handlers:
+  - url: /static
+    static_dir: static
+
+  - url: /assets
+    static_dir: assets
+
+  - url: /icons
+    static_dir: icons
+
+  - url: /manifest.json
+    static_files: manifest.json
+    upload: manifest.json
+
+  - url: /main.dart.js
+    static_files: main.dart.js
+    upload: main.dart.js
+
+  - url: /flutter_service_worker.js
+    static_files: flutter_service_worker.js
+    upload: flutter_service_worker.js
+
+  - url: /favicon.png
+    static_files: favicon.png
+    upload: favicon.png
+
+  - url: /.*
+    static_files: index.html
+    upload: index.html

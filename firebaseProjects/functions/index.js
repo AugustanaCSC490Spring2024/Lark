@@ -31,8 +31,8 @@ exports.betsChecker = onRequest(async (request, response) => {
   
 });
 
-checkIfBetsCompleted();
-checkPoolsBets();
+//checkIfBetsCompleted();
+//checkPoolsBets();
 
 async function getAllIncompleteBets() {
   const collectionRef = db.collection("Users");
