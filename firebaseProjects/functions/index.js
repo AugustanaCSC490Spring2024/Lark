@@ -216,10 +216,9 @@ function getTempForSpecificBet(zipcode) {
   }
 
 
-
 async function checkPoolsBets(){
 
-  const incompletePoolRef = await db.collection("Pool").get();
+  const incompletePoolRef = await db.collection("IncompletePools").get();
   console.log("Incomplete pools info: \n")
 
   const date = getDateTime();
@@ -234,10 +233,13 @@ async function checkPoolsBets(){
 
     const zipcode = poolInfo["zipCode"]
     var allBets = poolInfo["userTemp"]
-    var sortedBets = await sortMap(zipcode, allBets)
+    const tempNow = getTempForSpecificBet(zipcode);
+
+    var sortedBets = await sortMap(zipcode, allBets,tempNow)
     var allWinners = await findMin(sortedBets)
 
       if(allWinners != null){
+
         var winnings = poolInfo["totalWins"]
         winnings = winnings / allWinners.size;
         console.log("Total winngs: " + winnings)
@@ -273,11 +275,13 @@ async function checkPoolsBets(){
   });
 }
 
-function moveToCompletePool(winner, poolInfo){
+function moveToCompletePool(winner, poolInfo, tempNow){
 
   const winnerData = Object.fromEntries(winner);
 
   db.collection("CompletedPools").add({
+
+   "actualTemp":tempNow,
    "winners": winnerData,
    "date" : poolInfo["date"],
    "time" : poolInfo["time"],
@@ -285,16 +289,13 @@ function moveToCompletePool(winner, poolInfo){
    "userMoney" : poolInfo["userMoney"],
    "userTemp" : poolInfo["userTemp"],
    "zipCode": poolInfo["zipCode"],
-
-
   })
 
 
 }
 
 
-function sortMap(zipcode, bets){ 
-  const tempNow = 1;
+function sortMap(zipcode, bets, tempNow ){ 
     const betMap = new Map();
 
       for(var userid in bets){
@@ -308,6 +309,7 @@ function sortMap(zipcode, bets){
       return sortedArray; // Returning the sorted array, you might want to return sortedMap instead
       
 }
+
 
 async function findMin(map) {
   // Initialize variables to store the minimum value and pairs with that minimum value

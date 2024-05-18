@@ -74,7 +74,9 @@ Future<double> getExpectedWins(String zipCode, String day, int money, double pre
   Map<String, String> map =list1.first;
   day = day + map.keys.first.substring(10);
   String? temp = map[day];
+   
   double zScore = (predictedTemp - double.parse(temp!))/4;
+
   zScore = min(zScore, -1*(zScore));
   var normal = Normal();
   var prob = normal.cdf(zScore);

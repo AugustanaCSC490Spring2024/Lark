@@ -249,7 +249,7 @@ Future<bool> createPools(String zipCode, String date, String time,double temp, d
   }
 
   addMoney(money*(-1));
-  BetsPool bp = BetsPool("", zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
+  BetsPool bp = BetsPool("", zipCode, date,time, money, {uid!:money}, {uid:temp}, uid , 0);
   await docRef.add(bp.toFirestore());
   return true;
 

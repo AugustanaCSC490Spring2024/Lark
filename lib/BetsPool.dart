@@ -13,14 +13,17 @@ class BetsPool implements Comparable<BetsPool>{
   int? actualTemp;
 
   BetsPool(this.docID, this.zipCode, this.date, this.time,this.totalWins,
-  this.userMoney, this.userTemp, this.creator,{this.winners})
-  }
+  this.userMoney, this.userTemp, this.creator, this.actualTemp, {this.winners} ){ }
+
 
   factory BetsPool.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
     ){
+
+
   final data = snapshot.data();
+
   return BetsPool(
     snapshot.id,
     data?['zipCode'] ?? "",
@@ -30,10 +33,11 @@ class BetsPool implements Comparable<BetsPool>{
     data?['userMoney'] ?? {},
     data?['userTemp']?? {},
     data?['creator'] ?? "user1",
+    data?['actualTemp'],
     winners: data?['winners'],
-    actualTemp: data?['actualTemp']
   );
 }
+
 
   Map<String, dynamic> toFirestore() {
     return {
@@ -65,6 +69,10 @@ class BetsPool implements Comparable<BetsPool>{
     }else{
       return 1;
     }
+  }
+
+  double getWinningTemp(){
+    return userTemp[winners!.keys.first];
   }
 
   @override
