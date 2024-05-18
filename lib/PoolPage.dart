@@ -73,6 +73,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
           _buildMyPoolsTab(),
           // Third Tab: Completed Pools
           _buildCompletedPoolsTab(),
+
         ],
       ),
     );
@@ -82,24 +83,31 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     return FutureBuilder<Map<String, BetsPool>>(
       future: getBetPools(),
       builder: (context, snapshot) {
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          var poolsMap = snapshot.data!;
-          var keys = poolsMap.keys.toList();
 
-          // Filter out pools that the user has participated in
+
+          var poolsMap = snapshot.data!;
           var allPools = poolsMap.values.where((pool) => !hasParticipatedInPool(pool)).toList();
 
+
+
           return Column(
+
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
           Padding(
               padding: const EdgeInsets.all(8),
               child: TextButton(
                 onPressed: (){
+
+                  setState(() {
+                    
+                  
                   showDialog(
                     context: context,
                     builder: (BuildContext context){
@@ -166,6 +174,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   return null;
                                 },
                               ),
+
+
                               TextFormField(
                                 controller: tempController,
                                 decoration: InputDecoration(
@@ -179,6 +189,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   return null;
                                 },
                               ),
+
+
                               TextButton(
                                 onPressed: () async {
                                   final TimeOfDay? selectedTime = await showHourPicker(
@@ -196,18 +208,27 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                             ],
                           ),
                         ),
+
                         actions: [
                           TextButton(
                             onPressed: (){
                               Navigator.of(context).pop();
+
                             },
                             child: Text("Cancel"),
                           ),
+
+
+
                           ElevatedButton(
                             onPressed: () async{
                               if (_formKey.currentState!.validate()) {
                                 bool added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
+                              
                                 if (added){
+
+                                setState(() {                               
+
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context){
@@ -217,6 +238,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                         actions: [
                                           TextButton(
                                             onPressed: (){
+                                            
+
                                               Navigator.of(context).pop();
                                               Navigator.of(context).pop();
                                             },
@@ -226,11 +249,14 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       );
                                     }
                                   );
+
+                                 });
+
+
                                 }else{
                                   print(added);
                                 }
                               }
-                              // setState(() {});
                             },
                             child: Text("Submit"),
                             style: ElevatedButton.styleFrom(
@@ -242,10 +268,13 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                       );
                     }
                   );
+
+                  });
                 },
                 child: Text("Create a new pool"),
               ),
               ),
+
               Expanded(
                 child: ListView.builder(
                   itemCount: allPools.length,
@@ -253,6 +282,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                     var pool = allPools[index];
                     return Card(
                       // Customize card appearance as needed
+
+
                       child: ListTile(
                         title: Text('Zip Code: ${pool.zipCode}'),
                         subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
@@ -306,8 +337,12 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   TextButton(
                                   onPressed: () async{
                                     if (_formKey.currentState!.validate()) {
-                                    bool added = await addUserToBetPool(keys[index], double.parse(tempController.text), int.parse(moneyController.text));
+                                    bool added = await addUserToBetPool(allPools[index].docID, double.parse(tempController.text), int.parse(moneyController.text));
+                                 
+                                      
+                            
                                     if (added) {
+
                                     showDialog(
                                    context: context,
                                     builder: (
@@ -321,7 +356,13 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       onPressed: () {
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
+                                      setState(() {
+                                        
+                                      });
                                   },
+
+
+
                                         child: Text("Close"),
                                   ),
                                   ],
@@ -329,17 +370,17 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   }
                                   );
                                   }
+                               
                                   }
-                                    // setState(() {});
                                   },
                                   child: Text("Submit"),
+
+
                                   ),
                                   ],
                                   );
                                   }
                                   );
-
-
                         },
                       ),
                     );
@@ -349,6 +390,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
 
             ],
           );
+          
         }
       },
 
@@ -365,6 +407,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+
+
           var poolsMap = snapshot.data!;
           var keys = poolsMap.keys.toList();
 
@@ -376,10 +420,12 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             itemBuilder: (context, index) {
               var pool = myPools[index];
               return Card(
+
                 // Customize card appearance as needed
                 child: ListTile(
                   title: Text('Zip Code: ${pool.zipCode}'),
                   subtitle: Text('Amount: \$${pool.totalWins}, Date: ${pool.date}'),
+
                   onTap: () {
                     // Handle onTap event
                   },
@@ -394,6 +440,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
 
 
   Widget _buildCompletedPoolsTab() {
+
     return FutureBuilder<List<BetsPool>>(
       future: getCompletedPools(),
       builder: (context, snapshot) {
@@ -408,6 +455,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             itemCount: completedPools.length,
             itemBuilder: (context, index) {
               var pool = completedPools[index];
+
+
+
               return Card(
                 // Customize card appearance as needed
                 child: ListTile(
@@ -418,6 +468,10 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                   },
                 ),
               );
+
+
+
+
             },
           );
         } else {

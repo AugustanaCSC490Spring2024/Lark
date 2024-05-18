@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -96,7 +97,7 @@ Stream<double> getUserMoneyStream() {
   });
 }
 
-void addMoney(double money) async{
+Future<void> addMoney(double money) async{
   User? user = auth.currentUser;
   String? uid = user?.uid;
   final sfDocRef = db.collection("Users").doc(uid);
@@ -152,16 +153,36 @@ Future<List<Bets>> getBetsHelper(String betType) async {
 Future<bool> addUserToBetPool(String betID, double temp, int money) async {
   double curUserMoney = await getUserMoney();
   if (money < curUserMoney) {
-    addMoney(money * -1);
+    await addMoney(money * -1);
+
+    print("This si th bet id: $betID");
     final sfDocRef = db.collection("IncompletePools").doc(betID);
-    db.runTransaction((transaction) async {
+
+
+     db.runTransaction((transaction) async {
+      print("Transaction is running");
       final snapshot = await transaction.get(sfDocRef);
+      print("got snapshot: $snapshot");
+
+      print(snapshot.toString());
+
+
+
       BetsPool bp = BetsPool.fromFirestore(snapshot , null);
+      print("bp = $bp");
+      
       bp.addUser(auth.currentUser!.uid, temp, money);
+
+
+      print("Bets here in add user to bet pool: ${bp.userMoney}" );
+
+      
+      
       transaction.update(sfDocRef, {"totalWins": bp.totalWins, "userMoney":bp.userMoney, "userTemp":bp.userTemp});
-    }).then(
-          (value) => print("DocumentSnapshot successfully updated!"),
-      onError: (e) => print("Error updating document $e"),
+    })
+    .then(
+          (value) => print("addUserToBetPool TRANSACTION SUCCEEDED: $value"),
+      onError: (e) => print("addUserToBetPool TRANSACTION Error $e"),
     );
 
     return true;
@@ -220,11 +241,13 @@ Future<bool> createPools(String zipCode, String date, String time,double temp, d
   String? uid = user?.uid;
   final docRef = FirebaseFirestore.instance.collection("IncompletePools");
   final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
-  if(querySnapshot.docs.isNotEmpty) {
+  
+  if(querySnapshot.docs.length > 10) {
     return false;
   }
+
   addMoney(money*(-1));
-  BetsPool bp = BetsPool(zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
+  BetsPool bp = BetsPool("", zipCode, date,time, money, {uid!:money}, {uid:temp}, uid);
   await docRef.add(bp.toFirestore());
   return true;
 
