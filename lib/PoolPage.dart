@@ -51,21 +51,26 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     }
     return null;
   }
-  // StreamBuilder<double> _buildUserMoney() {
-  //   return StreamBuilder<double>(
-  //     stream: getUserMoneyStream(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Text('Loading...');
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //         UserMoney = snapshot.data!;
-  //         return Text('User Money: \$${snapshot.data}');
-  //       }
-  //     },
-  //   );
-  // }
+  FutureBuilder<double> getMoneyOfUser() {
+    return FutureBuilder<double>(
+      future: getUserMoney(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          UserMoney = snapshot.data!;
+          return Text('User Money: $UserMoney');
+        }
+      },
+    );
+  }
+  String _formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +170,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   if (value == null || value.isEmpty){
                                     return "Please enter a value";
                                   }
+                                  if (int.tryParse(value) == null){
+                                    return "Please enter a valid number";
+                                  }
                                   return null;
                                 },
                               ),
@@ -175,8 +183,15 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (value){
+                                  getMoneyOfUser();
                                   if (value == null || value.isEmpty){
                                     return "Please enter a value";
+                                  }
+                                  if (int.parse(value) > UserMoney){
+                                    return "You do not have enough money";
+                                  }
+                                  if (int.tryParse(value) == null){
+                                    return "Please enter a valid number";
                                   }
                                   return null;
                                 },
@@ -225,6 +240,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   if (value == null || value.isEmpty){
                                     return "Please enter a value";
                                   }
+                                  if (int.tryParse(value) == null){
+                                    return "Please enter a valid number";
+                                  }
                                   return null;
                                 },
                               ),
@@ -245,7 +263,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   );
                                   if (selectedTime != null) {
                                     setState(() {
-                                      timeController.text = selectedTime.format(context);
+                                      timeController.text = _formatTimeOfDay(selectedTime);
                                     });
                                   }
                                 },
@@ -361,6 +379,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       if (value == null || value.isEmpty){
                                       return "Please enter a value";
                                       }
+                                      if (int.tryParse(value) == null){
+                                        return "Please enter a valid number";
+                                      }
                                       return null;
                                       },
                                       ),
@@ -371,8 +392,16 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                         ),
                                   keyboardType: TextInputType.number,
                                   validator: (value){
+                                  getMoneyOfUser();
                                   if (value == null || value.isEmpty){
                                       return "Please enter a value";
+                                  }
+                                  if (int.parse(value) > UserMoney){
+                                      return "You do not have enough money";
+                                  }
+
+                                  if (int.tryParse(value) == null){
+                                  return "Please enter a valid number";
                                   }
                                   return null;
                                   },
