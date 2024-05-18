@@ -10,7 +10,7 @@ class BetsPool implements Comparable<BetsPool>{
   String creator;
   String time;
   Map<String, dynamic>? winners;
-  int? actualTemp;
+  double? actualTemp;
 
   BetsPool(this.docID, this.zipCode, this.date, this.time,this.totalWins,
   this.userMoney, this.userTemp, this.creator, this.actualTemp, {this.winners} ){ }
