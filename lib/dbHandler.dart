@@ -230,7 +230,7 @@ Future<Map<String, BetsPool>> getBetPoolsHelper(String poolType) async{
       pool[documentSnapshot.id] =bp;
     }
   } catch (e) {
-    print("Error getting all bets: $e");
+    print("Error getting bets pool: $e");
   }
   return pool;
 }
@@ -313,4 +313,59 @@ double getBetsPoolWInnings(BetsPool bp){
     return bp.userMoney[uid]*-1 as double;
 
   }
+}
+
+
+
+Stream<Map<String, BetsPool>> getIncompletePoolsStream() {
+  CollectionReference poolCollection = FirebaseFirestore.instance.collection("IncompletePools");
+
+  return poolCollection.snapshots().map((querySnapshot) {
+    Map<String, BetsPool> pool = {};
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      BetsPool bp = BetsPool.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+
+      pool[documentSnapshot.id] = bp;
+
+    }
+
+    return pool;
+  });
+}
+
+Stream<List<BetsPool>> getCompletePoolsParticipatedStream() {
+  CollectionReference poolCollection = FirebaseFirestore.instance.collection("CompletedPools");
+
+  return poolCollection.snapshots().map((querySnapshot) {
+    List<BetsPool> pool = [];
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      BetsPool bp = BetsPool.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+      if(hasParticipatedInPool(bp)){
+        pool.add(bp);
+      }
+    }
+    return pool;
+  });
+}
+
+Stream<List<Bets>> getBetsHelperStream(String betType) {
+  User? user = auth.currentUser;
+  String? uid = user?.uid;
+  CollectionReference betsCollection = FirebaseFirestore.instance
+      .collection("Users")
+      .doc(uid)
+      .collection(betType);
+
+  return betsCollection.snapshots().map((querySnapshot) {
+    List<Bets> pool = [];
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      Bets bp = Bets.fromFirestore(documentSnapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+      pool.add(bp);
+
+    }
+    return pool;
+  });
 }

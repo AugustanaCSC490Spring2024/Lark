@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,21 +44,25 @@ class _PageState extends State<Page> {
   double _logoOpacity = 0.0;
   double _cloudOpacity = 0.0;
 
-  @override
-  void initState() {
-    super.initState();
-    // Set opacity to 1 gradually after 1 second
-    Future.delayed(const Duration(seconds: 1), () {
+@override
+void initState() {
+  super.initState();
+  // Set opacity to 1 gradually after 1 second
+  Future.delayed(const Duration(seconds: 1), () {
+    if (mounted) {
       setState(() {
-        Future.delayed(const Duration(seconds: 1), () {
+        _cloudOpacity = 1.0;
+      });
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
           setState(() {
             _logoOpacity = 1.0;
           });
-        });
-        _cloudOpacity = 1.0;
+        }
       });
-    });
-  }
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -182,6 +187,12 @@ class _PageState extends State<Page> {
 
 // Signin occurs here
 Future<void> signInWithEmailAndPassword(String email, String password, BuildContext context) async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+  if (connectivityResult == ConnectivityResult.none) {
+    _showNoInternetDialog(context);
+    return;
+  }
+  
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
@@ -196,6 +207,27 @@ Future<void> signInWithEmailAndPassword(String email, String password, BuildCont
     showErrorDialog(context, "Wrong credentials. Please try again.");
   }
 }
+
+void _showNoInternetDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('No Internet Connection'),
+        content: const Text('Please check your internet connection and try again.'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
 void showErrorDialog(BuildContext context, String errorMessage) {
   showDialog(

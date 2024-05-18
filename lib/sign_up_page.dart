@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:html';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -130,6 +131,12 @@ class _SignUpPageState extends State<SignUpPage> {
 }
 
 Future<void> signUp(BuildContext context, String email, String password, String userName) async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+  if (connectivityResult == ConnectivityResult.none) {
+    _showNoInternetDialog(context);
+    return;
+  }
+
   try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
@@ -140,7 +147,8 @@ Future<void> signUp(BuildContext context, String email, String password, String 
     //Using async and await to make sure that runApp Does not happen
     Timer(Duration(seconds: 2), () {
       runApp(NavigationBarApp());
-    });  } on FirebaseAuthException catch (e) {
+    });  
+  } on FirebaseAuthException catch (e) {
     // Handle FirebaseAuth errors
     print('FirebaseAuthException: ${e.message}');
     // Display error message to the user
@@ -152,6 +160,26 @@ Future<void> signUp(BuildContext context, String email, String password, String 
     print('Signup error: $e');
     dialog(context, "Signup Error. Please try again. ", "Error");
   }
+}
+
+void _showNoInternetDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('No Internet Connection'),
+        content: const Text('Please check your internet connection and try again.'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 
