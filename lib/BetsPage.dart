@@ -360,6 +360,15 @@ class BetsPageState extends State<BetsPage> {
                                         _betAmountController.clear();
                                         _winnings = 0.0;
                                         _selectedHour = "0";
+                                         Positioned.fill(
+                                              child: Align(
+                                                alignment: Alignment.topCenter,
+                                                child: Visibility(
+                                                  visible: _showCoinEffect,
+                                                  child: coinEfffect(),
+                                                ),
+                                              ),
+                                            );
                                       } else {
                                         print("NO UID!");
                                       }
@@ -378,16 +387,6 @@ class BetsPageState extends State<BetsPage> {
                   if (_showCoinEffect)
                     SizedBox(height: 20),
                 ],
-              ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Visibility(
-                    visible: _showCoinEffect,
-                    child: coinEfffect(),
-                  ),
-                ),
-
               ),
             ],
           ),

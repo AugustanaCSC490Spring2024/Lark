@@ -243,7 +243,9 @@ Future<bool> createPools(String zipCode, String date, String time,double temp, d
   final querySnapshot = await docRef.where('creator', isEqualTo: uid).get();
   
   if(querySnapshot.docs.length >= 1) {
+
     return false;
+  
   }
 
   addMoney(money*(-1));
