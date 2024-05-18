@@ -56,6 +56,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
+        
         leading: GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -66,8 +67,12 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
           child: const TopNavigation(),
         ),
       ),
+
       backgroundColor: Colors.transparent,
-      body: TabBarView(
+      body: Column(children: [
+       
+
+      TabBarView(
         controller: _tabController,
         children: [
           // First Tab: All Pools
@@ -76,9 +81,14 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
           _buildMyPoolsTab(),
           // Third Tab: Completed Pools
           _buildCompletedPoolsTab(),
-
         ],
       ),
+
+
+      ],)   
+
+     
+
     );
   }
 
