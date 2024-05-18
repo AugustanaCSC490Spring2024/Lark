@@ -20,7 +20,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   TextEditingController dateController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-  double UserMoney = 0.0;
+  double UserMoney = 0;
   // Add a TabController for handling tabs
   late TabController _tabController;
 
@@ -29,7 +29,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
   }
-  
+
   Future<TimeOfDay?> showHourPicker({
     required BuildContext context,
     required TimeOfDay initialTime,
@@ -51,21 +51,26 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     }
     return null;
   }
-  // StreamBuilder<double> _buildUserMoney() {
-  //   return StreamBuilder<double>(
-  //     stream: getUserMoneyStream(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Text('Loading...');
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //         UserMoney = snapshot.data!;
-  //         return Text('User Money: \$${snapshot.data}');
-  //       }
-  //     },
-  //   );
-  // }
+  FutureBuilder<double> getMoneyOfUser() {
+    return FutureBuilder<double>(
+      future: getUserMoney(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          UserMoney = snapshot.data!;
+          return Text('User Money: $UserMoney');
+        }
+      },
+    );
+  }
+  String _formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +125,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   }
 
   Widget _buildAllPoolsTab() {
+    Size screenSize = MediaQuery.of(context).size;
     return FutureBuilder<Map<String, BetsPool>>(
       future: getBetPools(),
       builder: (context, snapshot) {
@@ -146,8 +152,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                 onPressed: (){
 
                   setState(() {
-                    
-                  
+
+
                   showDialog(
                     context: context,
                     builder: (BuildContext context){
@@ -167,28 +173,58 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   if (value == null || value.isEmpty){
                                     return "Please enter a value";
                                   }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: moneyController,
-                                decoration: InputDecoration(
-                                  labelText: "Amount",
-                                ),
-                                keyboardType: TextInputType.number,
-                                validator: (value){
-                                  if (value == null || value.isEmpty){
-                                    return "Please enter a value";
+                                  if (int.tryParse(value) == null){
+                                    return "Please enter a valid number";
                                   }
                                   return null;
                                 },
                               ),
                               SizedBox(height: 10),
+                              SizedBox(
+                                width: screenSize.width * 0.5,
+                                child: FutureBuilder<double>(
+                                  future: getUserMoney(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Container();
+                                    } else if (snapshot.hasError) {
+                                      return Text("Error: ${snapshot.error}");
+                                    } else {
+                                      double currentBalance = snapshot.data ?? 0.0;
+
+                                      return TextFormField(
+                                        controller: moneyController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Amount',
+                                          prefixIcon: Icon(Icons.attach_money),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter the amount you want to bet';
+                                          }
+                                          double betAmount = double.tryParse(value) ?? 0.0;
+                                          if (betAmount > currentBalance) {
+                                            return 'Insufficient balance. Please top up your account';
+                                          }
+
+
+                                        if (int.tryParse(value) == null){
+                                              return "Please enter a valid number";
+                                            }
+
+                                          return null;
+                                        },
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                              
+                              SizedBox(height: 10),
                               TextFormField(
                                 controller: dateController,
                                 decoration: const InputDecoration(
                                   labelText: 'Day',
-                                  border: OutlineInputBorder(),
                                   suffixIcon: Icon(Icons.calendar_today),
                                 ),
                                 readOnly: true,
@@ -227,6 +263,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   if (value == null || value.isEmpty){
                                     return "Please enter a value";
                                   }
+                                  if (int.tryParse(value) == null){
+                                    return "Please enter a valid number";
+                                  }
                                   return null;
                                 },
                               ),
@@ -236,7 +275,6 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                 controller: timeController,
                                 decoration: const InputDecoration(
                                   labelText: 'Time',
-                                  border: OutlineInputBorder(),
                                   suffixIcon: Icon(Icons.access_time),
                                 ),
                                 readOnly: true,
@@ -247,7 +285,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   );
                                   if (selectedTime != null) {
                                     setState(() {
-                                      timeController.text = selectedTime.format(context);
+                                      timeController.text = _formatTimeOfDay(selectedTime);
                                     });
                                   }
                                 },
@@ -278,10 +316,10 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                             onPressed: () async{
                               if (_formKey.currentState!.validate()) {
                                 bool added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
-                              
+
                                 if (added){
 
-                                setState(() {                               
+                                setState(() {
 
                                   showDialog(
                                     context: context,
@@ -292,7 +330,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                         actions: [
                                           TextButton(
                                             onPressed: (){
-                                            
+
 
                                               Navigator.of(context).pop();
                                               Navigator.of(context).pop();
@@ -363,6 +401,9 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       if (value == null || value.isEmpty){
                                       return "Please enter a value";
                                       }
+                                      if (int.tryParse(value) == null){
+                                        return "Please enter a valid number";
+                                      }
                                       return null;
                                       },
                                       ),
@@ -373,8 +414,16 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                         ),
                                   keyboardType: TextInputType.number,
                                   validator: (value){
+                                  getMoneyOfUser();
                                   if (value == null || value.isEmpty){
                                       return "Please enter a value";
+                                  }
+                                  if (int.parse(value) > UserMoney){
+                                      return "You do not have enough money";
+                                  }
+
+                                  if (int.tryParse(value) == null){
+                                  return "Please enter a valid number";
                                   }
                                   return null;
                                   },
@@ -412,7 +461,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
                                       setState(() {
-                                        
+
                                       });
                                   },
 
@@ -425,7 +474,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                   }
                                   );
                                   }
-                               
+
                                   }
                                   },
                                   child: Text("Submit"),
@@ -445,7 +494,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
 
             ],
           );
-          
+
         }
       },
 
