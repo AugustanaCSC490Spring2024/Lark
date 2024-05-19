@@ -259,8 +259,8 @@ class BetsPageState extends State<BetsPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
+
+
                       Text(
                         'Your potential winnings are: ',
                         style: TextStyle(
@@ -270,31 +270,36 @@ class BetsPageState extends State<BetsPage> {
                         ),
                       ),
                       SizedBox(width: 10.0),
-                      ElevatedButton(
-                        onPressed: () async {
-                          double winnings = await getExpectedWins(
-                            _locationController.text,
-                            _dayController.text,
-                            int.parse(_betAmountController.text),
-                            double.parse(_predictedTempController.text),
-                          ) as double;
-                          setState(() {
-                            _winnings = winnings;
-                          });
-                        },
-                        child: Text('Calculate Winnings'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              double winnings = await getExpectedWins(
+                                _locationController.text,
+                                _dayController.text,
+                                int.parse(_betAmountController.text),
+                                double.parse(_predictedTempController.text),
+                              ) as double;
+                              setState(() {
+                                _winnings = winnings;
+                              });
+                            },
+                            child: Text('Calculate Winnings'),
+                          ),
+                          SizedBox(width: 10.0),
+                          Text(
+                            'Winnings: $_winnings', // Display the calculated winnings
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 10.0),
-                      Text(
-                        'Winnings: $_winnings', // Display the calculated winnings
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Montserrat',
-                        ),
-                      ),
-                    ],
-                  ),
+
+
+
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {

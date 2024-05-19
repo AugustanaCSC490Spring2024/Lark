@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:larkcoins/topNavigationBar.dart';
 import 'BetsPool.dart';
 import 'HomePage.dart';
@@ -95,13 +96,33 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             Padding(
               padding: EdgeInsets.all(8.0),
             ),
-            TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: 'All Pools'),
-                Tab(text: 'My Pools'),
-                Tab(text: 'Completed Pools'),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+
+              child: TabBar(
+                isScrollable: true,
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Container(
+                      constraints: BoxConstraints(minWidth: 80.0),
+                      child: Center(child: Text('All Pools')),
+                    ),
+                  ),
+                    Tab(
+                    child: Container(
+                    constraints: BoxConstraints(minWidth: 80.0),
+                    child: Center(child: Text('My Pools')),
+                    ),
+                    ),
+                  Tab(
+                    child: Container(
+                      constraints: BoxConstraints(minWidth: 80.0),
+                      child: Center(child: Text('Completed Pools')),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: TabBarView(
@@ -124,502 +145,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     );
   }
 
-  // Widget _buildAllPoolsTab() {
-  //   Size screenSize = MediaQuery.of(context).size;
-  //   return FutureBuilder<Map<String, BetsPool>>(
-  //     future: getBetPools(),
-  //     builder: (context, snapshot) {
-  //
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Center(child: CircularProgressIndicator());
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //
-  //
-  //         var poolsMap = snapshot.data!;
-  //         var allPools = poolsMap.values.where((pool) => !hasParticipatedInPool(pool)).toList();
-  //
-  //
-  //
-  //         return Column(
-  //
-  //           mainAxisAlignment: MainAxisAlignment.start,
-  //           children: [
-  //         Padding(
-  //             padding: const EdgeInsets.all(8),
-  //             child: TextButton(
-  //               style: ButtonStyle(
-  //             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-  //             side: MaterialStateProperty.all<BorderSide>(
-  //             BorderSide(
-  //             color: Colors.white,
-  //             width: 2,
-  //             ),
-  //               ),
-  //               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-  //               RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(10),
-  //               ),
-  //             ),
-  //             ),
-  //               onPressed: (){
-  //                 setState(() {
-  //                 showDialog(
-  //                   context: context,
-  //                   builder: (BuildContext context){
-  //                     return AlertDialog(
-  //                       title: Text("Create a new pool"),
-  //                       titleTextStyle: TextStyle(
-  //                         color: Colors.black,
-  //                         fontSize: 18,
-  //                       ),
-  //                       content: Form(
-  //                         key: _formKey,
-  //                         child: Column(
-  //                           children: [
-  //                             TextFormField(
-  //                               controller: locationController,
-  //                               decoration: InputDecoration(
-  //                                 labelText: "Zip Code",
-  //                               ),
-  //                               keyboardType: TextInputType.number,
-  //                               validator: (value){
-  //                                 if (value == null || value.isEmpty){
-  //                                   return "Please enter a value";
-  //                                 }
-  //                                 if (int.tryParse(value) == null){
-  //                                   return "Please enter a valid number";
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                             SizedBox(height: 10),
-  //                             SizedBox(
-  //                               width: screenSize.width * 0.5,
-  //                               child: FutureBuilder<double>(
-  //                                 future: getUserMoney(),
-  //                                 builder: (context, snapshot) {
-  //                                   if (snapshot.connectionState == ConnectionState.waiting) {
-  //                                     return Container();
-  //                                   } else if (snapshot.hasError) {
-  //                                     return Text("Error: ${snapshot.error}");
-  //                                   } else {
-  //                                     double currentBalance = snapshot.data ?? 0.0;
-  //
-  //                                     return TextFormField(
-  //                                       controller: moneyController,
-  //                                       decoration: const InputDecoration(
-  //                                         labelText: 'Amount',
-  //                                         prefixIcon: Icon(Icons.attach_money),
-  //                                       ),
-  //                                       validator: (value) {
-  //                                         if (value == null || value.isEmpty) {
-  //                                           return 'Please enter the amount you want to bet';
-  //                                         }
-  //                                         double betAmount = double.tryParse(value) ?? 0.0;
-  //                                         if (betAmount > currentBalance) {
-  //                                           return 'Insufficient balance. Please top up your account';
-  //                                         }
-  //
-  //
-  //                                       if (int.tryParse(value) == null){
-  //                                             return "Please enter a valid number";
-  //                                           }
-  //
-  //                                         return null;
-  //                                       },
-  //                                     );
-  //                                   }
-  //                                 },
-  //                               ),
-  //                             ),
-  //
-  //                             SizedBox(height: 10),
-  //                             TextFormField(
-  //                               controller: dateController,
-  //                               decoration: const InputDecoration(
-  //                                 labelText: 'Day',
-  //                                 suffixIcon: Icon(Icons.calendar_today),
-  //                               ),
-  //                               readOnly: true,
-  //                               onTap: () async {
-  //                                 final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
-  //
-  //                                 final DateTime? picked = await showDatePicker(
-  //                                   context: context,
-  //                                   initialDate: tomorrow,
-  //                                   firstDate: tomorrow,
-  //                                   lastDate: DateTime(2101),
-  //                                 );
-  //                                 if (picked != null) {
-  //                                   String date = picked.toString();
-  //                                   date = date.substring(0, 10);
-  //                                   dateController.text = date;
-  //                                 }
-  //                               },
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   return 'Please select a date';
-  //                                 }
-  //
-  //                                 return null;
-  //                               },
-  //                             ),
-  //
-  //
-  //                             TextFormField(
-  //                               controller: tempController,
-  //                               decoration: InputDecoration(
-  //                                 labelText: "Temperature",
-  //                               ),
-  //                               keyboardType: TextInputType.number,
-  //                               validator: (value){
-  //                                 if (value == null || value.isEmpty){
-  //                                   return "Please enter a value";
-  //                                 }
-  //                                 if (int.tryParse(value) == null){
-  //                                   return "Please enter a valid number";
-  //                                 }
-  //                                 return null;
-  //                               },
-  //                             ),
-  //
-  //                           SizedBox(height: 10),
-  //                             TextFormField(
-  //                               controller: timeController,
-  //                               decoration: const InputDecoration(
-  //                                 labelText: 'Time',
-  //                                 suffixIcon: Icon(Icons.access_time),
-  //                               ),
-  //                               readOnly: true,
-  //                               onTap: () async {
-  //                                 final TimeOfDay? selectedTime = await showHourPicker(
-  //                                   context: context,
-  //                                   initialTime: TimeOfDay.now(),
-  //                                 );
-  //                                 if (selectedTime != null) {
-  //                                   setState(() {
-  //                                     timeController.text = _formatTimeOfDay(selectedTime);
-  //                                   });
-  //                                 }
-  //                               },
-  //                               validator: (value) {
-  //                                 if (value == null || value.isEmpty) {
-  //                                   return 'Please select a time';
-  //                                 }
-  //
-  //                                 return null;
-  //                               },
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //
-  //                       actions: [
-  //                         TextButton(
-  //                           onPressed: (){
-  //                             Navigator.of(context).pop();
-  //
-  //                           },
-  //                           child: Text("Cancel"),
-  //                         ),
-  //
-  //
-  //
-  //                         ElevatedButton(
-  //                           onPressed: () async{
-  //                             if (_formKey.currentState!.validate()) {
-  //                               bool added = await createPools(locationController.text, dateController.text, timeController.text, double.parse(tempController.text), double.parse(moneyController.text));
-  //
-  //                               if (added){
-  //
-  //                               setState(() {
-  //
-  //                                 showDialog(
-  //                                   context: context,
-  //                                   builder: (BuildContext context){
-  //                                     return AlertDialog(
-  //                                       title: Text("Success"),
-  //                                       content: Text("You have successfully created a new pool"),
-  //                                       actions: [
-  //                                         TextButton(
-  //                                           onPressed: (){
-  //
-  //
-  //                                             Navigator.of(context).pop();
-  //                                             Navigator.of(context).pop();
-  //                                           },
-  //                                           child: Text("Close"),
-  //                                         ),
-  //                                       ],
-  //                                     );
-  //                                   }
-  //                                 );
-  //
-  //                                });
-  //
-  //
-  //                               }
-  //                             }
-  //                           },
-  //                           child: Text("Submit"),
-  //                           style: ElevatedButton.styleFrom(
-  //                             foregroundColor: Colors.white, backgroundColor: Colors.blue,
-  //                             enableFeedback: locationController.text.isNotEmpty && moneyController.text.isNotEmpty && dateController.text.isNotEmpty && tempController.text.isNotEmpty && timeController.text.isNotEmpty,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     );
-  //                   }
-  //                 );
-  //
-  //                 });
-  //               },
-  //               child: Text("Create a new pool"),
-  //             ),
-  //             ),
-  //
-  //             Expanded(
-  //               child: ListView.builder(
-  //                 itemCount: allPools.length,
-  //                 itemBuilder: (context, index) {
-  //                   var pool = allPools[index];
-  //                   return Card(
-  //                     // Customize card appearance as needed
-  //
-  //
-  //                     child: ListTile(
-  //                       title: Text('Zip Code: ${pool.zipCode}'),
-  //                       subtitle: Column(
-  //                         mainAxisAlignment: MainAxisAlignment.start,
-  //                           children: [
-  //                             Text('Amount: \$${pool.totalWins}'),
-  //                             Text('Date: ${pool.date}'),
-  //                           ],
-  //                       ),
-  //                       trailing: Text('Total gamblers: ${pool.userMoney.length}'),
-  //                       onTap: () {
-  //                         // Handle onTap event
-  //                         showDialog(
-  //                         context: context,
-  //                         builder: (BuildContext context){
-  //                           return AlertDialog(
-  //                                 title: Text("Place your bet"),
-  //                                 content: Form(
-  //                                   key: _formKey,
-  //                                   child: Column(
-  //                                   children: [
-  //                                     TextFormField(
-  //                                     controller: tempController,
-  //                                     decoration: InputDecoration(
-  //                                     labelText: "Temperature",
-  //                                     ),
-  //                                     keyboardType: TextInputType.number,
-  //                                       validator: (value){
-  //                                     if (value == null || value.isEmpty){
-  //                                     return "Please enter a value";
-  //                                     }
-  //                                     if (int.tryParse(value) == null){
-  //                                       return "Please enter a valid number";
-  //                                     }
-  //                                     return null;
-  //                                     },
-  //                                     ),
-  //                                      TextFormField(
-  //                                       controller: moneyController,
-  //                                       decoration: InputDecoration(
-  //                                       labelText: "Amount",
-  //                                       ),
-  //                                 keyboardType: TextInputType.number,
-  //                                 validator: (value){
-  //                                 getMoneyOfUser();
-  //                                 if (value == null || value.isEmpty){
-  //                                     return "Please enter a value";
-  //                                 }
-  //                                 if (int.parse(value) > UserMoney){
-  //                                     return "You do not have enough money";
-  //                                 }
-  //
-  //                                 if (int.tryParse(value) == null){
-  //                                 return "Please enter a valid number";
-  //                                 }
-  //                                 return null;
-  //                                 },
-  //                                      ),
-  //                                 ],
-  //                                 ),
-  //                                 ),
-  //                                 actions: [
-  //                                 TextButton(
-  //                                 onPressed: (){
-  //                                   Navigator.of(context).pop();
-  //                                   },
-  //                                   child: Text("Cancel"),
-  //                                 ),
-  //
-  //                                 TextButton(
-  //                                 onPressed: () async{
-  //                                   if (_formKey.currentState!.validate()) {
-  //
-  //                                   bool added = await addUserToBetPool(allPools[index].docID, double.parse(tempController.text), int.parse(moneyController.text));
-  //
-  //                                   if (added) {
-  //
-  //                                   showDialog(
-  //                                  context: context,
-  //                                   builder: (
-  //                                   BuildContext context) {
-  //                                   return AlertDialog(
-  //                                     title: Text("Success"),
-  //                                     content: Text(
-  //                                     "You have successfully placed your bet"),
-  //                                 actions: [
-  //                                     TextButton(
-  //                                     onPressed: () {
-  //                                     Navigator.of(context).pop();
-  //                                     Navigator.of(context).pop();
-  //                                     setState(() {
-  //
-  //                                     });
-  //                                 },
-  //
-  //
-  //
-  //                                       child: Text("Close"),
-  //                                 ),
-  //                                 ],
-  //                                 );
-  //                                 }
-  //                                 );
-  //                                 }
-  //
-  //                                 }
-  //                                 },
-  //                                 child: Text("Submit"),
-  //
-  //
-  //                                 ),
-  //                                 ],
-  //                                 );
-  //                                 }
-  //                                 );
-  //                       },
-  //                     ),
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //
-  //           ],
-  //         );
-  //
-  //       }
-  //     },
-  //
-  //   );
-  // }
-  //
-  //
-  // Widget _buildMyPoolsTab() {
-  //   return FutureBuilder<Map<String, BetsPool>>(
-  //     future: getBetPools(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Center(child: CircularProgressIndicator());
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else {
-  //
-  //
-  //         var poolsMap = snapshot.data!;
-  //         var keys = poolsMap.keys.toList();
-  //
-  //         // Filter out pools that the user has participated in
-  //         var myPools = poolsMap.values.where((pool) => hasParticipatedInPool(pool)).toList();
-  //         if(myPools.isEmpty){
-  //           return Center(child: Text('No pools to show'));
-  //         }
-  //         else {
-  //           return ListView.builder(
-  //             itemCount: myPools.length,
-  //             itemBuilder: (context, index) {
-  //               var pool = myPools[index];
-  //               return Card(
-  //                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-  //                 color: Colors.white,
-  //                 elevation: 4,
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(15),
-  //                   side: BorderSide(
-  //                     color: Colors.black,
-  //                     width: 2,
-  //                   ),
-  //                 ),
-  //                 child: ListTile(
-  //                   title: Text('Zip Code: ${pool.zipCode}'),
-  //                   subtitle: Text(
-  //                       'Amount: \$${pool.totalWins}, Date: ${pool.date}'),
-  //                   trailing: Text('Total gamblers: ${pool.userMoney.length}'),
-  //                   onTap: () {
-  //                     // Handle onTap event
-  //                   },
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         }
-  //       }
-  //     },
-  //   );
-  // }
-  //
-  //
-  // Widget _buildCompletedPoolsTab() {
-  //
-  //   return FutureBuilder<List<BetsPool>>(
-  //     future: getCompletedPools(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Center(child: CircularProgressIndicator());
-  //       } else if (snapshot.hasError) {
-  //         return Text('Error: ${snapshot.error}');
-  //       } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-  //         // Create a copy of the list only when data is not null and not empty
-  //         var completedPools = snapshot.data!;
-  //         return ListView.builder(
-  //           itemCount: completedPools.length,
-  //           itemBuilder: (context, index) {
-  //             var pool = completedPools[index];
-  //             double totalWinnings = getBetsPoolWInnings(pool);
-  //
-  //
-  //
-  //
-  //
-  //             return Card(
-  //               // Customize card appearance as needed
-  //               child: ListTile(
-  //                 title: Text('Zip Code: ${pool.zipCode}'),
-  //                 subtitle: Text('Amount: \$${totalWinnings}, Date: ${pool.date}'),
-  //                 trailing: Text('Total gamblers: ${pool.userMoney.length}'),
-  //                 onTap: () {
-  //                   // Handle onTap event
-  //                 },
-  //               ),
-  //             );
-  //
-  //
-  //
-  //
-  //           },
-  //         );
-  //       } else {
-  //         return Center(child: Text('No completed pools to show'));
-  //       }
-  //     },
-  //   );
-  // }
+
   Widget _buildAllPoolsTab() {
     Size screenSize = MediaQuery.of(context).size;
     return StreamBuilder<Map<String, BetsPool>>(
@@ -828,7 +354,26 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                               }
                                           );
                                         });
+                                      }else{
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("Error"),
+                                                content: Text("You can only create one pool at a time until that pool finishes you can make more"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: Text("Close"),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                        );
                                       }
+
                                     }
                                   },
                                   child: Text("Submit"),
@@ -892,25 +437,41 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                                       return null;
                                                     },
                                                   ),
-                                                  TextFormField(
-                                                    controller: moneyController,
-                                                    decoration: InputDecoration(
-                                                      labelText: "Amount",
+                                                  SizedBox(
+                                                    width: screenSize.width * 0.5,
+                                                    child: FutureBuilder<double>(
+                                                      future: getUserMoney(),
+                                                      builder: (context, snapshot) {
+                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                          return Container();
+                                                        } else if (snapshot.hasError) {
+                                                          return Text("Error: ${snapshot.error}");
+                                                        } else {
+                                                          double currentBalance = snapshot.data ?? 0.0;
+
+                                                          return TextFormField(
+                                                            controller: moneyController,
+                                                            decoration: const InputDecoration(
+                                                              labelText: 'Amount',
+                                                              prefixIcon: Icon(Icons.attach_money),
+                                                            ),
+                                                            validator: (value) {
+                                                              if (value == null || value.isEmpty) {
+                                                                return 'Please enter the amount you want to bet';
+                                                              }
+                                                              double betAmount = double.tryParse(value) ?? 0.0;
+                                                              if (betAmount > currentBalance) {
+                                                                return 'Insufficient balance. Please top up your account';
+                                                              }
+                                                              if (int.tryParse(value) == null) {
+                                                                return "Please enter a valid number";
+                                                              }
+                                                              return null;
+                                                            },
+                                                          );
+                                                        }
+                                                      },
                                                     ),
-                                                    keyboardType: TextInputType.number,
-                                                    validator: (value) {
-                                                      getMoneyOfUser();
-                                                      if (value == null || value.isEmpty) {
-                                                        return "Please enter a value";
-                                                      }
-                                                      if (int.parse(value) > UserMoney) {
-                                                        return "You do not have enough money";
-                                                      }
-                                                      if (int.tryParse(value) == null) {
-                                                        return "Please enter a valid number";
-                                                      }
-                                                      return null;
-                                                    },
                                                   ),
                                                 ],
                                               ),
@@ -1036,6 +597,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
   }
 
   Widget _buildCompletedPoolsTab() {
+    Color textColor = Colors.black;
     return StreamBuilder<List<BetsPool>>(
       stream: getCompletePoolsParticipatedStream(),
       builder: (context, snapshot) {
@@ -1050,11 +612,17 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             itemBuilder: (context, index) {
               var pool = completedPools[index];
               double totalWinnings = getBetsPoolWInnings(pool);
+              if (pool.getCurUserMoneyBet() > 0) {
+                textColor = Colors.green;
+              } else {
+                textColor = Colors.red;
+              }
 
               return Card(
                 child: ExpansionTile(
-                  title: Text('Zip Code: ${pool.zipCode}'),
-                  subtitle: Text('Total gamblers: ${pool.userMoney.length}'),
+                  title: Text('Zip Code: ${pool.zipCode}', style: TextStyle(color: textColor)),
+                  subtitle: Text('Amount: \$${totalWinnings}', style: TextStyle(fontSize: 14, color: textColor)),
+                  //Text('Total gamblers: ${pool.userMoney.length}'),
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -1062,20 +630,16 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
-                            leading: Icon(Icons.monetization_on_outlined, size: 16),
-                            title: Text('Amount: \$${totalWinnings}, Date: ${pool.date}', style: TextStyle(fontSize: 14)),
+                            leading: Icon(Icons.people_alt_outlined, size: 16),
+                            title: Text('Total gamblers: ${pool.userMoney.length}'),
                           ),
                           ListTile(
                             leading: Icon(Icons.thermostat_outlined, size: 16),
-                            title: Text('temperature: ${pool.getWinningTemp()}', style: TextStyle(fontSize: 14)),
+                            title: Text('the winning temperature: ${pool.getWinningTemp()}', style: TextStyle(fontSize: 14)),
                           ),
                           ListTile(
                             leading: Icon(Icons.thermostat_outlined, size: 16),
-                            title: Text('temperature: ${pool.getCurUserTemp()}', style: TextStyle(fontSize: 14)),
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.monetization_on_outlined, size: 16),
-                            title: Text('Total Money in the Pool: \$${pool.totalWins}', style: TextStyle(fontSize: 14)),
+                            title: Text('Your temperature: ${pool.getCurUserTemp()}', style: TextStyle(fontSize: 14)),
                           ),
                           ListTile(
                             leading: Icon(Icons.access_time, size: 16),
