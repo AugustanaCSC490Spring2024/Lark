@@ -3,6 +3,8 @@
 //https://stackoverflow.com/questions/73763083/how-to-make-the-app-jump-to-another-page-after-clicking-text-flutter
 
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,7 @@ class TopNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.1; // Adjust this ratio as needed
+    double fontSize = min(screenWidth * 0.1,70); // Adjust this ratio as needed
 
     return GestureDetector(
       onTap: () {
@@ -58,7 +60,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.038;
+    double fontSize = min(screenWidth * 0.038,18);
     // Adjust this ratio as needed
 
     return Container(
