@@ -75,6 +75,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth * 0.3;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -93,37 +95,32 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-
-              child: TabBar(
-                isScrollable: true,
+               TabBar(
                 controller: _tabController,
+                 labelPadding: EdgeInsets.symmetric(horizontal: 0),
+                 indicatorPadding: EdgeInsets.zero,
                 tabs: [
                   Tab(
                     child: Container(
-                      constraints: BoxConstraints(minWidth: 80.0),
+                      constraints: BoxConstraints(minWidth: fontSize),
                       child: Center(child: Text('All Pools')),
                     ),
                   ),
                     Tab(
                     child: Container(
-                    constraints: BoxConstraints(minWidth: 80.0),
+                    constraints: BoxConstraints(minWidth: fontSize),
                     child: Center(child: Text('My Pools')),
                     ),
                     ),
                   Tab(
                     child: Container(
-                      constraints: BoxConstraints(minWidth: 80.0),
+                      constraints: BoxConstraints(minWidth: fontSize),
                       child: Center(child: Text('Completed Pools')),
                     ),
                   ),
                 ],
               ),
-            ),
+
             Expanded(
               child: TabBarView(
                 controller: _tabController,
