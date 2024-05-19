@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:larkcoins/NewUserName.dart';
 import 'package:larkcoins/dbHandler.dart';
+import 'package:larkcoins/topNavigationBar.dart';
 import 'LoginPage.dart';
 import 'changePassword.dart';
 import 'dbHandler.dart';
+import 'HomePage.dart';
+
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
@@ -21,6 +24,8 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   String username = '';
+
+
 
   @override
   void initState() {
@@ -55,11 +60,30 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Account'),
-      ),
-      backgroundColor: Color(0xffcdffd8),
-      body: SingleChildScrollView(
+        appBar: CustomAppBar(
+          leading: GestureDetector(
+            onTap: () {
+              // Avoid pushing HomePage again if already on it
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+            child: const TopNavigation(),
+          ),
+        ),
+      //backgroundColor: Color(0xffcdffd8),
+    body: Container(
+
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    colors: [Color(0xffcdffd8), Color(0xff94b9ff)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    ),
+    ),
+
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -267,6 +291,6 @@ class _AccountPageState extends State<AccountPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
