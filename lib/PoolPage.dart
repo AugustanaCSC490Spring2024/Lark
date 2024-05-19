@@ -405,7 +405,6 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Total gamblers: ${pool.userMoney.length}'),
-                                Text('More detailed information about the pool can go here.'),
                                 // Add any other detailed information you want to display
                                 TextButton(
                                   onPressed: () {
@@ -609,7 +608,7 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
             itemBuilder: (context, index) {
               var pool = completedPools[index];
               double totalWinnings = getBetsPoolWInnings(pool);
-              if (pool.getCurUserMoneyBet() > 0) {
+              if (totalWinnings > 0) {
                 textColor = Colors.green;
               } else {
                 textColor = Colors.red;
@@ -619,7 +618,6 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                 child: ExpansionTile(
                   title: Text('Zip Code: ${pool.zipCode}', style: TextStyle(color: textColor)),
                   subtitle: Text('Amount: \$${totalWinnings}', style: TextStyle(fontSize: 14, color: textColor)),
-                  //Text('Total gamblers: ${pool.userMoney.length}'),
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),

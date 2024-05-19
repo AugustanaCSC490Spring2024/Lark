@@ -84,21 +84,6 @@ class _AccountPageState extends State<AccountPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Respond to button press
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(screenSize.width, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1.0),
-                  ),
-                ),
-                child: const Text('Achievements'),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
               child: FutureBuilder<double>(
                 future: getUserMoney(), // Fetching user's wallet amount
                 builder: (context, snapshot) {
