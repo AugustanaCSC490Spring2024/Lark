@@ -14,20 +14,22 @@ class TopNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth * 0.05; // Adjust this ratio as needed
+
     return GestureDetector(
       onTap: () {
-        // the following two lines from chatgpt
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacementNamed(context, '/');
       },
-      child: const Directionality(
+      child: Directionality(
         textDirection: TextDirection.ltr,
         child: Text(
           'CLIMECOIN',
           style: TextStyle(
-            fontSize: 70,
             fontFamily: 'Casino3D',
             color: Color(0xffff8884),
+            fontSize: fontSize,
             shadows: [
               Shadow(
                 blurRadius: 10,
@@ -47,14 +49,17 @@ class TopNavigation extends StatelessWidget {
   }
 }
 
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leading;
 
   const CustomAppBar({super.key, required this.leading});
 
-
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth * 0.02; // Adjust this ratio as needed
+
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
       color: Colors.transparent,
@@ -76,7 +81,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: const EdgeInsets.only(right: 16),
                   child: Text(
                     'Wallet: \$${snapshot.data}',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: fontSize),
                   ),
                 );
               }
@@ -90,6 +95,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(80);
 }
+
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
