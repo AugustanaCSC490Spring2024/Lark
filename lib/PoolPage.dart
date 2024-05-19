@@ -405,7 +405,6 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Total gamblers: ${pool.userMoney.length}'),
-                                Text('More detailed information about the pool can go here.'),
                                 // Add any other detailed information you want to display
                                 TextButton(
                                   onPressed: () {
