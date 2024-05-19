@@ -610,7 +610,7 @@ Widget _buildCompletedPoolsTab() {
           itemBuilder: (context, index) {
             var pool = completedPools[index];
             double totalWinnings = getBetsPoolWInnings(pool);
-            if (pool.getCurUserMoneyBet() > 0) {
+            if ( totalWinnings> 0) {
               textColor = Colors.green;
             } else {
               textColor = Colors.red;
@@ -622,7 +622,7 @@ Widget _buildCompletedPoolsTab() {
             // Set the size of the circle as a fraction of the screen width
             double circleSize = screenWidth * 0.2; // Adjust the fraction as needed
             double fontSizeVal = screenWidth / 15;
-            int percetageWin = (pool.getCurUserMoneyBet() / pool.totalWins).round();
+            int percetageWin = (totalWinnings * 100 / pool.totalWins).round();
 
             return Card(
               child: ExpansionTile(
