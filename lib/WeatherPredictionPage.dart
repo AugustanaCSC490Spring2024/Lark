@@ -43,7 +43,18 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
         appBar: AppBar(
           title: Text('Weather Prediction'),
         ),
-        body: SingleChildScrollView(
+
+    body: Container(
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    colors: [Color(0xffcdffd8), Color(0xff94b9ff)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    ),
+    ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -143,7 +154,7 @@ class WeatherPredictionPageState extends State<WeatherPredictionPage> {
           ),
         ),
       ),
-    );
+    ));
   }
 Future<void> watchlistForcastDispaly() async {
     await loadWatchlist();
