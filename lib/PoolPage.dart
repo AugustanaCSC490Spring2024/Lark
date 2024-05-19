@@ -593,71 +593,125 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
     );
   }
 
-  Widget _buildCompletedPoolsTab() {
-    Color textColor = Colors.black;
-    return StreamBuilder<List<BetsPool>>(
-      stream: getCompletePoolsParticipatedStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          var completedPools = snapshot.data!;
-          return ListView.builder(
-            itemCount: completedPools.length,
-            itemBuilder: (context, index) {
-              var pool = completedPools[index];
-              double totalWinnings = getBetsPoolWInnings(pool);
-              if (pool.getCurUserMoneyBet() > 0) {
-                textColor = Colors.green;
-              } else {
-                textColor = Colors.red;
-              }
+  
 
-              return Card(
-                child: ExpansionTile(
-                  title: Text('Zip Code: ${pool.zipCode}', style: TextStyle(color: textColor)),
-                  subtitle: Text('Amount: \$${totalWinnings}', style: TextStyle(fontSize: 14, color: textColor)),
-                  //Text('Total gamblers: ${pool.userMoney.length}'),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.people_alt_outlined, size: 16),
-                            title: Text('Total gamblers: ${pool.userMoney.length}'),
+Widget _buildCompletedPoolsTab() {
+  Color textColor = Colors.black;
+  return StreamBuilder<List<BetsPool>>(
+    stream: getCompletePoolsParticipatedStream(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+        var completedPools = snapshot.data!;
+        return ListView.builder(
+          itemCount: completedPools.length,
+          itemBuilder: (context, index) {
+            var pool = completedPools[index];
+            double totalWinnings = getBetsPoolWInnings(pool);
+            if (pool.getCurUserMoneyBet() > 0) {
+              textColor = Colors.green;
+            } else {
+              textColor = Colors.red;
+            }
+
+            // Get the screen width
+            double screenWidth = MediaQuery.of(context).size.width;
+
+            // Set the size of the circle as a fraction of the screen width
+            double circleSize = screenWidth * 0.2; // Adjust the fraction as needed
+            double fontSizeVal = screenWidth / 15;
+            int percetageWin = (pool.getCurUserMoneyBet() / pool.totalWins).round();
+
+            return Card(
+              child: ExpansionTile(
+                title: Text('Zip Code: ${pool.zipCode}', style: TextStyle(color: textColor)),
+                subtitle: Text('Amount: \$${totalWinnings}', style: TextStyle(fontSize: 14, color: textColor)),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.people_alt_outlined, size: 16),
+                                title: Text('Total gamblers: ${pool.userMoney.length}'),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.thermostat_outlined, size: 16),
+                                title: Text('the winning temperature: ${pool.getWinningTemp()}', style: TextStyle(fontSize: 14)),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.thermostat_outlined, size: 16),
+                                title: Text('Your temperature: ${pool.getCurUserTemp()}', style: TextStyle(fontSize: 14)),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.access_time, size: 16),
+                                title: Text('Date: ${pool.date}', style: TextStyle(fontSize: 14)),
+                              ),
+                            ],
                           ),
-                          ListTile(
-                            leading: Icon(Icons.thermostat_outlined, size: 16),
-                            title: Text('the winning temperature: ${pool.getWinningTemp()}', style: TextStyle(fontSize: 14)),
+                        ),
+                        Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          percetageWin < 0 ? Icons.arrow_downward : Icons.arrow_upward,
+                          color: percetageWin < 0 ? Colors.red : Colors.green,
+                        ),
+                        SizedBox(width: 4),
+                        // Added circle container with only circumference
+                        Container(
+                          width: screenWidth * 0.2, // Adjust the size as needed
+                          height: screenWidth * 0.2, // Adjust the size as needed
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: percetageWin < 0 ? Colors.red : Colors.green,
+                              width: 4, // Adjust the thickness of the circumference
+                            ),
                           ),
-                          ListTile(
-                            leading: Icon(Icons.thermostat_outlined, size: 16),
-                            title: Text('Your temperature: ${pool.getCurUserTemp()}', style: TextStyle(fontSize: 14)),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${percetageWin}%',
+                            style: TextStyle(
+                              fontSize: fontSizeVal,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Montserrat',
+                              color: percetageWin < 0 ? Colors.red : Colors.green,
+                            ),
                           ),
-                          ListTile(
-                            leading: Icon(Icons.access_time, size: 16),
-                            title: Text('Date: ${pool.date}', style: TextStyle(fontSize: 14)),
-                          ),
-                          // Add any other detailed information you want to display
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              );
-            },
-          );
-        } else {
-          return Center(child: Text('No completed pools to show'));
-        }
-      },
-    );
-  }
-
+              ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      } else {
+        return Center(child: Text('No completed pools to show'));
+      }
+    },
+  );
+}
 
 
 
