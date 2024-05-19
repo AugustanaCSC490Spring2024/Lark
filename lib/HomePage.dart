@@ -132,12 +132,15 @@ class BetCard extends StatelessWidget {
     }
 
 
-    var winningPercentage = (winningAmount / bet.wager) * 100;
+    int winningPercentage = ((winningAmount / bet.wager) * 100).round();
+    Size screenSize = MediaQuery.of(context).size;
+    double screenWidth = screenSize.width;
+     double baseFontSize = screenWidth / 15;
 
 
     return Card(
       color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 3,
       child: ExpansionTile(
         title: Text(
@@ -163,8 +166,8 @@ class BetCard extends StatelessWidget {
                         SizedBox(width: 4),
                         // Added circle container with only circumference
                         Container(
-                          width: 150, // Adjust the size as needed
-                          height: 150, // Adjust the size as needed
+                          width: screenWidth * 0.3, // Adjust the size as needed
+                          height: screenWidth * 0.3, // Adjust the size as needed
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
@@ -174,9 +177,9 @@ class BetCard extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            '${winningPercentage.toStringAsFixed(2)}%',
+                            '${winningPercentage}%',
                             style: TextStyle(
-                              fontSize: 30,
+                              fontSize: baseFontSize,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Montserrat',
                               color: winningPercentage < 0 ? Colors.red : Colors.green,
