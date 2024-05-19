@@ -28,7 +28,7 @@ Future<bool> setBet(Bets bet) async {
    User? user = auth.currentUser;
    String? uid = user?.uid;
    double curUserMoney = await getUserMoney();
-   if(bet.wager<curUserMoney){
+   if(bet.wager<=curUserMoney){
      addMoney(bet.wager*(-1));
      final docRef = FirebaseFirestore.instance
          .collection("Users")
@@ -155,7 +155,7 @@ Future<List<Bets>> getBetsHelper(String betType) async {
 
 Future<bool> addUserToBetPool(String betID, double temp, int money) async {
   double curUserMoney = await getUserMoney();
-  if (money < curUserMoney) {
+  if (money <= curUserMoney) {
     await addMoney(money * -1);
 
     print("This is the bet id: $betID");
