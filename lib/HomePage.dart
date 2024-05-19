@@ -135,7 +135,7 @@ class BetCard extends StatelessWidget {
     int winningPercentage = ((winningAmount / bet.wager) * 100).round();
     Size screenSize = MediaQuery.of(context).size;
     double screenWidth = screenSize.width;
-     double baseFontSize = screenWidth / 15;
+    double baseFontSize = screenWidth / 15;
 
 
     return Card(
@@ -147,11 +147,13 @@ class BetCard extends StatelessWidget {
           titleText,
           style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
         ),
+
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(child: additionalInfo ?? SizedBox.shrink()),
+              
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
