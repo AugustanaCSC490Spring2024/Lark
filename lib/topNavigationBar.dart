@@ -15,7 +15,7 @@ class TopNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.05; // Adjust this ratio as needed
+    double fontSize = screenWidth * 0.1; // Adjust this ratio as needed
 
     return GestureDetector(
       onTap: () {
@@ -58,7 +58,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double fontSize = screenWidth * 0.02; // Adjust this ratio as needed
+    double fontSize = screenWidth * 0.038;
+    // Adjust this ratio as needed
 
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
