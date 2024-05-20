@@ -83,9 +83,20 @@ class BetsPageState extends State<BetsPage> {
           child: const TopNavigation(),
         ),
       ),
-      backgroundColor: Colors.transparent,
+      //backgroundColor: Colors.transparent,
 
-      body: SingleChildScrollView(
+    body: Container(
+
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    colors: [Color(0xffcdffd8), Color(0xff94b9ff)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    ),
+    ),
+
+
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
@@ -403,7 +414,8 @@ class BetsPageState extends State<BetsPage> {
           ),
         ),
       ),
-    );
+    ));
+
   }
 
   String getDate(int hour) {
