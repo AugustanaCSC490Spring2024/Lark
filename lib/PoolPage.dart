@@ -253,12 +253,12 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                       ),
                                       readOnly: true,
                                       onTap: () async {
-                                        final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
+                                        
 
                                         final DateTime? picked = await showDatePicker(
                                           context: context,
-                                          initialDate: tomorrow,
-                                          firstDate: tomorrow,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now(),
                                           lastDate: DateTime(2101),
                                         );
                                         if (picked != null) {

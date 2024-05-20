@@ -135,13 +135,12 @@ class BetsPageState extends State<BetsPage> {
                     ),
                     readOnly: true,
                     onTap: () async {
-                      final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
                       final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 5));
 
                       final DateTime? picked = await showDatePicker(
                         context: context,
-                        initialDate: tomorrow,
-                        firstDate: tomorrow,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
                         lastDate: maxSelectableDate,
                       );
                       if (picked != null) {
