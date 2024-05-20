@@ -136,7 +136,7 @@ class BetsPageState extends State<BetsPage> {
                     readOnly: true,
                     onTap: () async {
                       final DateTime tomorrow = DateTime.now().add(Duration(days: 1));
-                      final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 6));
+                      final DateTime maxSelectableDate = DateTime.now().add(const Duration(days: 5));
 
                       final DateTime? picked = await showDatePicker(
                         context: context,
@@ -165,12 +165,7 @@ class BetsPageState extends State<BetsPage> {
                     },
                     child: Text("Select Time: $_selectedHour"),
                   ),
-                  SizedBox(height: 10),
-                  if (_selectedHour == '0' && _formKey.currentState != null)
-                    Text(
-                      'Please select a time',
-                      style: TextStyle(color: Colors.red),
-                    ),
+
                   SizedBox(height: 20),
                   Text(
                     'The selected hour is according UTC timezone (24hr format): $_selectedHour',
@@ -273,17 +268,28 @@ class BetsPageState extends State<BetsPage> {
                       Row(
                         children: [
                           ElevatedButton(
+
                             onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                              if (_selectedHour == '0') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Please select a time')),
+                              );
+                              } else {
+                              // Calculate the expected winnings (if the user wins the bet
                               double winnings = await getExpectedWins(
-                                _locationController.text,
-                                _dayController.text,
-                                int.parse(_betAmountController.text),
-                                double.parse(_predictedTempController.text),
+                              _locationController.text,
+                              _dayController.text,
+                              int.parse(_betAmountController.text),
+                              double.parse(_predictedTempController.text),
                               ) as double;
                               setState(() {
-                                _winnings = winnings;
+                              _winnings = winnings;
                               });
-                            },
+                              }
+
+                              };
+                              },
                             child: Text('Calculate Winnings'),
                           ),
                           SizedBox(width: 10.0),

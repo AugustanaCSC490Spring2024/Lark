@@ -341,6 +341,8 @@ class PoolPageState extends State<PoolPage> with TickerProviderStateMixin{
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () {
+                                                        moneyController.clear();
+                                                        tempController.clear();
                                                         Navigator.of(context).pop();
                                                         Navigator.of(context).pop();
                                                       },
